@@ -2,6 +2,27 @@
 
 > Purpose: continuity between prompts/sessions. Log every meaningful step in the Progress Log and every judgment call under Decisions & Assumptions so future agents don't re-litigate settled questions or unknowingly contradict them.
 
+### 2026-09-26 — Auditor Role Module (`services/audit.api.ts` & `/audit/dashboard` page)
+- Replaced scaffold `services/audit.api.ts` stub with real `getElectionAudit(electionId)` → `GET /api/v1/audit/elections/:id`, using `apiClient`. Only the one function specified in the API contract; no invented endpoints.
+- Built `app/audit/dashboard/page.tsx` — read-only oversight view:
+  - Election dropdown populated by reusing `getElections()` from `election.api.ts` (no duplication).
+  - On selection, fetches and renders `ElectionAuditReport` defensively (only fields defined in the type).
+  - Chain integrity verification banner (✓ verified / ✗ failed).
+  - Vote count reconciliation stat cards (total, valid, invalid, last audited).
+  - Discrepancies list rendered only when the array is non-empty.
+  - States: idle ("select an election"), loading skeleton, error with retry, loaded report.
+  - Quick link to Blockchain Explorer for cross-reference.
+- No mutating actions — entire module is read-only.
+- Verified `npm run lint`, `npm run typecheck`, and `npm run build` pass cleanly.
+
+### 2026-09-26 — Blockchain Transparency Module (`services/blockchain.api.ts` & `/blockchain/*` pages)
+- Implemented `services/blockchain.api.ts` (`getBlocks`, `getBlockById`, `getTransaction`, `listBlocks`) using `apiClient`.
+- Built Resend-style read-only transparency pages:
+  - `app/blockchain/explorer/page.tsx`: Recent blocks list (height, mono hash, tx count, timestamp), loading skeleton, empty state, error retry.
+  - `app/blockchain/block/[blockId]/page.tsx`: Block detail displaying block hash, previous hash, timestamp, and list of transaction links.
+  - `app/blockchain/transaction/[txId]/page.tsx`: Transaction detail displaying `txId`, type (`VOTE`, `REGISTRATION`, `ELECTION_CREATE`, `RESULT_COMMIT`), block reference, and opaque payload hash. Reinforces immutable ledger commitment while guaranteeing voter secrecy.
+- Verified `npm run lint`, `npm run typecheck`, `npm run format`, and `npm run build` pass cleanly with zero warnings or errors.
+
 ### 2026-09-26 — Admin Role Module (`services/election.api.ts` extensions & `/admin/*` pages)
 - Extended `services/election.api.ts` with `getAdminSummary`, `getElectionResults`, and `updateElectionCandidates` (annotated with `// TODO` comments where backend contracts are pending).
 - Built Resend-style Admin module pages:

@@ -1,15 +1,12 @@
-import { api } from './api';
-import type { AuditEvent } from '@/types';
+import { apiClient } from './api';
+import type { ElectionAuditReport } from '@/types';
 
-// Hard dependency on the shared client; request bodies land with the audit prompt.
-void api;
-
-function notImplemented(endpoint: string): never {
-  throw new Error(`${endpoint} is not implemented yet (scaffold stub)`);
-}
-
-/** GET /api/v1/audit/elections/:id */
-export async function getElectionAudit(electionId: string): Promise<AuditEvent[]> {
-  void electionId;
-  throw notImplemented('GET /api/v1/audit/elections/:id');
+/**
+ * GET /api/v1/audit/elections/:id
+ * Fetches the aggregate audit report for a single election.
+ */
+export async function getElectionAudit(electionId: string): Promise<ElectionAuditReport> {
+  return apiClient<ElectionAuditReport>(`/audit/elections/${encodeURIComponent(electionId)}`, {
+    method: 'GET',
+  });
 }

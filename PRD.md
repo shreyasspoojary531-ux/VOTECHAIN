@@ -43,13 +43,13 @@ A verifiable electronic voting platform with four roles (Registrar, Voter, Admin
 - [x] Receipt / verification (`/verification`) → GET /api/v1/votes/receipt/:txId
 
 ### Blockchain
-- [ ] Explorer (`/blockchain/explorer`) → GET /api/v1/blockchain/blocks
-- [ ] Transaction detail (`/blockchain/transaction`) → GET /api/v1/blockchain/transactions/:txId
-- [ ] Block detail (`/blockchain/block`)
+- [x] Explorer (`/blockchain/explorer`) → GET /api/v1/blockchain/blocks
+- [x] Transaction detail (`/blockchain/transaction`) → GET /api/v1/blockchain/transactions/:txId
+- [x] Block detail (`/blockchain/block`)
 - [ ] Chain visual component (block-linkage visualization)
 
 ### Audit
-- [ ] Audit dashboard (`/audit/dashboard`) → GET /api/v1/audit/elections/:id
+- [x] Audit dashboard (`/audit/dashboard`) → GET /api/v1/audit/elections/:id
 
 ### Visual architecture pieces (DESIGN.md hero sections)
 - [ ] Vote Journey visual
