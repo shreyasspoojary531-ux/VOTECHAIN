@@ -25,22 +25,26 @@ Stack: Next.js 15 (App Router) · TypeScript (strict) · Tailwind CSS v4 · axio
 
 ```
 frontend/
-├── package.json               # scripts: dev, build, start, lint, typecheck
-├── tsconfig.json              # strict, bundler resolution, @/* → src/*
+├── package.json               # scripts: dev, build, start, lint, format, typecheck
+├── tsconfig.json              # strict: true, bundler resolution, @/* → src/*
 ├── next.config.ts
 ├── postcss.config.mjs         # Tailwind v4 via @tailwindcss/postcss
-├── eslint.config.mjs          # flat config: next/core-web-vitals + next/typescript
+├── eslint.config.mjs          # flat config: next/core-web-vitals + next/typescript + eslint-config-prettier
+├── .prettierrc                # Prettier configuration (semi, singleQuote, trailingComma, printWidth)
 ├── .gitignore                 # frontend-scoped (root .gitignore is root-anchored)
 ├── .env.example               # NEXT_PUBLIC_API_BASE_URL
+├── .env.local.example         # NEXT_PUBLIC_API_BASE_URL=http://localhost:8080/api/v1
 ├── public/                    # static assets (empty)
 └── src/
     ├── app/
     │   ├── layout.tsx         # root layout: Inter + Geist Mono + Fraunces (next/font), black canvas
     │   ├── globals.css        # Tailwind v4 import + @theme design tokens (DESIGN.md)
-    │   ├── page.tsx           # /
-    │   ├── login/page.tsx     # /login
-    │   ├── register/page.tsx  # /register
-    │   ├── otp/page.tsx       # /otp
+    │   ├── (public)/
+    │   │   └── page.tsx       # /
+    │   ├── (auth)/
+    │   │   ├── login/page.tsx # /login
+    │   │   ├── register/page.tsx # /register
+    │   │   └── otp/page.tsx   # /otp
     │   ├── registrar/
     │   │   ├── layout.tsx     # guard attachment point (renders children)
     │   │   ├── dashboard/page.tsx          # /registrar/dashboard
@@ -54,14 +58,18 @@ frontend/
     │   │   ├── create-election/page.tsx    # /admin/create-election
     │   │   ├── candidates/page.tsx         # /admin/candidates
     │   │   └── results/page.tsx            # /admin/results
-    │   ├── elections/page.tsx # /elections
-    │   ├── vote/page.tsx      # /vote
-    │   ├── verification/page.tsx           # /verification
+    │   ├── elections/
+    │   │   ├── page.tsx       # /elections
+    │   │   └── [id]/page.tsx  # /elections/[id]
+    │   ├── vote/
+    │   │   └── [electionId]/page.tsx       # /vote/[electionId]
+    │   ├── verification/
+    │   │   └── [txId]/page.tsx             # /verification/[txId]
     │   ├── blockchain/
     │   │   ├── layout.tsx
     │   │   ├── explorer/page.tsx           # /blockchain/explorer
-    │   │   ├── transaction/page.tsx        # /blockchain/transaction
-    │   │   └── block/page.tsx              # /blockchain/block
+    │   │   ├── transaction/[txId]/page.tsx # /blockchain/transaction/[txId]
+    │   │   └── block/[blockId]/page.tsx    # /blockchain/block/[blockId]
     │   └── audit/
     │       ├── layout.tsx
     │       └── dashboard/page.tsx          # /audit/dashboard
@@ -76,8 +84,11 @@ frontend/
     │   ├── voting.api.ts      # POST /votes, GET /votes/receipt/:txId
     │   ├── blockchain.api.ts  # GET /blockchain/blocks, /blockchain/transactions/:txId
     │   └── audit.api.ts       # GET /audit/elections/:id
-    └── types/
-        └── index.ts           # Role, Voter, Candidate, Election, Vote, BlockchainTransaction, Block, AuditEvent, Paginated
+    ├── types/
+    │   └── index.ts           # Role, Voter, Candidate, Election, Vote, BlockchainTransaction, Block, AuditEvent, Paginated
+    ├── lib/                   # helper functions & utilities
+    ├── hooks/                 # custom React hooks
+    └── context/               # React context providers
 ```
 
 ## Conventions

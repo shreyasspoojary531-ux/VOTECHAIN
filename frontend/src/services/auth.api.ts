@@ -1,5 +1,5 @@
-import { api } from "./api";
-import type { Role } from "@/types";
+import { api } from './api';
+import type { Role } from '@/types';
 
 // Hard dependency on the shared client; request bodies land with the auth prompt.
 void api;
@@ -34,11 +34,11 @@ function notImplemented(endpoint: string): never {
 /** POST /api/v1/auth/register */
 export async function register(params: RegisterParams): Promise<RegisterResult> {
   void params;
-  throw notImplemented("POST /api/v1/auth/register");
+  throw notImplemented('POST /api/v1/auth/register');
 }
 
 /** POST /api/v1/auth/login */
 export async function login(params: LoginParams): Promise<AuthSession> {
   void params;
-  throw notImplemented("POST /api/v1/auth/login");
+  throw notImplemented('POST /api/v1/auth/login');
 }

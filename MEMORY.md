@@ -4,6 +4,28 @@
 
 ## Progress Log
 
+### 2026-09-26 — Next.js 15 project setup with Prettier, ESLint 9, Tailwind v4 design tokens, and updated App Router structure
+- Installed `prettier` and `eslint-config-prettier` in `frontend/`.
+- Configured `.prettierrc` with requested defaults (`semi: true`, `singleQuote: true`, `trailingComma: 'all'`, `printWidth: 100`).
+- Updated `eslint.config.mjs` to integrate `eslint-config-prettier`.
+- Added `"format": "prettier --write ."` script to `package.json`.
+- Created `.env.local.example` with `NEXT_PUBLIC_API_BASE_URL=http://localhost:8080/api/v1` and updated `.env.example`.
+- Configured Tailwind v4 CSS-first design tokens in `globals.css` with color scale (`canvas`, `surface`, `hairline`, `ink`, `accent`, `success`, `danger`, `warning`), custom border radius (`md`, `lg`, `full`), and font variables (`--font-sans`, `--font-mono`, `--font-display`).
+- Reorganized `frontend/src/app/` structure:
+  - `(public)/page.tsx` -> `/`
+  - `(auth)/login/page.tsx` -> `/login`
+  - `(auth)/register/page.tsx` -> `/register`
+  - `(auth)/otp/page.tsx` -> `/otp`
+  - `registrar/*` (`dashboard`, `aadhaar-search`, `register-voter`, `voters`)
+  - `admin/*` (`dashboard`, `elections`, `create-election`, `candidates`, `results`)
+  - `elections/page.tsx` & `elections/[id]/page.tsx`
+  - `vote/[electionId]/page.tsx`
+  - `verification/[txId]/page.tsx`
+  - `blockchain/*` (`explorer`, `transaction/[txId]`, `block/[blockId]`)
+  - `audit/dashboard/page.tsx`
+- Scaffolded non-app directory structure under `frontend/src/`: `services/`, `types/`, `lib/`, `components/`, `hooks/`, `context/`.
+- Verified `npm run lint`, `npm run typecheck`, `npm run format`, and `npm run build` succeed cleanly.
+
 ### 2026-09-26 — Scaffold + route skeleton + API client foundation (frontend branch)
 - Reinitialized the empty `frontend/` scaffold (all pre-existing files were 0 bytes; nothing of value was lost). Stack: Next.js 15 App Router + TypeScript strict, Tailwind CSS v4 (CSS-first `@theme`), ESLint 9 flat config, axios. Package manager: npm (Node v25).
 - Created all 20 required routes with placeholder pages rendering a shared `ComingSoon` component (`/`, `/login`, `/register`, `/otp`, 4× `/registrar/*`, 5× `/admin/*`, `/elections`, `/vote`, `/verification`, 3× `/blockchain/*`, `/audit/dashboard`). Segment layouts (`layout.tsx`) added for `/registrar`, `/admin`, `/blockchain`, `/audit` as guard/chrome attachment points.

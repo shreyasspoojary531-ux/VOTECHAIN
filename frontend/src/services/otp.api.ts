@@ -1,5 +1,5 @@
-import { api } from "./api";
-import type { AuthSession } from "./auth.api";
+import { api } from './api';
+import type { AuthSession } from './auth.api';
 
 // Hard dependency on the shared client; request bodies land with the OTP prompt.
 void api;
@@ -26,11 +26,11 @@ function notImplemented(endpoint: string): never {
 /** POST /api/v1/auth/send-otp */
 export async function sendOtp(params: SendOtpParams): Promise<SendOtpResult> {
   void params;
-  throw notImplemented("POST /api/v1/auth/send-otp");
+  throw notImplemented('POST /api/v1/auth/send-otp');
 }
 
 /** POST /api/v1/auth/verify-otp */
 export async function verifyOtp(params: VerifyOtpParams): Promise<AuthSession> {
   void params;
-  throw notImplemented("POST /api/v1/auth/verify-otp");
+  throw notImplemented('POST /api/v1/auth/verify-otp');
 }

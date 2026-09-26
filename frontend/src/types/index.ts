@@ -6,7 +6,7 @@
  * pagination envelopes, etc. will be added as endpoints come online.
  */
 
-export type Role = "REGISTRAR" | "VOTER" | "ADMIN" | "AUDITOR";
+export type Role = 'REGISTRAR' | 'VOTER' | 'ADMIN' | 'AUDITOR';
 
 /** A citizen record identified by Aadhaar, awaiting or completed registration. */
 export interface Voter {
@@ -29,7 +29,7 @@ export interface Candidate {
   imageUrl: string | null;
 }
 
-export type ElectionStatus = "DRAFT" | "ACTIVE" | "CLOSED" | "ARCHIVED";
+export type ElectionStatus = 'DRAFT' | 'ACTIVE' | 'CLOSED' | 'ARCHIVED';
 
 export interface Election {
   id: string;
@@ -58,7 +58,7 @@ export interface BlockchainTransaction {
   txId: string;
   /** Hash of the block that committed this transaction, null while pending. */
   blockHash: string | null;
-  type: "VOTE" | "REGISTRATION" | "ELECTION_CREATE" | "RESULT_COMMIT";
+  type: 'VOTE' | 'REGISTRATION' | 'ELECTION_CREATE' | 'RESULT_COMMIT';
   /** Epoch milliseconds. */
   timestamp: number;
   /** Opaque payload hash — payload contents are never exposed to clients. */

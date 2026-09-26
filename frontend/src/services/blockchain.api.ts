@@ -1,5 +1,5 @@
-import { api } from "./api";
-import type { Block, BlockchainTransaction, Paginated } from "@/types";
+import { api } from './api';
+import type { Block, BlockchainTransaction, Paginated } from '@/types';
 
 // Hard dependency on the shared client; request bodies land with the explorer prompt.
 void api;
@@ -16,11 +16,11 @@ function notImplemented(endpoint: string): never {
 /** GET /api/v1/blockchain/blocks */
 export async function listBlocks(params?: ListBlocksParams): Promise<Paginated<Block>> {
   void params;
-  throw notImplemented("GET /api/v1/blockchain/blocks");
+  throw notImplemented('GET /api/v1/blockchain/blocks');
 }
 
 /** GET /api/v1/blockchain/transactions/:txId */
 export async function getTransaction(txId: string): Promise<BlockchainTransaction> {
   void txId;
-  throw notImplemented("GET /api/v1/blockchain/transactions/:txId");
+  throw notImplemented('GET /api/v1/blockchain/transactions/:txId');
 }

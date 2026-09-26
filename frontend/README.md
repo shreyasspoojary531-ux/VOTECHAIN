@@ -12,13 +12,13 @@ npm run dev                  # http://localhost:3000
 
 ## Scripts
 
-| Command           | Purpose                          |
-| ----------------- | -------------------------------- |
-| `npm run dev`     | Development server               |
-| `npm run build`   | Production build                 |
-| `npm run start`   | Serve the production build       |
-| `npm run lint`    | ESLint (flat config)             |
-| `npm run typecheck` | `tsc --noEmit`                 |
+| Command             | Purpose                    |
+| ------------------- | -------------------------- |
+| `npm run dev`       | Development server         |
+| `npm run build`     | Production build           |
+| `npm run start`     | Serve the production build |
+| `npm run lint`      | ESLint (flat config)       |
+| `npm run typecheck` | `tsc --noEmit`             |
 
 ## Layout
 

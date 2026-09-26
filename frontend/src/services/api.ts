@@ -9,13 +9,13 @@ import axios, {
   type AxiosHeaders,
   type AxiosInstance,
   type InternalAxiosRequestConfig,
-} from "axios";
+} from 'axios';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:8000";
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:8000';
 
 export const api: AxiosInstance = axios.create({
   baseURL: API_BASE_URL,
-  headers: { "Content-Type": "application/json" },
+  headers: { 'Content-Type': 'application/json' },
   timeout: 15_000,
 });
 
@@ -37,7 +37,7 @@ const getToken = (): string | null => null;
 api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   const token = getToken();
   if (token) {
-    (config.headers as AxiosHeaders).set("Authorization", `Bearer ${token}`);
+    (config.headers as AxiosHeaders).set('Authorization', `Bearer ${token}`);
   }
   return config;
 });

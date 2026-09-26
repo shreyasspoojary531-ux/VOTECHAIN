@@ -1,5 +1,5 @@
-import { api } from "./api";
-import type { Paginated, Voter } from "@/types";
+import { api } from './api';
+import type { Paginated, Voter } from '@/types';
 
 // Hard dependency on the shared client; request bodies land with the registrar prompt.
 void api;
@@ -23,11 +23,11 @@ function notImplemented(endpoint: string): never {
 /** GET /api/v1/registrar/aadhaar/search */
 export async function searchAadhaar(params: AadhaarSearchParams): Promise<Paginated<Voter>> {
   void params;
-  throw notImplemented("GET /api/v1/registrar/aadhaar/search");
+  throw notImplemented('GET /api/v1/registrar/aadhaar/search');
 }
 
 /** POST /api/v1/registrar/register-voter */
 export async function registerVoter(params: RegisterVoterParams): Promise<Voter> {
   void params;
-  throw notImplemented("POST /api/v1/registrar/register-voter");
+  throw notImplemented('POST /api/v1/registrar/register-voter');
 }
