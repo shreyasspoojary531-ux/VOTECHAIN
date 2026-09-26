@@ -18,10 +18,10 @@ A verifiable electronic voting platform with four roles (Registrar, Voter, Admin
 - [ ] Role-based navigation shell (REGISTRAR / VOTER / ADMIN / AUDITOR)
 
 ### Auth & identity
-- [ ] Register page (`/register`) → POST /api/v1/auth/register
-- [ ] Login page (`/login`) → POST /api/v1/auth/login
-- [ ] OTP send + verify flow (`/otp`) → POST /api/v1/auth/send-otp, /verify-otp
-- [ ] JWT session handling (storage, refresh, 401 handling)
+- [x] Register page (`/register`) → POST /api/v1/auth/register
+- [x] Login page (`/login`) → POST /api/v1/auth/login
+- [x] OTP send + verify flow (`/otp`) → POST /api/v1/auth/send-otp, /verify-otp
+- [x] JWT session handling (storage, refresh, 401 handling)
 - [ ] Role guards for /registrar, /admin, /audit segments
 
 ### Registrar

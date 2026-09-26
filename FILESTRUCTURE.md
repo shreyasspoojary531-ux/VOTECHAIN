@@ -89,7 +89,8 @@ frontend/
     ├── lib/
     │   └── auth-token.ts      # Auth token store abstraction (getToken, setToken, clearToken)
     ├── hooks/                 # custom React hooks
-    └── context/               # React context providers
+    └── context/
+        └── AuthContext.tsx    # Auth state provider (user, token, login, logout, loading)
 ```
 
 ## Conventions

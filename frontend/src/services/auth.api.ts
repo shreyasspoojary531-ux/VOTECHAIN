@@ -1,44 +1,30 @@
-import { api } from './api';
-import type { Role } from '@/types';
+import { apiClient } from './api';
+import { clearToken } from '@/lib/auth-token';
+import type { LoginRequest, LoginResponse, RegisterRequest } from '@/types';
 
-// Hard dependency on the shared client; request bodies land with the auth prompt.
-void api;
-
-export interface RegisterParams {
-  aadhaar: string;
-  name: string;
-  password: string;
+/**
+ * POST /api/v1/auth/register
+ */
+export async function register(data: RegisterRequest): Promise<unknown> {
+  return apiClient<unknown>('/auth/register', {
+    method: 'POST',
+    body: data,
+  });
 }
 
-export interface LoginParams {
-  aadhaar: string;
-  password: string;
+/**
+ * POST /api/v1/auth/login
+ */
+export async function login(data: LoginRequest): Promise<LoginResponse> {
+  return apiClient<LoginResponse>('/auth/login', {
+    method: 'POST',
+    body: data,
+  });
 }
 
-/** Returned by login / verify-otp once the session is fully established. */
-export interface AuthSession {
-  accessToken: string;
-  userId: string;
-  /** Role is assigned server-side and drives role-based navigation. */
-  role: Role;
-}
-
-export interface RegisterResult {
-  userId: string;
-}
-
-function notImplemented(endpoint: string): never {
-  throw new Error(`${endpoint} is not implemented yet (scaffold stub)`);
-}
-
-/** POST /api/v1/auth/register */
-export async function register(params: RegisterParams): Promise<RegisterResult> {
-  void params;
-  throw notImplemented('POST /api/v1/auth/register');
-}
-
-/** POST /api/v1/auth/login */
-export async function login(params: LoginParams): Promise<AuthSession> {
-  void params;
-  throw notImplemented('POST /api/v1/auth/login');
+/**
+ * Logout function — clears stored token client-side.
+ */
+export function logout(): void {
+  clearToken();
 }

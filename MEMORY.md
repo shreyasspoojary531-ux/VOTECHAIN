@@ -2,6 +2,16 @@
 
 > Purpose: continuity between prompts/sessions. Log every meaningful step in the Progress Log and every judgment call under Decisions & Assumptions so future agents don't re-litigate settled questions or unknowingly contradict them.
 
+### 2026-09-26 — Auth Services, AuthContext, and Resend-Style Auth Pages (`/login`, `/register`, `/otp`)
+- Implemented `services/auth.api.ts` (`register`, `login`, `logout`) using `apiClient`.
+- Implemented `services/otp.api.ts` (`sendOtp`, `verifyOtp`) using `apiClient`.
+- Created `context/AuthContext.tsx` providing `{ user, token, isAuthenticated, login, logout, loading }` with stored token hydration on mount, and wrapped `app/layout.tsx` with `<AuthProvider>`.
+- Built Resend-style minimal UI pages:
+  - `app/(auth)/login/page.tsx`: Credentials form, loading spinner, inline error display, role-based dashboard redirection upon successful login.
+  - `app/(auth)/register/page.tsx`: Form matching `RegisterRequest`, client-side validation (required fields, email format, 12-digit Aadhaar), routing to `/otp` upon registration for multi-factor verification.
+  - `app/(auth)/otp/page.tsx`: 6-digit segmented OTP input with auto-advance, 60s cooldown timer for resend action, role-based redirection upon verification.
+- Verified `npm run lint`, `npm run typecheck`, `npm run format`, and `npm run build` pass cleanly.
+
 ### 2026-09-26 — Domain Types & Centralized Fetch API Client (`apiClient`)
 - Defined complete domain model TypeScript interfaces in `frontend/src/types/index.ts`:
   - Auth: `RegisterRequest`, `LoginRequest`, `LoginResponse`, `SendOtpRequest`, `VerifyOtpRequest`, `VerifyOtpResponse`
