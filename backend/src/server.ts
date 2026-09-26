@@ -2,7 +2,7 @@ import app from './app';
 import { config } from './config';
 import { logger } from './utils/logger';
 
-const server = app.listen(config.PORT, () => {
+const server = app.listen(config.PORT, '0.0.0.0', () => {
   logger.info(
     {
       port: config.PORT,

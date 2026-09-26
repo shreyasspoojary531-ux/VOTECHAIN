@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { login as loginApi } from '@/services/auth.api';
+import { login as loginApi, sendOtp, verifyOtp } from '@/services/auth.api';
 import { ApiError } from '@/services/api';
 import type { Role } from '@/types';
 
@@ -16,6 +16,12 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // OTP flow state
+  const [otpStep, setOtpStep] = useState(false);
+  const [pendingToken, setPendingToken] = useState<string | null>(null);
+  const [otpCode, setOtpCode] = useState('');
+  const [devOtpHint, setDevOtpHint] = useState<string | null>(null);
 
   const getRoleDashboard = (role: Role): string => {
     switch (role) {
@@ -58,9 +64,26 @@ export default function LoginPage() {
 
     try {
       const response = await loginApi({ email: targetEmail, password: 'password123' });
-      authLogin(response.jwt, response.user);
-      const dashboard = getRoleDashboard(response.user.role);
-      router.push(dashboard);
+
+      if (response.otpRequired && response.pendingToken) {
+        // Voter login — need OTP step
+        setPendingToken(response.pendingToken);
+        setOtpStep(true);
+
+        // Auto-send OTP
+        const otpResult = await sendOtp(response.pendingToken);
+        if (otpResult.devOtp) {
+          setDevOtpHint(otpResult.devOtp);
+        }
+        setLoading(false);
+        return;
+      }
+
+      if (response.jwt) {
+        authLogin(response.jwt, response.user);
+        const dashboard = getRoleDashboard(response.user.role);
+        router.push(dashboard);
+      }
     } catch (err: unknown) {
       if (err instanceof ApiError) {
         setError(err.message);
@@ -81,9 +104,26 @@ export default function LoginPage() {
 
     try {
       const response = await loginApi({ email, password });
-      authLogin(response.jwt, response.user);
-      const dashboard = getRoleDashboard(response.user.role);
-      router.push(dashboard);
+
+      if (response.otpRequired && response.pendingToken) {
+        // Voter login — need OTP step
+        setPendingToken(response.pendingToken);
+        setOtpStep(true);
+
+        // Auto-send OTP
+        const otpResult = await sendOtp(response.pendingToken);
+        if (otpResult.devOtp) {
+          setDevOtpHint(otpResult.devOtp);
+        }
+        setLoading(false);
+        return;
+      }
+
+      if (response.jwt) {
+        authLogin(response.jwt, response.user);
+        const dashboard = getRoleDashboard(response.user.role);
+        router.push(dashboard);
+      }
     } catch (err: unknown) {
       if (err instanceof ApiError) {
         setError(err.message);
@@ -96,6 +136,109 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
+
+  const handleOtpSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!pendingToken) return;
+    setError(null);
+    setLoading(true);
+
+    try {
+      const result = await verifyOtp(pendingToken, otpCode);
+
+      if (result.jwt) {
+        authLogin(result.jwt, result.user);
+        const dashboard = getRoleDashboard(result.user.role);
+        router.push(dashboard);
+      }
+    } catch (err: unknown) {
+      if (err instanceof ApiError) {
+        setError(err.message);
+      } else if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('OTP verification failed. Please try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // OTP verification step
+  if (otpStep) {
+    return (
+      <main className="flex min-h-screen flex-col items-center justify-center p-6 bg-canvas text-ink">
+        <div className="w-full max-w-sm space-y-6">
+          <div className="space-y-2 text-center">
+            <h1 className="text-2xl font-semibold tracking-tight">Verify OTP</h1>
+            <p className="text-sm text-ink-secondary">
+              A one-time password has been sent to your registered device.
+            </p>
+          </div>
+
+          <form
+            onSubmit={handleOtpSubmit}
+            className="space-y-4 rounded-lg border border-hairline bg-surface p-6"
+          >
+            {error && (
+              <div
+                role="alert"
+                className="rounded-md border border-danger/30 bg-danger/10 p-3 text-xs text-danger"
+              >
+                {error}
+              </div>
+            )}
+
+            {devOtpHint && (
+              <div className="rounded-md border border-accent/30 bg-accent/10 p-3 text-xs text-accent font-mono text-center">
+                Dev OTP: <span className="font-bold text-base">{devOtpHint}</span>
+              </div>
+            )}
+
+            <div className="space-y-1.5">
+              <label htmlFor="otp" className="text-xs font-medium text-ink-secondary">
+                One-Time Password
+              </label>
+              <input
+                id="otp"
+                type="text"
+                required
+                value={otpCode}
+                onChange={(e) => setOtpCode(e.target.value)}
+                placeholder="Enter 6-digit OTP"
+                maxLength={6}
+                className="w-full rounded-md border border-hairline-strong bg-canvas px-3 py-2 text-sm text-ink text-center font-mono text-lg tracking-[0.3em] placeholder-ink-muted focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+                disabled={loading}
+                autoFocus
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading || otpCode.length < 6}
+              className="flex w-full items-center justify-center rounded-md bg-ink py-2 text-sm font-medium text-canvas transition-opacity hover:opacity-90 disabled:opacity-50"
+            >
+              {loading ? 'Verifying...' : 'Verify & Sign In'}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setOtpStep(false);
+                setPendingToken(null);
+                setOtpCode('');
+                setDevOtpHint(null);
+                setError(null);
+              }}
+              className="flex w-full items-center justify-center text-xs text-ink-muted hover:text-ink transition-colors"
+            >
+              ← Back to login
+            </button>
+          </form>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-6 bg-canvas text-ink">

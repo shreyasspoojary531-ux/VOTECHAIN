@@ -137,12 +137,30 @@ export async function apiClient<T>(path: string, options: ApiClientOptions = {})
 
     const errObj =
       typeof data === 'object' && data !== null ? (data as Record<string, unknown>) : null;
+    const innerError =
+      errObj?.error && typeof errObj.error === 'object'
+        ? (errObj.error as Record<string, unknown>)
+        : null;
+
     const message =
+      (innerError && typeof innerError.message === 'string' ? innerError.message : null) ||
       (errObj && typeof errObj.message === 'string' ? errObj.message : null) ||
       (typeof data === 'string' && data ? data : null) ||
       `HTTP request failed with status ${response.status}`;
-    const code = errObj && typeof errObj.code === 'string' ? errObj.code : undefined;
+    const code =
+      (innerError && typeof innerError.code === 'string' ? innerError.code : undefined) ||
+      (errObj && typeof errObj.code === 'string' ? errObj.code : undefined);
     throw new ApiError(response.status, message, code);
+  }
+
+  // Auto-unwrap backend's standard { success: true, data: T } envelope
+  if (
+    typeof data === 'object' &&
+    data !== null &&
+    'success' in (data as Record<string, unknown>) &&
+    'data' in (data as Record<string, unknown>)
+  ) {
+    return (data as Record<string, unknown>).data as T;
   }
 
   return data as T;

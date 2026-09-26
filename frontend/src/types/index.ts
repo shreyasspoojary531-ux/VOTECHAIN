@@ -7,19 +7,21 @@ export type Role = 'REGISTRAR' | 'VOTER' | 'ADMIN' | 'AUDITOR';
 
 export interface User {
   id: string;
-  name: string;
+  name?: string;
   role: Role;
-  email?: string;
+  email: string;
   aadhaarLast4?: string;
+  isActive?: boolean;
+  createdAt?: string;
 }
 
 // Auth
 export interface RegisterRequest {
-  name: string;
+  name?: string;
   email: string;
   password: string;
-  aadhaarNumber: string;
-  role: Role;
+  aadhaarNumber?: string;
+  role?: Role;
 }
 
 export interface LoginRequest {
@@ -28,8 +30,11 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  jwt: string;
+  jwt: string | null;
   user: User;
+  otpRequired: boolean;
+  pendingToken: string | null;
+  devOtp: string | null;
 }
 
 export interface SendOtpRequest {
