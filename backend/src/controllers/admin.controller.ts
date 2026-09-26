@@ -1,5 +1,20 @@
 import { Request, Response, NextFunction } from 'express';
 import { adminService } from '../services/admin.service';
+import { electionService } from '../services/election.service';
+
+/** GET /admin/summary — Overall system stats for admin dashboard */
+export async function getAdminSummary(
+  _req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const summary = await electionService.adminSummary();
+    res.status(200).json({ success: true, data: summary });
+  } catch (err) {
+    next(err);
+  }
+}
 
 /** POST /admin/mock-aadhaar — Create Mock Aadhaar record */
 export async function createMockAadhaar(

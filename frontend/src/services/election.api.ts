@@ -45,7 +45,8 @@ export async function getElections(): Promise<Election[]> {
   if (Array.isArray(result)) {
     return result;
   }
-  return result?.items || [];
+  const raw = result as unknown as { items?: Election[]; data?: Election[] };
+  return raw?.items || raw?.data || [];
 }
 
 /**

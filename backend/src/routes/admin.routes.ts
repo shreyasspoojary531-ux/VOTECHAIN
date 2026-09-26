@@ -13,12 +13,16 @@ import {
   deleteMockAadhaar,
   deleteElection,
   deleteVoter,
+  getAdminSummary,
 } from '../controllers/admin.controller';
 
 const router = Router();
 
 // All routes require valid JWT + ADMIN role
 router.use(authenticate, requireRole('ADMIN'));
+
+/** GET /api/v1/admin/summary */
+router.get('/summary', getAdminSummary);
 
 /** GET /api/v1/admin/mock-aadhaar */
 router.get('/mock-aadhaar', validate({ query: listQuerySchema }), listMockAadhaars);
