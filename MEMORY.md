@@ -2,6 +2,13 @@
 
 > Purpose: continuity between prompts/sessions. Log every meaningful step in the Progress Log and every judgment call under Decisions & Assumptions so future agents don't re-litigate settled questions or unknowingly contradict them.
 
+### 2026-09-26 — Role-Based Navigation & Guards
+- Built `components/navbar.tsx` — responsive navigation shell with role-specific link routing and user display (supports REGISTRAR, VOTER, ADMIN, AUDITOR).
+- Built `components/role-guard.tsx` — client-side route protection checking `isAuthenticated` and `user.role`, rendering "Access Denied" or redirecting to `/login`.
+- Attached `RoleGuard` + `Navbar` to role-specific layouts (`/registrar/layout.tsx`, `/admin/layout.tsx`, `/audit/layout.tsx`).
+- Attached `Navbar` (without guard) to voter-facing and public layouts (`/blockchain/layout.tsx`, `/elections/layout.tsx`, `/vote/layout.tsx`, `/verification/layout.tsx`).
+- Verified `npm run lint`, `npm run typecheck`, and `npm run build` pass cleanly.
+
 ### 2026-09-26 — Auditor Role Module (`services/audit.api.ts` & `/audit/dashboard` page)
 - Replaced scaffold `services/audit.api.ts` stub with real `getElectionAudit(electionId)` → `GET /api/v1/audit/elections/:id`, using `apiClient`. Only the one function specified in the API contract; no invented endpoints.
 - Built `app/audit/dashboard/page.tsx` — read-only oversight view:

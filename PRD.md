@@ -13,16 +13,16 @@ A verifiable electronic voting platform with four roles (Registrar, Voter, Admin
 - [x] Project scaffold (Next.js TS + Tailwind v4 + ESLint, npm)
 - [x] Route/page skeleton (20 routes, placeholder pages)
 - [x] Centralized API client (axios instance, env base URL, JWT + error interceptor stubs)
-- [ ] Typed service layer wired to real endpoints (stubs exist in `services/*.api.ts`)
+- [x] Typed service layer wired to real endpoints (stubs exist in `services/*.api.ts`)
 - [ ] Shared UI primitives (buttons, inputs, cards, hairline borders)
-- [ ] Role-based navigation shell (REGISTRAR / VOTER / ADMIN / AUDITOR)
+- [x] Role-based navigation shell (REGISTRAR / VOTER / ADMIN / AUDITOR)
 
 ### Auth & identity
 - [x] Register page (`/register`) → POST /api/v1/auth/register
 - [x] Login page (`/login`) → POST /api/v1/auth/login
 - [x] OTP send + verify flow (`/otp`) → POST /api/v1/auth/send-otp, /verify-otp
 - [x] JWT session handling (storage, refresh, 401 handling)
-- [ ] Role guards for /registrar, /admin, /audit segments
+- [x] Role guards for /registrar, /admin, /audit segments
 
 ### Registrar
 - [x] Dashboard (`/registrar/dashboard`)

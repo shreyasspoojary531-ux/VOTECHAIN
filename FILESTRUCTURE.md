@@ -59,11 +59,14 @@ frontend/
     │   │   ├── candidates/page.tsx         # /admin/candidates
     │   │   └── results/page.tsx            # /admin/results
     │   ├── elections/
+    │   │   ├── layout.tsx
     │   │   ├── page.tsx       # /elections
     │   │   └── [id]/page.tsx  # /elections/[id]
     │   ├── vote/
+    │   │   ├── layout.tsx
     │   │   └── [electionId]/page.tsx       # /vote/[electionId]
     │   ├── verification/
+    │   │   ├── layout.tsx
     │   │   └── [txId]/page.tsx             # /verification/[txId]
     │   ├── blockchain/
     │   │   ├── layout.tsx
@@ -74,7 +77,9 @@ frontend/
     │       ├── layout.tsx
     │       └── dashboard/page.tsx          # /audit/dashboard
     ├── components/
-    │   └── coming-soon.tsx    # shared placeholder for scaffold routes
+    │   ├── coming-soon.tsx    # shared placeholder for scaffold routes
+    │   ├── navbar.tsx         # responsive role-based navigation shell
+    │   └── role-guard.tsx     # client component for route protection
     ├── services/
     │   ├── api.ts             # centralized fetch wrapper apiClient<T> + ApiError
     │   ├── auth.api.ts        # POST /auth/register, /auth/login (typed stubs)
@@ -95,6 +100,6 @@ frontend/
 
 ## Conventions
 
-- Route groups that will need shared guards/chrome (`registrar`, `admin`, `blockchain`, `audit`) own a segment `layout.tsx`.
+- Route groups that will need shared guards/chrome (`registrar`, `admin`, `blockchain`, `audit`, `elections`, `vote`, `verification`) own a segment `layout.tsx`.
 - One service file per domain, all importing the single client from `services/api.ts`.
 - Design tokens are CSS-first (`@theme` in `globals.css`); no `tailwind.config.js` exists by design (Tailwind v4).

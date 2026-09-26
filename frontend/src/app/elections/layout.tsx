@@ -1,6 +1,6 @@
 import Navbar from '@/components/navbar';
 
-export default function BlockchainLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function ElectionsLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <>
       <Navbar />
