@@ -25,10 +25,10 @@ A verifiable electronic voting platform with four roles (Registrar, Voter, Admin
 - [x] Role guards for /registrar, /admin, /audit segments
 
 ### Registrar
-- [x] Dashboard (`/registrar/dashboard`)
-- [x] Aadhaar search (`/registrar/aadhaar-search`) → GET /api/v1/registrar/aadhaar/search
-- [x] Register voter (`/registrar/register-voter`) → POST /api/v1/registrar/register-voter
-- [x] Voters list (`/registrar/voters`)
+- [x] Dashboard (`/registrar/dashboard`) *(frontend)*
+- [x] Aadhaar search (`/registrar/aadhaar-search`) → GET /api/v1/registrar/aadhaar/search *(frontend ✓, backend ✓)*
+- [x] Register voter (`/registrar/register-voter`) → POST /api/v1/registrar/register-voter *(frontend ✓, backend ✓ — age gate, 409 duplicate, atomic tx, audit)*
+- [x] Voters list (`/registrar/voters`) *(frontend ✓, backend ✓ — paginated)*
 
 ### Admin
 - [x] Dashboard (`/admin/dashboard`)

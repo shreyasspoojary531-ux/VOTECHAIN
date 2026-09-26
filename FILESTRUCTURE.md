@@ -1,6 +1,6 @@
 # FILESTRUCTURE.md — Real Folder Tree
 
-> Kept up to date per AGENTS.md. Last updated: 2026-09-26 (scaffold commit).
+> Kept up to date per AGENTS.md. Last updated: 2026-09-26 (registrar backend commit).
 
 ## Repository root
 
@@ -11,12 +11,54 @@
 ├── MEMORY.md              # progress log + decisions & assumptions
 ├── FILESTRUCTURE.md       # this file
 ├── DESIGN.md              # visual direction & tokens reference
-├── backend/               # API service (empty scaffold, separate prompt)
+├── backend/               # API service (Express + Prisma; registrar module live)
 ├── blockchain/            # ledger services (separate prompt)
 ├── database/              # schema/migrations (separate prompt)
 ├── docs/                  # architecture/API/security docs (empty placeholders)
 ├── scripts/               # orchestration helpers
-└── frontend/              # ← Next.js web app (this scaffold)
+└── frontend/              # ← Next.js web app
+```
+
+## backend/
+
+Stack: Express + TypeScript + Prisma (PostgreSQL) · JWT auth · RBAC · Zod · Pino
+
+```
+backend/
+├── package.json               # scripts: dev, build, start, prisma:*
+├── tsconfig.json
+├── Dockerfile
+├── .env                       # local only (PORT=8080 for frontend parity)
+├── prisma/
+│   ├── schema.prisma          # 11 models + enums
+│   ├── migrations/20260926084701_init/
+│   └── seed.ts                # 50 Aadhaar (5 minors), admin/registrar/3 voters
+├── tests/
+│   └── registrar.e2e.sh       # 10-case endpoint test (401/403/400/404/409/422/201/200)
+└── src/
+    ├── app.ts                 # helmet, cors, rate-limit, pino-http, route mounting
+    ├── server.ts              # listen + graceful shutdown
+    ├── config/index.ts        # env validation
+    ├── middleware/
+    │   ├── auth.middleware.ts     # authenticate() JWT + authorize()/requireRole() RBAC
+    │   ├── validate.middleware.ts # generic Zod body/query/params validation (422)
+    │   ├── errorHandler.ts        # AppError + centralized handler
+    │   └── notFound.ts
+    ├── validators/
+    │   └── registrar.validator.ts
+    ├── repositories/
+    │   ├── aadhaar.repository.ts  # minimal-PII select + alreadyRegistered flag
+    │   └── voter.repository.ts    # transactional create + paginated list
+    ├── services/
+    │   └── registrar.service.ts   # age gate, $transaction, VOTER_REGISTERED audit
+    ├── controllers/
+    │   └── registrar.controller.ts
+    ├── routes/
+    │   ├── health.routes.ts
+    │   └── registrar.routes.ts    # authenticate + requireRole('REGISTRAR')
+    └── utils/
+        ├── logger.ts
+        └── prisma.ts
 ```
 
 ## frontend/
