@@ -88,6 +88,25 @@
   - `npx tsc --noEmit` and `npm run lint` in `frontend/`: 0 errors.
   - `npx tsc --noEmit` in `backend/`: 0 errors.
 
+### 2026-09-27 — Admin Mock Aadhaar & Testing Data Control Hub
+- **Backend Endpoints (`/api/v1/admin`)**:
+  - Built `admin.validator.ts`, `admin.service.ts`, `admin.controller.ts`, and `admin.routes.ts`.
+  - Added endpoints:
+    - `POST /admin/mock-aadhaar`: Create new Mock Aadhaar citizen entries.
+    - `GET /admin/mock-aadhaar`: Paginated search list of Mock Aadhaar citizens.
+    - `DELETE /admin/mock-aadhaar/:id`: Delete Mock Aadhaar record (with cascade handling for linked VoterProfile/User).
+    - `DELETE /admin/elections/:id`: Delete election and associated candidates/ballots/credentials.
+    - `DELETE /admin/voters/:id`: Delete registered voter profile and account.
+- **Frontend Pages & Services**:
+  - Added `MockAadhaarRecord` and `CreateMockAadhaarRequest` types to `frontend/src/types/index.ts`.
+  - Built `frontend/src/services/admin.api.ts` typed API wrappers.
+  - Built `/admin/mock-aadhaar` page with citizen creation modal, searchable list, and per-row delete actions.
+  - Built `/admin/data-control` page for centralized testing cleanups across Elections, Voters, and Citizens.
+  - Updated `Nav.tsx` and `admin/dashboard/page.tsx` with module links.
+- **Verification**:
+  - `npx tsc --noEmit` and `npm run lint` in `frontend/`: 0 errors.
+  - `npx tsc --noEmit` in `backend/`: 0 errors.
+
 ## Decisions & Assumptions
 
 - **`src/` directory: yes.** The repo's pre-existing (empty) scaffold used `src/`, and keeping Next.js app code under `frontend/src/` separates it cleanly from config at `frontend/` root. Documented in FILESTRUCTURE.md.

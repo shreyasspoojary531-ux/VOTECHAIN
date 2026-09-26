@@ -42,8 +42,8 @@ export default function Nav() {
           { href: '/admin/dashboard', label: 'Dashboard' },
           { href: '/admin/elections', label: 'Elections' },
           { href: '/admin/create-election', label: 'Create Election' },
-          { href: '/admin/candidates', label: 'Candidates' },
-          { href: '/admin/results', label: 'Results' },
+          { href: '/admin/mock-aadhaar', label: 'Mock Aadhaar' },
+          { href: '/admin/data-control', label: 'Testing Control' },
         ];
       case 'AUDITOR':
         return [

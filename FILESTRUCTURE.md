@@ -53,6 +53,7 @@ backend/
     ├── validators/
     │   ├── auth.validator.ts
     │   ├── registrar.validator.ts
+    │   ├── admin.validator.ts
     │   ├── election.validator.ts
     │   ├── candidate.validator.ts
     │   ├── voting.validator.ts
@@ -72,6 +73,7 @@ backend/
     ├── services/
     │   ├── auth.service.ts
     │   ├── registrar.service.ts
+    │   ├── admin.service.ts
     │   ├── election.service.ts
     │   ├── voting.service.ts
     │   ├── blockchain.service.ts
@@ -79,6 +81,7 @@ backend/
     ├── controllers/
     │   ├── auth.controller.ts
     │   ├── registrar.controller.ts
+    │   ├── admin.controller.ts
     │   ├── election.controller.ts
     │   ├── voting.controller.ts
     │   ├── blockchain.controller.ts
@@ -87,6 +90,7 @@ backend/
     │   ├── health.routes.ts
     │   ├── auth.routes.ts
     │   ├── registrar.routes.ts
+    │   ├── admin.routes.ts
     │   ├── election.routes.ts
     │   ├── candidate.routes.ts
     │   ├── voting.routes.ts

@@ -85,7 +85,7 @@ export default function AdminDashboardPage() {
             <div className="rounded-lg border border-hairline bg-surface p-6 space-y-2">
               <p className="text-xs font-medium text-ink-secondary">Total Votes Cast</p>
               <p className="font-mono text-3xl font-bold text-ink">
-                {summary.totalVotesCast.toLocaleString()}
+                {(summary.totalVotesCast ?? 0).toLocaleString()}
               </p>
             </div>
 
@@ -163,6 +163,36 @@ export default function AdminDashboardPage() {
               </div>
               <p className="mt-2 text-xs text-ink-secondary">
                 Inspect live candidate vote tallies and turnout statistics.
+              </p>
+            </Link>
+
+            <Link
+              href="/admin/mock-aadhaar"
+              className="group rounded-lg border border-hairline bg-surface p-6 transition-all hover:border-hairline-emphasis hover:bg-surface-raised"
+            >
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-semibold text-ink group-hover:text-accent">
+                  Mock Aadhaar Directory
+                </h3>
+                <span className="font-mono text-xs text-ink-muted group-hover:text-accent">→</span>
+              </div>
+              <p className="mt-2 text-xs text-ink-secondary">
+                Create and manage test citizens in the simulated Aadhaar database.
+              </p>
+            </Link>
+
+            <Link
+              href="/admin/data-control"
+              className="group rounded-lg border border-hairline bg-surface p-6 transition-all hover:border-hairline-emphasis hover:bg-surface-raised"
+            >
+              <div className="flex items-center justify-between">
+                <h3 className="text-sm font-semibold text-ink group-hover:text-accent">
+                  Testing Control Hub
+                </h3>
+                <span className="font-mono text-xs text-ink-muted group-hover:text-accent">→</span>
+              </div>
+              <p className="mt-2 text-xs text-ink-secondary">
+                Unified data hub to view and delete test elections, voters, and citizens.
               </p>
             </Link>
           </div>
