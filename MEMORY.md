@@ -2,6 +2,12 @@
 
 > Purpose: continuity between prompts/sessions. Log every meaningful step in the Progress Log and every judgment call under Decisions & Assumptions so future agents don't re-litigate settled questions or unknowingly contradict them.
 
+### 2026-09-26 — Login Page Redesign
+- **Login Page Redesign (`app/(auth)/login/page.tsx`)**: Redesigned strictly following the Resend centered login reference image layout. Features top-left `< Home` back link, brand mark icon, centered headline (`Log in to VoteChain`), inline sign up link (`/register`), custom ambient background texture (`bg-login.png`), top fading stroke `resend-card` form container, rounded inputs, red-tinted error state styling (`role="alert"`), full-width primary submit button, and quiet footer terms note.
+- **Form & Auth Preserved**: 100% preservation of all existing auth state (`email`, `password`, `loading`, `error`), demo role handlers (`Voter`, `Registrar`, `Admin`, `Auditor`), API submission logic, error handling, and session redirects.
+- **Verification**: `npm run lint`, `npm run typecheck`, and `npm run build` in `frontend/` passed cleanly (19/19 pages built).
+
+
 ### 2026-09-26 — Landing Page Redesign & Navbar Component
 - **Navbar Component (`components/Navbar.tsx`)**: Created reusable standalone Navbar component featuring brand wordmark ("VoteChain"), centered navigation links (`Elections`, `Verify a Vote`, `Blockchain Explorer`), ghost "Log in" link, and solid pill "Get started" button. Implemented scroll-aware backdrop blur (`bg-black/70 backdrop-blur-md` on scroll) and accessible mobile hamburger drawer toggle (`aria-expanded`, `aria-controls`). Fixed layout imports across existing route segments to use canonical `Navbar.tsx`.
 - **Landing Page Redesign (`app/(public)/page.tsx`)**:
