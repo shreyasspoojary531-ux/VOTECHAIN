@@ -94,7 +94,7 @@ export interface Candidate {
   imageUrl?: string | null;
 }
 
-export type ElectionStatus = 'DRAFT' | 'ACTIVE' | 'CLOSED' | 'ARCHIVED';
+export type ElectionStatus = 'DRAFT' | 'PUBLISHED' | 'ACTIVE' | 'CLOSED' | 'RESULTS_PUBLISHED' | 'ARCHIVED';
 
 export interface Election {
   id: string;
@@ -122,12 +122,16 @@ export interface CreateElectionRequest {
 export interface CastVoteRequest {
   electionId: string;
   candidateId: string;
-  voterId: string;
+  credentialHash?: string;
+  voterId?: string;
 }
 
 export interface CastVoteResponse {
   txId: string;
-  receiptHash: string;
+  receiptHash?: string;
+  ballotHash?: string;
+  blockNumber?: number;
+  status?: string;
   timestamp: number;
 }
 
