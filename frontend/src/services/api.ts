@@ -1,4 +1,4 @@
-import { getToken } from '@/lib/auth-token';
+import { clearToken, getToken } from '@/lib/auth-token';
 
 export class ApiError extends Error {
   status: number;
@@ -24,7 +24,7 @@ const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:8080/
 /**
  * Centralized API client wrapper around standard fetch.
  * Handles base URL prefixing, JWT header injection, JSON body serialization,
- * error normalization, and response parsing.
+ * error normalization, response parsing, and automatic token expiration cleanup.
  */
 export async function apiClient<T>(path: string, options: ApiClientOptions = {}): Promise<T> {
   const { method = 'GET', body, headers: customHeaders, ...restOptions } = options;
@@ -82,6 +82,17 @@ export async function apiClient<T>(path: string, options: ApiClientOptions = {})
   }
 
   if (!response.ok) {
+    // 401 Unauthorized handling: clear expired token and prompt re-login
+    if (response.status === 401) {
+      clearToken();
+      if (typeof window !== 'undefined') {
+        localStorage.removeItem('auth_user');
+        if (!window.location.pathname.startsWith('/login')) {
+          window.location.href = '/login?expired=true';
+        }
+      }
+    }
+
     const errObj =
       typeof data === 'object' && data !== null ? (data as Record<string, unknown>) : null;
     const message =
