@@ -175,12 +175,16 @@ export interface Block {
 // Audit
 export interface ElectionAuditReport {
   electionId: string;
-  totalVotesCast: number;
-  validVotesCount: number;
-  invalidVotesCount: number;
-  chainIntegrityVerified: boolean;
-  discrepancies: string[];
-  lastAuditTimestamp: number;
+  totalVotesCast?: number;
+  totalBallots?: number;
+  totalTransactions?: number;
+  validVotesCount?: number;
+  invalidVotesCount?: number;
+  chainIntegrityVerified?: boolean;
+  isIntegrityVerified?: boolean;
+  discrepancies?: string[];
+  lastAuditTimestamp?: number;
+  auditedAt?: number;
 }
 
 export interface AuditEvent {
