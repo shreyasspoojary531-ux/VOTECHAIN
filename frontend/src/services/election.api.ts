@@ -92,8 +92,25 @@ export async function createElection(data: CreateElectionRequest): Promise<Elect
 }
 
 /**
+ * POST /api/v1/elections/:id/publish — ADMIN only
+ */
+export async function publishElection(id: string): Promise<Election> {
+  return apiClient<Election>(`/elections/${id}/publish`, {
+    method: 'POST',
+  });
+}
+
+/**
+ * POST /api/v1/elections/:id/close — ADMIN only
+ */
+export async function closeElection(id: string): Promise<Election> {
+  return apiClient<Election>(`/elections/${id}/close`, {
+    method: 'POST',
+  });
+}
+
+/**
  * GET /api/v1/elections/:id/results
- * TODO: backend endpoint not yet specified in API contract v1 for election results
  */
 export async function getElectionResults(electionId: string): Promise<ElectionResultsData> {
   return apiClient<ElectionResultsData>(`/elections/${electionId}/results`, {
@@ -103,7 +120,6 @@ export async function getElectionResults(electionId: string): Promise<ElectionRe
 
 /**
  * PUT /api/v1/elections/:id/candidates
- * TODO: backend endpoint not yet specified in API contract v1 for candidate CRUD
  */
 export async function updateElectionCandidates(
   electionId: string,

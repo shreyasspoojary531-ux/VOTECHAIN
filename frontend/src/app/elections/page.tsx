@@ -63,6 +63,7 @@ export default function ElectionsListPage() {
 
   const getStatusBadge = (status: string) => {
     switch (status) {
+      case 'PUBLISHED':
       case 'ACTIVE':
         return (
           <span className="inline-flex items-center rounded-full bg-success/10 px-2.5 py-0.5 font-mono text-xs font-medium text-success">
@@ -72,7 +73,7 @@ export default function ElectionsListPage() {
       case 'DRAFT':
         return (
           <span className="inline-flex items-center rounded-full bg-warning/10 px-2.5 py-0.5 font-mono text-xs font-medium text-warning">
-            Upcoming
+            Upcoming (Draft)
           </span>
         );
       case 'CLOSED':
@@ -159,9 +160,9 @@ export default function ElectionsListPage() {
                   >
                     View Details
                   </Link>
-                  {election.status === 'ACTIVE' && (
+                  {(election.status === 'PUBLISHED' || election.status === 'ACTIVE') && (
                     <Link
-                      href={`/vote/${election.id}`}
+                      href={`/elections/${election.id}`}
                       className="rounded-md bg-ink px-4 py-2 text-xs font-medium text-canvas hover:opacity-90"
                     >
                       Cast Vote →
