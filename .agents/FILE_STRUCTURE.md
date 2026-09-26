@@ -87,19 +87,24 @@ Project scaffold created according to multi-service architecture (Frontend, Back
 │   │
 │   ├── src/
 │   │   ├── config/
+│   │   │   └── index.ts        — Centralized typed env configuration
 │   │   ├── routes/
+│   │   │   └── health.routes.ts — Health check route (/api/v1/health)
 │   │   ├── controllers/
 │   │   ├── services/
 │   │   ├── repositories/
 │   │   ├── models/
 │   │   ├── middleware/
+│   │   │   ├── errorHandler.ts  — Centralized Express error handler
+│   │   │   └── notFound.ts      — 404 handler
 │   │   ├── validators/
 │   │   ├── crypto/
 │   │   ├── blockchain/
 │   │   ├── utils/
+│   │   │   └── logger.ts        — Pino logger instance
 │   │   ├── types/
-│   │   ├── app.ts
-│   │   └── server.ts
+│   │   ├── app.ts               — Express application & middleware configuration
+│   │   └── server.ts            — HTTP server listener & graceful shutdown
 │   │
 │   └── tests/
 │
