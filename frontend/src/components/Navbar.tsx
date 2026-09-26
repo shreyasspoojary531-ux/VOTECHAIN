@@ -2,12 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const pathname = usePathname();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -21,12 +19,6 @@ export default function Navbar() {
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
-
-  const navLinks = [
-    { href: '/elections', label: 'Elections' },
-    { href: '/verification', label: 'Verify a Vote' },
-    { href: '/blockchain/explorer', label: 'Blockchain Explorer' },
-  ];
 
   return (
     <header
@@ -44,24 +36,6 @@ export default function Navbar() {
         >
           VoteChain
         </Link>
-
-        {/* Center: Primary Navigation Links (Desktop) */}
-        <nav className="hidden md:flex items-center space-x-8" aria-label="Main Navigation">
-          {navLinks.map((link) => {
-            const isActive = pathname === link.href;
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`text-xs font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent rounded-sm px-1 py-0.5 ${
-                  isActive ? 'text-ink font-semibold' : 'text-ink-secondary hover:text-ink'
-                }`}
-              >
-                {link.label}
-              </Link>
-            );
-          })}
-        </nav>
 
         {/* Right: Auth Action Buttons (Desktop) */}
         <div className="hidden md:flex items-center space-x-4">
@@ -118,22 +92,9 @@ export default function Navbar() {
       {mobileMenuOpen && (
         <div
           id="mobile-nav-menu"
-          className="md:hidden bg-surface/95 backdrop-blur-lg border-b border-hairline px-6 py-6 space-y-4 transition-all"
+          className="md:hidden bg-surface/95 backdrop-blur-lg border-b border-hairline px-6 py-6 space-y-3 transition-all"
         >
-          <nav className="flex flex-col space-y-3" aria-label="Mobile Navigation">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className="text-sm font-medium text-ink-secondary hover:text-ink py-1 transition-colors"
-              >
-                {link.label}
-              </Link>
-            ))}
-          </nav>
-
-          <div className="pt-4 border-t border-hairline flex flex-col space-y-3">
+          <div className="flex flex-col space-y-3">
             <Link
               href="/login"
               onClick={() => setMobileMenuOpen(false)}
