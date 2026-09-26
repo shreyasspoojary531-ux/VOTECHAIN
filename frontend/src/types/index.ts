@@ -197,3 +197,24 @@ export interface Paginated<T> {
   pageSize: number;
   totalPages?: number;
 }
+
+// Mock Aadhaar Admin Management
+export interface MockAadhaarRecord {
+  id: string;
+  aadhaarNumber: string;
+  fullName: string;
+  dateOfBirth: string | Date;
+  gender: 'Male' | 'Female' | 'Other';
+  phone: string;
+  address: string;
+  createdAt: string | Date;
+}
+
+export interface CreateMockAadhaarRequest {
+  aadhaarNumber: string;
+  fullName: string;
+  dateOfBirth: string;
+  gender: 'Male' | 'Female' | 'Other';
+  phone: string;
+  address: string;
+}
