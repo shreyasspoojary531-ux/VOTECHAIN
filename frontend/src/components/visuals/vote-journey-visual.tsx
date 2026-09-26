@@ -18,7 +18,8 @@ const STEPS: JourneyStep[] = [
     subtitle: 'Aadhaar Hash + OTP Verification',
     codeSnippet: 'SHA256(Aadhaar) → BlindToken',
     status: 'completed',
-    details: 'Voter proves citizenship & registration. Identity is cryptographically decoupled into a one-time voting token.',
+    details:
+      'Voter proves citizenship & registration. Identity is cryptographically decoupled into a one-time voting token.',
   },
   {
     step: 2,
@@ -26,7 +27,8 @@ const STEPS: JourneyStep[] = [
     subtitle: 'ZK-SNARK Proof Generation',
     codeSnippet: 'zkProof(VoterKey, ElectionID)',
     status: 'completed',
-    details: 'Proves to the network that the voter is eligible for this specific election without linking their identity to the vote.',
+    details:
+      'Proves to the network that the voter is eligible for this specific election without linking their identity to the vote.',
   },
   {
     step: 3,
@@ -34,7 +36,8 @@ const STEPS: JourneyStep[] = [
     subtitle: 'Homomorphic Paillier Encryption',
     codeSnippet: 'Enc(CandidateID, ElectionPubKey)',
     status: 'completed',
-    details: 'The selected candidate ID is encrypted on the client device using the public key of the election authority.',
+    details:
+      'The selected candidate ID is encrypted on the client device using the public key of the election authority.',
   },
   {
     step: 4,
@@ -42,7 +45,8 @@ const STEPS: JourneyStep[] = [
     subtitle: 'Append-Only Blockchain Block',
     codeSnippet: 'Block#1429 • Tx: 0x8a1c...f4b2',
     status: 'completed',
-    details: 'The transaction is submitted to the consensus network and immutably written into the latest block.',
+    details:
+      'The transaction is submitted to the consensus network and immutably written into the latest block.',
   },
   {
     step: 5,
@@ -50,7 +54,8 @@ const STEPS: JourneyStep[] = [
     subtitle: 'Universal Verifiability',
     codeSnippet: 'Verify(ReceiptID) == TRUE',
     status: 'completed',
-    details: 'Voter receives an immutable transaction hash allowing them to verify their vote is counted in the tally.',
+    details:
+      'Voter receives an immutable transaction hash allowing them to verify their vote is counted in the tally.',
   },
 ];
 

@@ -4,9 +4,7 @@ export default function BlockchainLayout({ children }: Readonly<{ children: Reac
   return (
     <>
       <Navbar />
-      <main className="pt-14 min-h-screen bg-canvas">
-        {children}
-      </main>
+      <main className="pt-14 min-h-screen bg-canvas">{children}</main>
     </>
   );
 }

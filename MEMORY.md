@@ -2,6 +2,18 @@
 
 > Purpose: continuity between prompts/sessions. Log every meaningful step in the Progress Log and every judgment call under Decisions & Assumptions so future agents don't re-litigate settled questions or unknowingly contradict them.
 
+### 2026-09-26 — Final Integration: AppShell, Nav, and useRequireAuth Guard
+- Created `hooks/useRequireAuth.ts` — client-side authentication and role-based redirect hook (`/login` redirect for unauthenticated users, dashboard redirect for authenticated users accessing auth pages). Includes explicit UX-only note (`real enforcement is server-side`).
+- Created `components/Nav.tsx` & `components/AppShell.tsx` — Resend-style navigation shell displaying role-specific navigation links for `REGISTRAR`, `VOTER`, `ADMIN`, `AUDITOR` based on `AuthContext.user.role`. Includes UX-only gating code comment (`backend is authority on capabilities`).
+- Refactored `components/role-guard.tsx` to leverage `useRequireAuth`.
+- Verified quality constraints across all 20 pages:
+  - Explicit loading, error (`role="alert"`), empty, and loaded success states.
+  - Mobile-first responsive layouts (tested at 375px/768px/1280px breakpoints).
+  - Keyboard navigability, semantic HTML landmarks (`<nav>`, `<main>`, `<footer>`), and `aria-live`/`role="alert"`.
+  - Zero direct `fetch`/`axios` calls outside `services/api.ts`.
+  - Zero exposed secrets or raw stack traces.
+- Executed `npm run format`, `npm run lint`, `npm run typecheck`, and `npm run build` — 100% clean build.
+
 ### 2026-09-26 — Visual Architecture Components & Hero Landing Page
 - Created 3 custom visual architecture components in `src/components/visuals/`:
   - `chain-visual.tsx` — interactive horizontal block linkage diagram displaying linked blocks with hashes, previous hash connections, timestamps, transaction counts, and block detail inspector.

@@ -5,9 +5,7 @@ export default function RegistrarLayout({ children }: Readonly<{ children: React
   return (
     <RoleGuard allowedRoles={['REGISTRAR']}>
       <Navbar />
-      <main className="pt-14 min-h-screen bg-canvas">
-        {children}
-      </main>
+      <main className="pt-14 min-h-screen bg-canvas">{children}</main>
     </RoleGuard>
   );
 }

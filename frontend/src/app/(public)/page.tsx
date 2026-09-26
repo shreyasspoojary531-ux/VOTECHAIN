@@ -22,7 +22,8 @@ export default function HomePage() {
         </h1>
 
         <p className="mt-6 text-base sm:text-lg text-[#a3a3a3] max-w-2xl font-sans leading-relaxed">
-          VoteChain decouples voter identity from ballot payload using Zero-Knowledge proofs and Aadhaar verification. Every vote is mathematically sealed and publicly audited on-chain.
+          VoteChain decouples voter identity from ballot payload using Zero-Knowledge proofs and
+          Aadhaar verification. Every vote is mathematically sealed and publicly audited on-chain.
         </p>
 
         <div className="mt-8 flex flex-wrap gap-4 items-center">

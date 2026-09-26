@@ -86,7 +86,10 @@ export default function Navbar() {
         {isAuthenticated ? (
           <div className="pt-4 border-t border-hairline flex flex-col space-y-4">
             <div className="font-mono text-xs text-ink-muted">
-              {user?.name} <span className="bg-surface-raised px-1.5 py-0.5 rounded-md ml-2 border border-hairline">{user?.role}</span>
+              {user?.name}{' '}
+              <span className="bg-surface-raised px-1.5 py-0.5 rounded-md ml-2 border border-hairline">
+                {user?.role}
+              </span>
             </div>
             <button
               onClick={() => {
@@ -100,10 +103,18 @@ export default function Navbar() {
           </div>
         ) : (
           <div className="pt-4 border-t border-hairline flex flex-col space-y-4">
-            <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="text-xs font-medium tracking-wider text-ink-secondary hover:text-ink">
+            <Link
+              href="/login"
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-xs font-medium tracking-wider text-ink-secondary hover:text-ink"
+            >
               Login
             </Link>
-            <Link href="/register" onClick={() => setMobileMenuOpen(false)} className="text-xs font-medium tracking-wider text-ink-secondary hover:text-ink">
+            <Link
+              href="/register"
+              onClick={() => setMobileMenuOpen(false)}
+              className="text-xs font-medium tracking-wider text-ink-secondary hover:text-ink"
+            >
               Register
             </Link>
           </div>
@@ -123,7 +134,7 @@ export default function Navbar() {
         {/* Desktop Right Side */}
         <div className="hidden md:flex items-center space-x-8">
           <DesktopLinks />
-          
+
           <div className="flex items-center space-x-4">
             {isAuthenticated ? (
               <>
@@ -142,10 +153,16 @@ export default function Navbar() {
               </>
             ) : (
               <>
-                <Link href="/login" className="text-xs font-medium tracking-wider text-ink-secondary hover:text-ink">
+                <Link
+                  href="/login"
+                  className="text-xs font-medium tracking-wider text-ink-secondary hover:text-ink"
+                >
                   Login
                 </Link>
-                <Link href="/register" className="text-xs font-medium tracking-wider text-ink-secondary hover:text-ink">
+                <Link
+                  href="/register"
+                  className="text-xs font-medium tracking-wider text-ink-secondary hover:text-ink"
+                >
                   Register
                 </Link>
               </>
@@ -159,16 +176,32 @@ export default function Navbar() {
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           aria-label="Toggle menu"
         >
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg"
+          >
             {mobileMenuOpen ? (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             ) : (
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 6h16M4 12h16M4 18h16"
+              />
             )}
           </svg>
         </button>
       </div>
-      
+
       <MobileMenu />
     </nav>
   );

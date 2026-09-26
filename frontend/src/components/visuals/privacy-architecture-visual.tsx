@@ -8,7 +8,9 @@ export default function PrivacyArchitectureVisual() {
       <div className="flex items-center justify-between pb-4 border-b border-[#1f1f1f] mb-6">
         <div className="flex items-center space-x-3">
           <div className="w-2.5 h-2.5 rounded-full bg-[#fbbf24]" />
-          <h3 className="text-sm font-medium text-[#f5f5f4]">Identity-Ballot Decoupling Architecture</h3>
+          <h3 className="text-sm font-medium text-[#f5f5f4]">
+            Identity-Ballot Decoupling Architecture
+          </h3>
         </div>
         <span className="text-xs font-mono text-[#6b6b6b]">Zero Aadhaar Storage On-Chain</span>
       </div>

@@ -47,7 +47,10 @@ const DEFAULT_BLOCKS: BlockVisualData[] = [
   },
 ];
 
-export default function ChainVisual({ blocks = DEFAULT_BLOCKS, interactive = true }: ChainVisualProps) {
+export default function ChainVisual({
+  blocks = DEFAULT_BLOCKS,
+  interactive = true,
+}: ChainVisualProps) {
   const [selectedBlock, setSelectedBlock] = useState<number | null>(null);
   const [hoveredHash, setHoveredHash] = useState<string | null>(null);
 
@@ -79,8 +82,8 @@ export default function ChainVisual({ blocks = DEFAULT_BLOCKS, interactive = tru
                     isSelected
                       ? 'border-[#818cf8] bg-[#141414] shadow-[0_0_15px_rgba(129,140,248,0.15)]'
                       : isPrevLinked || isSelfHovered
-                      ? 'border-[#34d399] bg-[#141414]'
-                      : 'border-[#1f1f1f] bg-[#0a0a0a] hover:border-[#262626] hover:bg-[#141414]'
+                        ? 'border-[#34d399] bg-[#141414]'
+                        : 'border-[#1f1f1f] bg-[#0a0a0a] hover:border-[#262626] hover:bg-[#141414]'
                   }`}
                   onClick={() => interactive && setSelectedBlock(isSelected ? null : block.index)}
                   onMouseEnter={() => setHoveredHash(block.hash)}
@@ -90,18 +93,20 @@ export default function ChainVisual({ blocks = DEFAULT_BLOCKS, interactive = tru
                     <span className="text-xs font-mono px-2 py-0.5 rounded bg-[#1f1f1f] text-[#818cf8]">
                       BLOCK #{block.index}
                     </span>
-                    <span className="text-xs font-mono text-[#6b6b6b]">
-                      {block.txCount} txs
-                    </span>
+                    <span className="text-xs font-mono text-[#6b6b6b]">{block.txCount} txs</span>
                   </div>
 
                   {/* Hash indicator */}
                   <div className="space-y-2 text-xs font-mono">
                     <div>
-                      <div className="text-[10px] text-[#6b6b6b] uppercase tracking-wider mb-0.5">Hash</div>
+                      <div className="text-[10px] text-[#6b6b6b] uppercase tracking-wider mb-0.5">
+                        Hash
+                      </div>
                       <div
                         className={`truncate px-1.5 py-1 rounded transition-colors ${
-                          isSelfHovered ? 'bg-[#34d399]/10 text-[#34d399]' : 'text-[#f5f5f4] bg-[#141414]'
+                          isSelfHovered
+                            ? 'bg-[#34d399]/10 text-[#34d399]'
+                            : 'text-[#f5f5f4] bg-[#141414]'
                         }`}
                         title={block.hash}
                       >
@@ -110,14 +115,19 @@ export default function ChainVisual({ blocks = DEFAULT_BLOCKS, interactive = tru
                     </div>
 
                     <div>
-                      <div className="text-[10px] text-[#6b6b6b] uppercase tracking-wider mb-0.5">Prev Hash</div>
+                      <div className="text-[10px] text-[#6b6b6b] uppercase tracking-wider mb-0.5">
+                        Prev Hash
+                      </div>
                       <div
                         className={`truncate px-1.5 py-1 rounded transition-colors ${
-                          isPrevLinked ? 'bg-[#34d399]/20 text-[#34d399] font-bold' : 'text-[#6b6b6b] bg-[#0a0a0a]'
+                          isPrevLinked
+                            ? 'bg-[#34d399]/20 text-[#34d399] font-bold'
+                            : 'text-[#6b6b6b] bg-[#0a0a0a]'
                         }`}
                         title={block.previousHash}
                       >
-                        {block.previousHash === '0x0000000000000000000000000000000000000000000000000000000000000000'
+                        {block.previousHash ===
+                        '0x0000000000000000000000000000000000000000000000000000000000000000'
                           ? 'GENESIS_PREV_ZERO'
                           : `${block.previousHash.slice(0, 8)}...${block.previousHash.slice(-6)}`}
                       </div>
@@ -142,7 +152,8 @@ export default function ChainVisual({ blocks = DEFAULT_BLOCKS, interactive = tru
                     <div
                       className={`h-0.5 w-10 transition-colors duration-200 ${
                         hoveredHash &&
-                        (blocks[idx].hash === hoveredHash || blocks[idx + 1].previousHash === hoveredHash)
+                        (blocks[idx].hash === hoveredHash ||
+                          blocks[idx + 1].previousHash === hoveredHash)
                           ? 'bg-[#34d399]'
                           : 'bg-[#1f1f1f]'
                       }`}
