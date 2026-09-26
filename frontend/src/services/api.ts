@@ -1,64 +1,99 @@
-/**
- * Centralized API client.
- *
- * Every backend call in this app must go through this axios instance so the
- * base URL and (future) JWT header injection live in exactly one place.
- */
-import axios, {
-  type AxiosError,
-  type AxiosHeaders,
-  type AxiosInstance,
-  type InternalAxiosRequestConfig,
-} from 'axios';
+import { getToken } from '@/lib/auth-token';
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:8000';
+export class ApiError extends Error {
+  status: number;
+  override message: string;
+  code?: string;
 
-export const api: AxiosInstance = axios.create({
-  baseURL: API_BASE_URL,
-  headers: { 'Content-Type': 'application/json' },
-  timeout: 15_000,
-});
-
-// ---------------------------------------------------------------------------
-// Request interceptor — JWT header stub
-// ---------------------------------------------------------------------------
-
-/**
- * Token storage is deliberately a stub for the scaffold phase. Auth logic
- * arrives in a later prompt; until then this always returns null and no
- * Authorization header is ever attached.
- *
- * Future shape (do not implement yet):
- * - `getToken()` reads the access token from the auth store / cookie.
- * - 401 responses trigger a refresh-token flow in the response interceptor.
- */
-const getToken = (): string | null => null;
-
-api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-  const token = getToken();
-  if (token) {
-    (config.headers as AxiosHeaders).set('Authorization', `Bearer ${token}`);
+  constructor(status: number, message: string, code?: string) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = status;
+    this.message = message;
+    this.code = code;
   }
-  return config;
-});
-
-// ---------------------------------------------------------------------------
-// Response interceptor — error normalization stub
-// ---------------------------------------------------------------------------
-
-/** Normalized error shape every service layer function will reject with. */
-export interface ApiError {
-  status: number | null;
-  message: string;
 }
 
-api.interceptors.response.use(
-  (response) => response,
-  (error: AxiosError<{ message?: string }>) => {
-    const normalized: ApiError = {
-      status: error.response?.status ?? null,
-      message: error.response?.data?.message ?? error.message,
-    };
-    return Promise.reject(normalized);
-  },
-);
+export interface ApiClientOptions extends Omit<RequestInit, 'body'> {
+  method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+  body?: unknown;
+}
+
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:8080/api/v1';
+
+/**
+ * Centralized API client wrapper around standard fetch.
+ * Handles base URL prefixing, JWT header injection, JSON body serialization,
+ * error normalization, and response parsing.
+ */
+export async function apiClient<T>(path: string, options: ApiClientOptions = {}): Promise<T> {
+  const { method = 'GET', body, headers: customHeaders, ...restOptions } = options;
+
+  const url = path.startsWith('http')
+    ? path
+    : `${BASE_URL.replace(/\/$/, '')}/${path.replace(/^\//, '')}`;
+
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+    ...(customHeaders as Record<string, string>),
+  };
+
+  const token = getToken();
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  const fetchOptions: RequestInit = {
+    method,
+    headers,
+    ...restOptions,
+  };
+
+  if (body !== undefined) {
+    fetchOptions.body = typeof body === 'string' ? body : JSON.stringify(body);
+  }
+
+  let response: Response;
+  try {
+    response = await fetch(url, fetchOptions);
+  } catch (err: unknown) {
+    const error = err as Error;
+    throw new ApiError(0, error.message || 'Network error');
+  }
+
+  if (response.status === 204) {
+    return {} as T;
+  }
+
+  let data: unknown;
+  const contentType = response.headers.get('content-type');
+  if (contentType && contentType.includes('application/json')) {
+    try {
+      data = await response.json();
+    } catch {
+      data = null;
+    }
+  } else {
+    try {
+      data = await response.text();
+    } catch {
+      data = null;
+    }
+  }
+
+  if (!response.ok) {
+    const errObj =
+      typeof data === 'object' && data !== null ? (data as Record<string, unknown>) : null;
+    const message =
+      (errObj && typeof errObj.message === 'string' ? errObj.message : null) ||
+      (typeof data === 'string' && data ? data : null) ||
+      `HTTP request failed with status ${response.status}`;
+    const code = errObj && typeof errObj.code === 'string' ? errObj.code : undefined;
+    throw new ApiError(response.status, message, code);
+  }
+
+  return data as T;
+}
+
+/** Export api alias for existing service stubs */
+export const api = apiClient;

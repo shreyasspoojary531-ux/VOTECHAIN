@@ -1,32 +1,92 @@
 /**
- * Shared domain types for the e-voting frontend.
- *
- * These are frontend-side contracts for the API v1 resources. They are
- * intentionally minimal for the scaffold phase — richer status enums,
- * pagination envelopes, etc. will be added as endpoints come online.
+ * Shared domain types for the e-voting platform frontend API v1 surface.
  */
 
+// User & Role
 export type Role = 'REGISTRAR' | 'VOTER' | 'ADMIN' | 'AUDITOR';
 
-/** A citizen record identified by Aadhaar, awaiting or completed registration. */
+export interface User {
+  id: string;
+  name: string;
+  role: Role;
+  email?: string;
+  aadhaarLast4?: string;
+}
+
+// Auth
+export interface RegisterRequest {
+  name: string;
+  email: string;
+  password: string;
+  aadhaarNumber: string;
+  role: Role;
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface LoginResponse {
+  jwt: string;
+  user: User;
+}
+
+export interface SendOtpRequest {
+  identifier: string;
+}
+
+export interface VerifyOtpRequest {
+  identifier: string;
+  otp: string;
+}
+
+export interface VerifyOtpResponse {
+  verified: boolean;
+  sessionToken?: string;
+}
+
+// Registrar
+export interface AadhaarSearchQuery {
+  aadhaarNumber: string;
+}
+
+export interface AadhaarSearchResult {
+  aadhaarLast4: string;
+  isRegistered: boolean;
+  voterId?: string;
+  name?: string;
+  constituencyId?: string;
+}
+
+export interface RegisterVoterRequest {
+  aadhaarNumber: string;
+  name: string;
+  constituencyId: string;
+}
+
+export interface RegisterVoterResponse {
+  voterId: string;
+  isRegistered: boolean;
+  registeredAt: number;
+}
+
+/** Legacy / general voter model interface */
 export interface Voter {
   id: string;
   aadhaarLast4: string;
   name: string;
-  /** Null until the registrar completes registration. */
   isRegistered: boolean;
   constituencyId: string;
-  /** Epoch milliseconds. */
   registeredAt: number | null;
 }
 
+// Election
 export interface Candidate {
   id: string;
-  electionId: string;
   name: string;
   partyName: string;
-  /** Optional candidate portrait/manifesto image URL. */
-  imageUrl: string | null;
+  imageUrl?: string | null;
 }
 
 export type ElectionStatus = 'DRAFT' | 'ACTIVE' | 'CLOSED' | 'ARCHIVED';
@@ -36,43 +96,82 @@ export interface Election {
   title: string;
   description: string;
   status: ElectionStatus;
-  /** Epoch milliseconds. */
   startsAt: number;
-  /** Epoch milliseconds. */
   endsAt: number;
   candidates: Candidate[];
 }
 
-/** A submitted ballot; the client never sees the vote content, only its receipt. */
-export interface Vote {
-  /** Blockchain transaction id of the committed ballot. */
+export interface CreateElectionRequest {
+  title: string;
+  description: string;
+  startsAt: number;
+  endsAt: number;
+  candidates: Array<{
+    name: string;
+    partyName: string;
+    imageUrl?: string | null;
+  }>;
+}
+
+// Voting
+export interface CastVoteRequest {
+  electionId: string;
+  candidateId: string;
+  voterId: string;
+}
+
+export interface CastVoteResponse {
+  txId: string;
+  receiptHash: string;
+  timestamp: number;
+}
+
+export interface VoteReceipt {
   txId: string;
   electionId: string;
-  /** Epoch milliseconds. */
+  receiptHash: string;
   castAt: number;
-  /** Blind signature receipt proving inclusion without revealing the ballot. */
+  blockHash?: string;
+}
+
+/** Legacy Vote alias */
+export interface Vote {
+  txId: string;
+  electionId: string;
+  castAt: number;
   receiptHash: string;
 }
 
-export interface BlockchainTransaction {
+// Blockchain
+export interface Transaction {
   txId: string;
-  /** Hash of the block that committed this transaction, null while pending. */
   blockHash: string | null;
   type: 'VOTE' | 'REGISTRATION' | 'ELECTION_CREATE' | 'RESULT_COMMIT';
-  /** Epoch milliseconds. */
   timestamp: number;
-  /** Opaque payload hash — payload contents are never exposed to clients. */
   payloadHash: string;
 }
+
+export type BlockchainTransaction = Transaction;
 
 export interface Block {
   height: number;
   hash: string;
   previousHash: string;
-  /** Epoch milliseconds. */
   timestamp: number;
   txCount: number;
   txIds: string[];
+  transactions?: Transaction[];
+}
+
+// Audit
+export interface ElectionAuditReport {
+  electionId: string;
+  totalVotesCast: number;
+  validVotesCount: number;
+  invalidVotesCount: number;
+  chainIntegrityVerified: boolean;
+  discrepancies: string[];
+  lastAuditTimestamp: number;
 }
 
 export interface AuditEvent {
@@ -80,13 +179,11 @@ export interface AuditEvent {
   electionId: string;
   actorRole: Role;
   action: string;
-  /** Epoch milliseconds. */
   timestamp: number;
-  /** Correlates the event with a blockchain transaction where applicable. */
   txId: string | null;
 }
 
-/** Envelope for all list-returning endpoints (registrar search, blocks, etc.). */
+// Envelopes
 export interface Paginated<T> {
   items: T[];
   total: number;

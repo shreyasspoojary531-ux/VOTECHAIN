@@ -2,7 +2,22 @@
 
 > Purpose: continuity between prompts/sessions. Log every meaningful step in the Progress Log and every judgment call under Decisions & Assumptions so future agents don't re-litigate settled questions or unknowingly contradict them.
 
-## Progress Log
+### 2026-09-26 — Domain Types & Centralized Fetch API Client (`apiClient`)
+- Defined complete domain model TypeScript interfaces in `frontend/src/types/index.ts`:
+  - Auth: `RegisterRequest`, `LoginRequest`, `LoginResponse`, `SendOtpRequest`, `VerifyOtpRequest`, `VerifyOtpResponse`
+  - User/Role: `Role`, `User`
+  - Registrar: `AadhaarSearchQuery`, `AadhaarSearchResult`, `RegisterVoterRequest`, `RegisterVoterResponse`
+  - Election: `Election`, `CreateElectionRequest`, `Candidate`
+  - Voting: `CastVoteRequest`, `CastVoteResponse`, `VoteReceipt`
+  - Blockchain: `Block`, `Transaction`
+  - Audit: `ElectionAuditReport`
+- Created token store helper `frontend/src/lib/auth-token.ts` with `getToken()`, `setToken()`, `clearToken()`.
+- Implemented single centralized API client `apiClient<T>(path, options)` in `frontend/src/services/api.ts` using `fetch`:
+  - Base URL prefixing with `process.env.NEXT_PUBLIC_API_BASE_URL`
+  - Automatic `Authorization: Bearer <token>` attachment
+  - `Content-Type: application/json` default
+  - Error handling normalizing failures into custom `ApiError` class with `status`, `message`, `code`
+  - Support for `GET`, `POST`, `PUT`, `DELETE` methods with typed generics
 
 ### 2026-09-26 — Next.js 15 project setup with Prettier, ESLint 9, Tailwind v4 design tokens, and updated App Router structure
 - Installed `prettier` and `eslint-config-prettier` in `frontend/`.

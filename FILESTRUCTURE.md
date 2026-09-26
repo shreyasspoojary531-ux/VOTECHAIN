@@ -76,7 +76,7 @@ frontend/
     ├── components/
     │   └── coming-soon.tsx    # shared placeholder for scaffold routes
     ├── services/
-    │   ├── api.ts             # centralized axios client + JWT/error interceptor stubs
+    │   ├── api.ts             # centralized fetch wrapper apiClient<T> + ApiError
     │   ├── auth.api.ts        # POST /auth/register, /auth/login (typed stubs)
     │   ├── otp.api.ts         # POST /auth/send-otp, /auth/verify-otp
     │   ├── registration.api.ts# GET /registrar/aadhaar/search, POST /registrar/register-voter
@@ -85,8 +85,9 @@ frontend/
     │   ├── blockchain.api.ts  # GET /blockchain/blocks, /blockchain/transactions/:txId
     │   └── audit.api.ts       # GET /audit/elections/:id
     ├── types/
-    │   └── index.ts           # Role, Voter, Candidate, Election, Vote, BlockchainTransaction, Block, AuditEvent, Paginated
-    ├── lib/                   # helper functions & utilities
+    │   └── index.ts           # Domain types (User, Auth, Registrar, Election, Voting, Blockchain, Audit, Paginated)
+    ├── lib/
+    │   └── auth-token.ts      # Auth token store abstraction (getToken, setToken, clearToken)
     ├── hooks/                 # custom React hooks
     └── context/               # React context providers
 ```
