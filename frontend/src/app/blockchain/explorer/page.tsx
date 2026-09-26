@@ -78,13 +78,24 @@ export default function BlockchainExplorerPage() {
         <ChainVisual
           blocks={
             blocks && blocks.length > 0
-              ? blocks.map((b) => ({
-                  index: b.height,
-                  hash: b.hash,
-                  previousHash: b.previousHash,
-                  timestamp: new Date(b.timestamp).toISOString(),
-                  txCount: b.txCount,
-                }))
+              ? blocks.map((b) => {
+                  const raw = b as unknown as {
+                    height?: number;
+                    blockNumber?: number;
+                    hash?: string;
+                    blockHash?: string;
+                    previousHash?: string;
+                    timestamp?: number | string;
+                    txCount?: number;
+                  };
+                  return {
+                    index: raw.height ?? raw.blockNumber ?? 0,
+                    hash: raw.hash || raw.blockHash || '',
+                    previousHash: raw.previousHash || '',
+                    timestamp: new Date(raw.timestamp || Date.now()).toISOString(),
+                    txCount: raw.txCount || 0,
+                  };
+                })
               : undefined
           }
         />

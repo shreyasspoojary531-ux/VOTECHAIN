@@ -70,9 +70,11 @@ export default function ChainVisual({
       <div className="relative overflow-x-auto pb-4 pt-2 scrollbar-thin scrollbar-thumb-[#1f1f1f]">
         <div className="flex items-center min-w-max space-x-0">
           {blocks.map((block, idx) => {
+            const hash = block?.hash || (block as unknown as { blockHash?: string })?.blockHash || '';
+            const previousHash = block?.previousHash || '';
             const isSelected = selectedBlock === block.index;
-            const isPrevLinked = hoveredHash && block.previousHash === hoveredHash;
-            const isSelfHovered = hoveredHash && block.hash === hoveredHash;
+            const isPrevLinked = Boolean(hoveredHash && previousHash === hoveredHash);
+            const isSelfHovered = Boolean(hoveredHash && hash === hoveredHash);
 
             return (
               <React.Fragment key={block.index}>
@@ -86,14 +88,14 @@ export default function ChainVisual({
                         : 'border-[#1f1f1f] bg-[#0a0a0a] hover:border-[#262626] hover:bg-[#141414]'
                   }`}
                   onClick={() => interactive && setSelectedBlock(isSelected ? null : block.index)}
-                  onMouseEnter={() => setHoveredHash(block.hash)}
+                  onMouseEnter={() => setHoveredHash(hash)}
                   onMouseLeave={() => setHoveredHash(null)}
                 >
                   <div className="flex items-center justify-between mb-3">
                     <span className="text-xs font-mono px-2 py-0.5 rounded bg-[#1f1f1f] text-[#818cf8]">
                       BLOCK #{block.index}
                     </span>
-                    <span className="text-xs font-mono text-[#6b6b6b]">{block.txCount} txs</span>
+                    <span className="text-xs font-mono text-[#6b6b6b]">{block.txCount || 0} txs</span>
                   </div>
 
                   {/* Hash indicator */}
@@ -108,9 +110,11 @@ export default function ChainVisual({
                             ? 'bg-[#34d399]/10 text-[#34d399]'
                             : 'text-[#f5f5f4] bg-[#141414]'
                         }`}
-                        title={block.hash}
+                        title={hash}
                       >
-                        {block.hash.slice(0, 10)}...{block.hash.slice(-8)}
+                        {hash.length > 18
+                          ? `${hash.slice(0, 10)}...${hash.slice(-8)}`
+                          : hash || '0x000...'}
                       </div>
                     </div>
 
@@ -124,12 +128,14 @@ export default function ChainVisual({
                             ? 'bg-[#34d399]/20 text-[#34d399] font-bold'
                             : 'text-[#6b6b6b] bg-[#0a0a0a]'
                         }`}
-                        title={block.previousHash}
+                        title={previousHash}
                       >
-                        {block.previousHash ===
+                        {previousHash ===
                         '0x0000000000000000000000000000000000000000000000000000000000000000'
                           ? 'GENESIS_PREV_ZERO'
-                          : `${block.previousHash.slice(0, 8)}...${block.previousHash.slice(-6)}`}
+                          : previousHash.length > 14
+                            ? `${previousHash.slice(0, 8)}...${previousHash.slice(-6)}`
+                            : previousHash || '0x000...'}
                       </div>
                     </div>
                   </div>
