@@ -2,6 +2,16 @@
 
 > Purpose: continuity between prompts/sessions. Log every meaningful step in the Progress Log and every judgment call under Decisions & Assumptions so future agents don't re-litigate settled questions or unknowingly contradict them.
 
+### 2026-09-26 — Admin Role Module (`services/election.api.ts` extensions & `/admin/*` pages)
+- Extended `services/election.api.ts` with `getAdminSummary`, `getElectionResults`, and `updateElectionCandidates` (annotated with `// TODO` comments where backend contracts are pending).
+- Built Resend-style Admin module pages:
+  - `app/admin/dashboard/page.tsx`: System overview cards (active elections, total votes cast, total elections count), loading skeleton, error retry, quick navigation cards.
+  - `app/admin/elections/page.tsx`: Table of all elections from `getElections()` with status, startsAt/endsAt dates, and action link to view results per election.
+  - `app/admin/create-election/page.tsx`: Form for `CreateElectionRequest` with title, description, start/end date-time pickers, and dynamic candidate roster builder. Redirects to `/admin/elections` on creation.
+  - `app/admin/candidates/page.tsx`: Per-election candidate inspection and management interface with election selector and inline candidate addition.
+  - `app/admin/results/page.tsx`: Election results console with selectable election dropdown (query param `?electionId=...` support wrapped in `<Suspense>`) and high-contrast minimal candidate vote percentage bars.
+- Verified `npm run lint`, `npm run typecheck`, `npm run format`, and `npm run build` pass cleanly.
+
 ### 2026-09-26 — Core Election + Voting Module (`services/election.api.ts`, `services/voting.api.ts`, and voting pages)
 - Implemented `services/election.api.ts` (`getElections`, `getElectionById`, `createElection`) and `services/voting.api.ts` (`castVote`, `getReceipt`) using `apiClient`.
 - Built citizen voting journey pages:

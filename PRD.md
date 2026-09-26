@@ -31,11 +31,11 @@ A verifiable electronic voting platform with four roles (Registrar, Voter, Admin
 - [x] Voters list (`/registrar/voters`)
 
 ### Admin
-- [ ] Dashboard (`/admin/dashboard`)
-- [ ] Elections list (`/admin/elections`) → GET /api/v1/elections
-- [ ] Create election (`/admin/create-election`) → POST /api/v1/elections
-- [ ] Candidates management (`/admin/candidates`)
-- [ ] Results (`/admin/results`)
+- [x] Dashboard (`/admin/dashboard`)
+- [x] Elections list (`/admin/elections`) → GET /api/v1/elections
+- [x] Create election (`/admin/create-election`) → POST /api/v1/elections
+- [x] Candidates management (`/admin/candidates`)
+- [x] Results (`/admin/results`)
 
 ### Voter
 - [x] Elections browse (`/elections`)

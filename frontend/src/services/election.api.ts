@@ -1,10 +1,38 @@
 import { apiClient } from './api';
-import type { CreateElectionRequest, Election, ElectionStatus, Paginated } from '@/types';
+import type {
+  Candidate,
+  CreateElectionRequest,
+  Election,
+  ElectionStatus,
+  Paginated,
+} from '@/types';
 
 export interface ListElectionsParams {
   status?: ElectionStatus;
   page?: number;
   pageSize?: number;
+}
+
+export interface CandidateResult {
+  candidateId: string;
+  candidateName: string;
+  partyName: string;
+  voteCount: number;
+  votePercentage: number;
+}
+
+export interface ElectionResultsData {
+  electionId: string;
+  title: string;
+  totalVotesCast: number;
+  status: ElectionStatus;
+  results: CandidateResult[];
+}
+
+export interface AdminSummary {
+  activeElectionsCount: number;
+  totalVotesCast: number;
+  totalElectionsCount: number;
 }
 
 /**
@@ -59,5 +87,38 @@ export async function createElection(data: CreateElectionRequest): Promise<Elect
   return apiClient<Election>('/elections', {
     method: 'POST',
     body: data,
+  });
+}
+
+/**
+ * GET /api/v1/elections/:id/results
+ * TODO: backend endpoint not yet specified in API contract v1 for election results
+ */
+export async function getElectionResults(electionId: string): Promise<ElectionResultsData> {
+  return apiClient<ElectionResultsData>(`/elections/${electionId}/results`, {
+    method: 'GET',
+  });
+}
+
+/**
+ * PUT /api/v1/elections/:id/candidates
+ * TODO: backend endpoint not yet specified in API contract v1 for candidate CRUD
+ */
+export async function updateElectionCandidates(
+  electionId: string,
+  candidates: Array<Pick<Candidate, 'name' | 'partyName'>>,
+): Promise<Election> {
+  return apiClient<Election>(`/elections/${electionId}/candidates`, {
+    method: 'PUT',
+    body: { candidates },
+  });
+}
+
+/**
+ * GET /api/v1/admin/summary
+ */
+export async function getAdminSummary(): Promise<AdminSummary> {
+  return apiClient<AdminSummary>('/admin/summary', {
+    method: 'GET',
   });
 }
