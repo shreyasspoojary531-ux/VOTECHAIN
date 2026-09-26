@@ -14,7 +14,7 @@ A verifiable electronic voting platform with four roles (Registrar, Voter, Admin
 - [x] Route/page skeleton (20 routes, placeholder pages)
 - [x] Centralized API client (axios instance, env base URL, JWT + error interceptor stubs)
 - [x] Typed service layer wired to real endpoints (stubs exist in `services/*.api.ts`)
-- [ ] Shared UI primitives (buttons, inputs, cards, hairline borders)
+- [x] Shared UI primitives (buttons, inputs, cards, hairline borders)
 - [x] Role-based navigation shell (REGISTRAR / VOTER / ADMIN / AUDITOR)
 
 ### Auth & identity
@@ -46,15 +46,15 @@ A verifiable electronic voting platform with four roles (Registrar, Voter, Admin
 - [x] Explorer (`/blockchain/explorer`) → GET /api/v1/blockchain/blocks
 - [x] Transaction detail (`/blockchain/transaction`) → GET /api/v1/blockchain/transactions/:txId
 - [x] Block detail (`/blockchain/block`)
-- [ ] Chain visual component (block-linkage visualization)
+- [x] Chain visual component (block-linkage visualization)
 
 ### Audit
 - [x] Audit dashboard (`/audit/dashboard`) → GET /api/v1/audit/elections/:id
 
 ### Visual architecture pieces (DESIGN.md hero sections)
-- [ ] Vote Journey visual
-- [ ] Blockchain chain visual
-- [ ] Privacy architecture visual
+- [x] Vote Journey visual
+- [x] Blockchain chain visual
+- [x] Privacy architecture visual
 
 ## 3. Non-goals (for the frontend)
 

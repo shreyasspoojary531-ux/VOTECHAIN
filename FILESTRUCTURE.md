@@ -79,7 +79,17 @@ frontend/
     ├── components/
     │   ├── coming-soon.tsx    # shared placeholder for scaffold routes
     │   ├── navbar.tsx         # responsive role-based navigation shell
-    │   └── role-guard.tsx     # client component for route protection
+    │   ├── role-guard.tsx     # client component for route protection
+    │   ├── ui/
+    │   │   ├── button.tsx       # Button component (primary, secondary, danger, ghost)
+    │   │   ├── input.tsx        # Input & Label components
+    │   │   ├── card.tsx         # Card, CardHeader, CardTitle, CardContent, CardFooter
+    │   │   ├── status-badge.tsx # StatusBadge component (success, danger, warning, neutral, accent)
+    │   │   └── skeleton.tsx     # Skeleton loader component
+    │   └── visuals/
+    │       ├── chain-visual.tsx # Block linkage visualization component
+    │       ├── vote-journey-visual.tsx # Cryptographic 5-step vote journey diagram
+    │       └── privacy-architecture-visual.tsx # Identity-Ballot decoupling diagram
     ├── services/
     │   ├── api.ts             # centralized fetch wrapper apiClient<T> + ApiError
     │   ├── auth.api.ts        # POST /auth/register, /auth/login (typed stubs)

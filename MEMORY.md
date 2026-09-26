@@ -2,6 +2,18 @@
 
 > Purpose: continuity between prompts/sessions. Log every meaningful step in the Progress Log and every judgment call under Decisions & Assumptions so future agents don't re-litigate settled questions or unknowingly contradict them.
 
+### 2026-09-26 — Visual Architecture Components & Hero Landing Page
+- Created 3 custom visual architecture components in `src/components/visuals/`:
+  - `chain-visual.tsx` — interactive horizontal block linkage diagram displaying linked blocks with hashes, previous hash connections, timestamps, transaction counts, and block detail inspector.
+  - `vote-journey-visual.tsx` — 5-step cryptographic vote pipeline diagram (Identity Verification -> ZK Eligibility Proof -> Encrypted Ballot -> Ledger Block -> Public Receipt Verification).
+  - `privacy-architecture-visual.tsx` — Identity-Ballot decoupling architecture diagram showing PII isolation zone, ZK blind bridge, and public ledger zone.
+- Built rich public home page in `app/(public)/page.tsx`:
+  - Hero section with Fraunces serif heading and trust taglines.
+  - Quick role portal navigation bar (`Voter`, `Registrar`, `Admin`, `Auditor`).
+  - Embedded all three visual architecture diagrams.
+- Embedded `ChainVisual` component at the top of `/blockchain/explorer/page.tsx` for real-time block linkage visualization.
+- Verified `npm run lint`, `npm run typecheck`, and `npm run build` pass cleanly (19/19 routes prerender statically/dynamically).
+
 ### 2026-09-26 — Role-Based Navigation & Guards
 - Built `components/navbar.tsx` — responsive navigation shell with role-specific link routing and user display (supports REGISTRAR, VOTER, ADMIN, AUDITOR).
 - Built `components/role-guard.tsx` — client-side route protection checking `isAuthenticated` and `user.role`, rendering "Access Denied" or redirecting to `/login`.

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { getBlocks } from '@/services/blockchain.api';
 import { ApiError } from '@/services/api';
 import type { Block } from '@/types';
+import ChainVisual from '@/components/visuals/chain-visual';
 
 export default function BlockchainExplorerPage() {
   const [blocks, setBlocks] = useState<Block[] | null>(null);
@@ -72,6 +73,21 @@ export default function BlockchainExplorerPage() {
             Transparent, append-only blockchain verifying electronic ballot commitment integrity.
           </p>
         </div>
+
+        {/* Chain Visual Diagram */}
+        <ChainVisual
+          blocks={
+            blocks && blocks.length > 0
+              ? blocks.map((b) => ({
+                  index: b.height,
+                  hash: b.hash,
+                  previousHash: b.previousHash,
+                  timestamp: new Date(b.timestamp).toISOString(),
+                  txCount: b.txCount,
+                }))
+              : undefined
+          }
+        />
 
         {/* Error Alert */}
         {error && (
