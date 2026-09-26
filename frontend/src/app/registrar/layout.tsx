@@ -1,4 +1,4 @@
-import Navbar from '@/components/navbar';
+import Navbar from '@/components/Navbar';
 import RoleGuard from '@/components/role-guard';
 
 export default function RegistrarLayout({ children }: Readonly<{ children: React.ReactNode }>) {

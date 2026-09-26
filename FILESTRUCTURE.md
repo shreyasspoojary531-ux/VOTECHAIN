@@ -1,6 +1,6 @@
 # FILESTRUCTURE.md — Real Folder Tree
 
-> Kept up to date per AGENTS.md. Last updated: 2026-09-26 (complete backend workflow commit).
+> Kept up to date per AGENTS.md. Last updated: 2026-09-26 (landing page redesign & Navbar component).
 
 ## Repository root
 

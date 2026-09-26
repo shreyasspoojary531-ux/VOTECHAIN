@@ -2,6 +2,15 @@
 
 > Purpose: continuity between prompts/sessions. Log every meaningful step in the Progress Log and every judgment call under Decisions & Assumptions so future agents don't re-litigate settled questions or unknowingly contradict them.
 
+### 2026-09-26 — Landing Page Redesign & Navbar Component
+- **Navbar Component (`components/Navbar.tsx`)**: Created reusable standalone Navbar component featuring brand wordmark ("VoteChain"), centered navigation links (`Elections`, `Verify a Vote`, `Blockchain Explorer`), ghost "Log in" link, and solid pill "Get started" button. Implemented scroll-aware backdrop blur (`bg-black/70 backdrop-blur-md` on scroll) and accessible mobile hamburger drawer toggle (`aria-expanded`, `aria-controls`). Fixed layout imports across existing route segments to use canonical `Navbar.tsx`.
+- **Landing Page Redesign (`app/(public)/page.tsx`)**:
+  - **Resend Asymmetric Hero**: Positioned `bg-hero-1.webp` full-bleed object-cover so diagonal streaks sit near the CTA row while keeping heading contrast pure black. Left-aligned two-line heading using `font-heading`, announcement pill (`VoteChain 2.0 Protocol →`), side-by-side pill CTA & ghost link, and right-column abstract SVG voting illustration with `{/* TODO: replace with final voting illustration asset */}` marker.
+  - **Live Audit Timeline Section**: Repurposed Resend tracking UI (Reference Image 4) for voting timeline ("Verified", "Recorded", "Consensus In-Progress") using dark `resend-card` with fading top-only partial stroke, status pill badges with colored dots, and monospace ID/hash chips.
+  - **Light Mode Audit Showcase**: Integrated `bg-light.webp` with smooth gradient transition mask separating dark hero and light section, featuring high-contrast card scrim and zero-knowledge feature callouts.
+- **Verification**: `npm run lint`, `npm run typecheck`, and `npm run build` in `frontend/` passed 100% cleanly (19/19 pages built).
+
+
 ### 2026-09-26 — Complete Backend Workflow & API Route Implementation
 - **Hyperledger Fabric Isolation Layer (`src/blockchain/`)**: Implemented `fabric.client.ts`, `fabric.gateway.ts`, `fabric.service.ts`, `transactions.ts`, and `types.ts`. Isolated Fabric SDK behind `FabricService` exposing strictly `submitVote()`, `getTransaction()`, `getBlock()`, and `verifyTransaction()`.
 - **Domain Repositories (`src/repositories/`)**: Built `candidate.repository.ts`, `credential.repository.ts`, `voting.repository.ts`, `blockchain.repository.ts`, and `audit.repository.ts`.
