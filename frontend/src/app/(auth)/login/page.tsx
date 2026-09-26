@@ -32,6 +32,48 @@ export default function LoginPage() {
     }
   };
 
+  const handleQuickLogin = async (role: Role) => {
+    setError(null);
+    setLoading(true);
+
+    let targetEmail = 'voter@votechain.gov';
+    switch (role) {
+      case 'REGISTRAR':
+        targetEmail = 'registrar@votechain.gov';
+        break;
+      case 'ADMIN':
+        targetEmail = 'admin@votechain.gov';
+        break;
+      case 'AUDITOR':
+        targetEmail = 'auditor@votechain.gov';
+        break;
+      case 'VOTER':
+      default:
+        targetEmail = 'voter@votechain.gov';
+        break;
+    }
+
+    setEmail(targetEmail);
+    setPassword('password123');
+
+    try {
+      const response = await loginApi({ email: targetEmail, password: 'password123' });
+      authLogin(response.jwt, response.user);
+      const dashboard = getRoleDashboard(response.user.role);
+      router.push(dashboard);
+    } catch (err: unknown) {
+      if (err instanceof ApiError) {
+        setError(err.message);
+      } else if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Sign in failed. Please try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -61,8 +103,49 @@ export default function LoginPage() {
         <div className="space-y-2 text-center">
           <h1 className="text-2xl font-semibold tracking-tight">Sign in to VoteChain</h1>
           <p className="text-sm text-ink-secondary">
-            Enter your credentials to access your account
+            Click a demo role account or enter credentials below
           </p>
+        </div>
+
+        {/* Instant Demo Role Selector */}
+        <div className="p-3 rounded-lg border border-hairline bg-surface space-y-2">
+          <div className="text-[11px] font-mono text-ink-muted uppercase tracking-wider text-center">
+            One-Click Demo Login
+          </div>
+          <div className="grid grid-cols-2 gap-2 font-mono text-xs">
+            <button
+              type="button"
+              disabled={loading}
+              onClick={() => handleQuickLogin('VOTER')}
+              className="p-2 rounded border border-hairline bg-canvas hover:border-accent hover:bg-surface-raised text-accent text-center transition-all disabled:opacity-50"
+            >
+              ⚡ Voter Login
+            </button>
+            <button
+              type="button"
+              disabled={loading}
+              onClick={() => handleQuickLogin('REGISTRAR')}
+              className="p-2 rounded border border-hairline bg-canvas hover:border-success hover:bg-surface-raised text-success text-center transition-all disabled:opacity-50"
+            >
+              ⚡ Registrar Login
+            </button>
+            <button
+              type="button"
+              disabled={loading}
+              onClick={() => handleQuickLogin('ADMIN')}
+              className="p-2 rounded border border-hairline bg-canvas hover:border-warning hover:bg-surface-raised text-warning text-center transition-all disabled:opacity-50"
+            >
+              ⚡ Admin Login
+            </button>
+            <button
+              type="button"
+              disabled={loading}
+              onClick={() => handleQuickLogin('AUDITOR')}
+              className="p-2 rounded border border-hairline bg-canvas hover:border-danger hover:bg-surface-raised text-danger text-center transition-all disabled:opacity-50"
+            >
+              ⚡ Auditor Login
+            </button>
+          </div>
         </div>
 
         <form
@@ -88,7 +171,7 @@ export default function LoginPage() {
               required
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              placeholder="voter@example.com"
+              placeholder="voter@votechain.gov"
               className="w-full rounded-md border border-hairline-strong bg-canvas px-3 py-2 text-sm text-ink placeholder-ink-muted focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
               disabled={loading}
             />
@@ -115,33 +198,7 @@ export default function LoginPage() {
             disabled={loading}
             className="flex w-full items-center justify-center rounded-md bg-ink py-2 text-sm font-medium text-canvas transition-opacity hover:opacity-90 disabled:opacity-50"
           >
-            {loading ? (
-              <span className="flex items-center gap-2">
-                <svg
-                  className="h-4 w-4 animate-spin text-canvas"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
-                </svg>
-                Signing in...
-              </span>
-            ) : (
-              'Sign In'
-            )}
+            {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
 
