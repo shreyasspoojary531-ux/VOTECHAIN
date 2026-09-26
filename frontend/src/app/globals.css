@@ -33,9 +33,9 @@
   --radius-full: 9999px;
 
   /* Font families — wired to next/font variables in app/layout.tsx */
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-poppins), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
-  --font-display: var(--font-fraunces), Georgia, serif;
+  --font-display: var(--font-poppins), sans-serif;
   --font-heading: var(--font-mistical), var(--font-fraunces), Georgia, serif;
   --font-poppins: var(--font-poppins), sans-serif;
 }
