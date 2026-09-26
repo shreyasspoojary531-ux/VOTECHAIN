@@ -4,7 +4,7 @@ This file is the project's living memory. Update it after **every** prompt — t
 
 ## Project Context (short)
 
-VoteChain — privacy-preserving digital voting system prototype (fake/demo data only). Created multi-service raw file and folder structure (`frontend`, `backend`, `blockchain`, `database`, `docs`, `scripts`, `.github`).
+VoteChain — privacy-preserving digital voting system prototype (fake/demo data only). Currently building **frontend only** (Next.js, TypeScript, Tailwind CSS). Backend (Express/TypeScript + PostgreSQL via Prisma) and blockchain (Hyperledger Fabric) phases are documented in `PRD.md` but not started yet.
 
 ---
 
@@ -12,22 +12,28 @@ VoteChain — privacy-preserving digital voting system prototype (fake/demo data
 
 *(Newest entry on top. One entry per prompt: what was built, key choices made.)*
 
-- Created raw multi-service folder and file structure per `FILESTRUCTURE.md` request (containing `frontend/`, `backend/`, `blockchain/`, `database/`, `docs/`, `scripts/`, `.github/`). Updated `.agents/FILE_STRUCTURE.md`.
+- Not started yet — scaffold checkpoint is next.
 
 ---
 
 ## Errors & Fixes
 
-- Fixed initially generated flat Next.js structure by removing flat files and scaffolding full multi-service tree as requested.
+*(Every bug hit, its root cause, and how it was actually fixed — not just the symptom patched over.)*
+
+- None yet.
 
 ---
 
 ## Decisions & Assumptions
 
-- Generated clean raw empty files / `.gitkeep` placeholding directories matching the user-provided `FILESTRUCTURE.md` spec without writing application logic yet.
+*(Anywhere the AI had to make a judgment call because PRD/MEMORY didn't specify something — logged here instead of stopping to ask.)*
+
+- Stack changed from JavaScript to TypeScript across the whole project (frontend and backend) — decided before any code was written, no migration needed.
 
 ---
 
 ## Git Commit History
 
-- Initial scaffold commit pending.
+*(Just the commit log — one line per commit: hash if known, message, and which prompt/feature it corresponds to.)*
+
+- None yet.

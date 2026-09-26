@@ -19,7 +19,7 @@ UI should follow the visual language of **Resend** (resend.com / their dashboard
 
 ## Current Phase
 
-**Frontend only.** Stack: **Next.js (JavaScript, not TypeScript) + Tailwind CSS + Axios + Recharts**. Routing is Next.js's own file-based routing (App Router) — do not add React Router. Do not scaffold backend, database, or blockchain code yet — that's Phase 2/3 in `PRD.md`. All data should come from a mock data/service layer shaped like the future real API so swapping in the real backend later doesn't require rewiring components.
+**Frontend only.** Stack: **Next.js (TypeScript) + Tailwind CSS + Axios + Recharts**. Routing is Next.js's own file-based routing (App Router) — do not add React Router. Do not scaffold backend, database, or blockchain code yet — that's Phase 2/3 in `PRD.md`. All data should come from a mock data/service layer shaped like the future real API so swapping in the real backend later doesn't require rewiring components.
 
 ## Prompt & Commit Discipline
 
@@ -30,7 +30,7 @@ UI should follow the visual language of **Resend** (resend.com / their dashboard
 
 ## Code Quality (production-level)
 
-- Plain JavaScript (no TypeScript). Use JSDoc comments on shared functions/services where types would help readability, but don't add a TS toolchain.
+- TypeScript strict mode. No `any` unless truly unavoidable, and any unavoidable use gets a one-line comment saying why. Shared data shapes (Voter, Election, Candidate, Ballot, BlockchainTransaction, etc.) get real interfaces/types in `types/`, not inline object shapes repeated across files.
 - Clean separation, following Next.js App Router conventions: `app/` for routes/pages, `components/` for reusable UI (no business logic in components), `lib/` or `services/` for the mock API/data layer, `hooks/` for custom hooks.
 - No leftover `console.log`, no dead code, no unresolved TODOs without a corresponding note in `MEMORY.md`.
 - Responsive layouts, accessible markup (labels, semantic elements, keyboard nav where relevant).

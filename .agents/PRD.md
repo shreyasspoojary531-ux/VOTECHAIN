@@ -15,7 +15,7 @@ Core privacy rule: voter identity is always kept separate from ballot data, at e
 ## Checkpoints
 
 ### Phase 1 — Frontend (current)
-- [ ] Project scaffold: Next.js (JavaScript) + Tailwind CSS, App Router
+- [ ] Project scaffold: Next.js (TypeScript) + Tailwind CSS, App Router
 - [ ] Route/page skeleton for all voter and admin routes (Next.js file-based routing)
 - [ ] Mock data/service layer (shaped like the future real API, swappable later)
 - [ ] Login screen — demo identity input + eligibility result
@@ -36,7 +36,7 @@ Core privacy rule: voter identity is always kept separate from ballot data, at e
 - [ ] Privacy architecture visual — Identity Layer / Anonymous Voting Layer / Blockchain Layer, visually separated
 
 ### Phase 2 — Backend (not started)
-- [ ] Express (or Next.js API routes) + PostgreSQL setup; data models: MockAadhaar, Voter, Election, Candidate, VotingCredential, Ballot, BlockchainTransaction, AuditLog, Admin
+- [ ] Express (TypeScript) + PostgreSQL (Prisma) setup; data models: MockAadhaar, Voter, Election, Candidate, VotingCredential, Ballot, BlockchainTransaction, AuditLog, Admin
 - [ ] Auth APIs (`/api/auth/login`, `/logout`, `/me`) + JWT (no ballot/candidate data in token)
 - [ ] Role-based authorization middleware (VOTER, ADMIN, AUDITOR)
 - [ ] Election APIs (CRUD, admin-only mutations)
