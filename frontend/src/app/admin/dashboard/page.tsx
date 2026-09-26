@@ -85,7 +85,7 @@ export default function AdminDashboardPage() {
             <div className="rounded-lg border border-hairline bg-surface p-6 space-y-2">
               <p className="text-xs font-medium text-ink-secondary">Total Votes Cast</p>
               <p className="font-mono text-3xl font-bold text-ink">
-                {summary.totalVotesCast.toLocaleString()}
+                {(summary.totalVotesCast ?? 0).toLocaleString()}
               </p>
             </div>
 

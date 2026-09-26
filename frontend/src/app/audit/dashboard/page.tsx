@@ -9,6 +9,25 @@ import type { ElectionAuditReport, Election } from '@/types';
 
 type ViewState = 'idle' | 'loading' | 'loaded' | 'error';
 
+function formatNumber(val: unknown): string {
+  if (typeof val === 'number') {
+    return val.toLocaleString();
+  }
+  if (typeof val === 'string' && val.trim() !== '') {
+    const parsed = Number(val);
+    if (!isNaN(parsed)) return parsed.toLocaleString();
+    return val;
+  }
+  return '0';
+}
+
+function formatDate(val: unknown): string {
+  if (!val) return new Date().toLocaleString();
+  const d = new Date(val as string | number);
+  if (isNaN(d.getTime())) return new Date().toLocaleString();
+  return d.toLocaleString();
+}
+
 export default function AuditDashboardPage() {
   const [elections, setElections] = useState<Election[]>([]);
   const [electionsLoading, setElectionsLoading] = useState(true);
@@ -250,28 +269,28 @@ export default function AuditDashboardPage() {
                 <div className="rounded-lg border border-hairline bg-surface p-6 space-y-2">
                   <p className="text-xs font-medium text-ink-secondary">Total Votes Cast</p>
                   <p className="font-mono text-3xl font-bold text-ink">
-                    {(report.totalVotesCast ?? report.totalBallots ?? 0).toLocaleString()}
+                    {formatNumber(report.totalVotesCast ?? report.totalBallots)}
                   </p>
                 </div>
 
                 <div className="rounded-lg border border-hairline bg-surface p-6 space-y-2">
                   <p className="text-xs font-medium text-ink-secondary">Valid Votes</p>
                   <p className="font-mono text-3xl font-bold text-success">
-                    {(report.validVotesCount ?? report.totalBallots ?? 0).toLocaleString()}
+                    {formatNumber(report.validVotesCount ?? report.totalBallots)}
                   </p>
                 </div>
 
                 <div className="rounded-lg border border-hairline bg-surface p-6 space-y-2">
                   <p className="text-xs font-medium text-ink-secondary">Invalid Votes</p>
                   <p className="font-mono text-3xl font-bold text-danger">
-                    {(report.invalidVotesCount ?? 0).toLocaleString()}
+                    {formatNumber(report.invalidVotesCount)}
                   </p>
                 </div>
 
                 <div className="rounded-lg border border-hairline bg-surface p-6 space-y-2">
                   <p className="text-xs font-medium text-ink-secondary">Last Audited</p>
                   <p className="font-mono text-sm font-bold text-ink">
-                    {new Date(report.lastAuditTimestamp ?? report.auditedAt ?? Date.now()).toLocaleString()}
+                    {formatDate(report.lastAuditTimestamp ?? report.auditedAt)}
                   </p>
                 </div>
               </div>
