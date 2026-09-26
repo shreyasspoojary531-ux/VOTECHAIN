@@ -1,8 +1,11 @@
 // ---------------------------------------------------------------------------
-// E-Voting platform schema
-// Phase 2 — Auth & OTP module
-// NOTE: SQLite connector — no enum support; role/purpose values are validated
-// at the application layer (Zod) instead.
+// VoteChain — privacy-preserving e-voting platform
+// Modular Monolith | PostgreSQL | Prisma
+//
+// PRIVACY MODEL: identity and ballot must remain independent.
+//   User → VoterProfile → VoterEligibility → AnonymousCredential
+//        → Ballot (NO userId!) → BlockchainTransaction
+// There is no direct queryable path from userId to candidateId.
 // ---------------------------------------------------------------------------
 
 generator client {
@@ -10,56 +13,239 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
-/// Platform users. Never store plaintext passwords — only the bcrypt hash.
-/// role: "ADMIN" | "REGISTRAR" | "VOTER" (registration defaults to VOTER;
-/// ADMIN and REGISTRAR exist only via seed).
-model User {
-  id           String    @id @default(uuid())
-  email        String    @unique
-  passwordHash String
-  role         String    @default("VOTER")
-  isActive     Boolean   @default(false)
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
+// ------------------------------- ENUMS -------------------------------------
 
-  otpCodes OTPCode[]
+enum Role {
+  REGISTRAR
+  VOTER
+  ADMIN
+  AUDITOR
+}
+
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum ElectionStatus {
+  DRAFT
+  PUBLISHED
+  ACTIVE
+  CLOSED
+  RESULTS
+}
+
+enum BlockchainStatus {
+  PENDING
+  VALID
+  INVALID
+}
+
+enum Gender {
+  MALE
+  FEMALE
+  OTHER
+}
+
+// ------------------------------ MODELS -------------------------------------
+
+/// Government identity registry (mock). READ-ONLY — never written by the app
+/// after seeding. Voters never touch this; only Registrar searches it.
+model MockAadhaar {
+  id            String   @id @default(uuid())
+  aadhaarNumber String   @unique @db.VarChar(12)
+  fullName      String
+  dateOfBirth   DateTime @db.Date
+  gender        Gender
+  phone         String   @db.VarChar(10)
+  email         String?
+  address       String?
+  constituency  String
+  isAlive       Boolean  @default(true)
+  createdAt     DateTime @default(now())
+
+  voterProfile VoterProfile?
+
+  @@index([aadhaarNumber])
+  @@index([constituency])
+}
+
+/// Platform accounts. passwordHash is bcrypt; never store plaintext.
+model User {
+  id           String     @id @default(uuid())
+  email        String     @unique
+  passwordHash String
+  role         Role       @default(VOTER)
+  status       UserStatus @default(INACTIVE)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+
+  voterProfile  VoterProfile?
+  otpCodes      OTPCode[]
+  /// anonymous credentials issued to this user's voter profile
+  credentialsIssued AnonymousCredential[] @relation("CredentialIssuedToUser")
+  elections     Election[]
+  auditRecords  AuditRecord[]         @relation("actor")
 
   @@index([email])
 }
 
-/// One-time codes. At most one valid (unconsumed, unexpired) row per
-/// (userId, purpose) — creating a new one invalidates prior unconsumed ones.
-/// codeHash is an HMAC-SHA256 hash of the 6-digit code, never the raw code.
-/// purpose: "LOGIN" | "REGISTRATION".
+/// Bridge between User and Aadhaar identity. One-to-one on both sides.
+model VoterProfile {
+  id            String   @id @default(uuid())
+  userId        String   @unique
+  aadhaarId     String   @unique
+  constituency  String
+  isVerified    Boolean  @default(false)
+  registeredAt  DateTime @default(now())
+
+  user         User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  aadhaar      MockAadhaar         @relation(fields: [aadhaarId], references: [id])
+  eligibilities VoterEligibility[]
+
+  @@index([constituency])
+  @@index([aadhaarId])
+}
+
+/// Per-election eligibility. UNIQUE(voterProfileId, electionId) prevents
+/// double-enrollment. Election must be PUBLISHED/ACTIVE when granted.
+model VoterEligibility {
+  id             String    @id @default(uuid())
+  voterProfileId String
+  electionId     String
+  eligible       Boolean   @default(true)
+  verifiedAt     DateTime  @default(now())
+
+  voterProfile VoterProfile @relation(fields: [voterProfileId], references: [id], onDelete: Cascade)
+  election     Election     @relation(fields: [electionId], references: [id], onDelete: Cascade)
+
+  @@unique([voterProfileId, electionId])
+  @@index([electionId])
+}
+
+/// One-time codes. Never store the raw code — only HMAC hash with pepper.
+/// purpose: LOGIN | REGISTRATION (validated at app layer via Zod).
 model OTPCode {
-  id         String    @id @default(uuid())
-  userId     String
-  purpose    String
-  codeHash   String
-  expiresAt  DateTime
-  consumedAt DateTime?
-  createdAt  DateTime  @default(now())
+  id        String    @id @default(uuid())
+  userId    String
+  purpose   String    @default("LOGIN")
+  codeHash  String
+  expiresAt DateTime
+  isUsed    Boolean   @default(false)
+  createdAt DateTime  @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@index([userId, purpose, consumedAt, expiresAt])
+  @@index([userId, purpose, isUsed, expiresAt])
 }
 
-/// Append-only audit trail. metadata is a JSON string (SQLite has no JSON type).
-/// No FK to User — actorUserId is a loose reference so audit rows survive
-/// user deletion. Every later module writes through audit.service.logEvent.
-model AuditRecord {
-  id          String   @id @default(uuid())
-  eventType   String
-  electionId  String?
-  actorUserId String?
-  metadata    String?
-  createdAt   DateTime @default(now())
+model Election {
+  id           String         @id @default(uuid())
+  title        String
+  description  String?
+  constituency String
+  startAt      DateTime
+  endAt        DateTime
+  status       ElectionStatus @default(DRAFT)
+  createdBy    String
+  createdAt    DateTime       @default(now())
 
-  @@index([eventType, createdAt])
+  creator     User               @relation(fields: [createdBy], references: [id])
+  candidates  Candidate[]
+  eligibilities VoterEligibility[]
+  credentials AnonymousCredential[]
+  auditRecords AuditRecord[]
+
+  @@index([status])
+  @@index([constituency])
+}
+
+model Candidate {
+  id         String   @id @default(uuid())
+  electionId String
+  name       String
+  party      String
+  symbol     String?
+  manifesto  String?
+  createdAt  DateTime @default(now())
+
+  election Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
+  ballots  Ballot[]
+
   @@index([electionId])
+}
+
+/// The identity/ballot firewall. `credential` UUID is the only handle the
+/// ballot side ever sees; `used` guarantees one vote per credential.
+model AnonymousCredential {
+  id         String   @id @default(uuid())
+  credential String   @unique @default(uuid())
+  electionId String
+  issuedTo   String
+  used       Boolean  @default(false)
+  issuedAt   DateTime @default(now())
+
+  /// NOTE: issuedTo references User.id directly (not VoterProfile) so the
+  /// credential table stands alone on the identity side.
+
+  election Election     @relation(fields: [electionId], references: [id], onDelete: Cascade)
+  voter    User         @relation("CredentialIssuedToUser", fields: [issuedTo], references: [id], onDelete: Cascade)
+  ballots  Ballot[]
+
+  @@index([electionId])
+  @@index([issuedTo])
+}
+
+/// The ballot itself. NO userId anywhere. ballotHash binds
+/// (electionId, candidateId, credential, salt) so auditors can detect
+/// tampering without learning the vote.
+model Ballot {
+  id          String   @id @default(uuid())
+  credentialId String  @unique
+  candidateId String
+  ballotHash  String   @unique
+  submittedAt DateTime @default(now())
+
+  credential AnonymousCredential @relation(fields: [credentialId], references: [id], onDelete: Cascade)
+  candidate  Candidate           @relation(fields: [candidateId], references: [id])
+  blockchainTx BlockchainTransaction?
+
+  @@index([ballotHash])
+  @@index([candidateId])
+}
+
+/// On-chain reference for a ballot. status PENDING → VALID after ack.
+model BlockchainTransaction {
+  id            String           @id @default(uuid())
+  ballotId      String           @unique
+  transactionId String           @unique
+  blockNumber   Int?
+  status        BlockchainStatus @default(PENDING)
+  recordedAt    DateTime         @default(now())
+
+  ballot Ballot @relation(fields: [ballotId], references: [id], onDelete: Cascade)
+
+  @@index([transactionId])
+  @@index([status])
+}
+
+/// Append-only audit trail. actor is optional for system events.
+model AuditRecord {
+  id        String   @id @default(uuid())
+  electionId String?
+  actorId   String?
+  actorRole String?
+  action    String
+  metadata  Json?
+  timestamp DateTime @default(now())
+
+  election Election? @relation(fields: [electionId], references: [id])
+  actor    User?     @relation("actor", fields: [actorId], references: [id])
+
+  @@index([electionId])
+  @@index([action])
 }

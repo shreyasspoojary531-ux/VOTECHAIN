@@ -4,9 +4,12 @@ import * as otpCrypto from "../crypto/otp";
 import * as jwt from "../crypto/jwt";
 import { config } from "../config";
 import { logger } from "../utils/logger";
+import { ApiError } from "../middleware/errorHandler";
 import * as userRepo from "../repositories/user.repository";
 import * as otpRepo from "../repositories/otp.repository";
 import { logEvent } from "./audit.service";
+
+const GENERIC_LOGIN_ERROR = new ApiError(401, "INVALID_CREDENTIALS", "Invalid email or OTP");
 
 /** Shared OTP-send engine used by send-otp, register, and login. */
 async function sendOtp(userId: string, email: string, purpose: "LOGIN" | "REGISTRATION"): Promise<void> {
@@ -36,7 +39,7 @@ export async function register(email: string, password: string) {
   }
 
   const passwordHash = await passwordCrypto.hash(password);
-  const user = await userRepo.createUser({ email, passwordHash }); // role VOTER, isActive false by default
+  const user = await userRepo.createUser({ email, passwordHash }); // role VOTER, status INACTIVE by default
 
   await sendOtp(user.id, user.email, "REGISTRATION");
 
@@ -57,9 +60,9 @@ export async function login(email: string, password: string) {
   const user = await userRepo.findByEmail(email);
 
   // Generic 401 regardless of which check fails — never reveal the reason.
-  if (!user || !user.isActive || !(await passwordCrypto.compare(password, user.passwordHash))) {
+  if (!user || user.status !== "ACTIVE" || !(await passwordCrypto.compare(password, user.passwordHash))) {
     await logEvent({ eventType: "AUTH_LOGIN", metadata: { email, result: "failure" } });
-    throw new AuthError("Invalid credentials");
+    throw GENERIC_LOGIN_ERROR;
   }
 
   await sendOtp(user.id, user.email, "LOGIN");
@@ -71,12 +74,12 @@ export async function login(email: string, password: string) {
 export async function verifyOtp(email: string, code: string, purpose: "LOGIN" | "REGISTRATION") {
   const user = await userRepo.findByEmail(email);
   if (!user) {
-    throw new AuthError("Invalid or expired code");
+    throw GENERIC_LOGIN_ERROR;
   }
 
   const otp = await otpRepo.findLatestValid(user.id, purpose);
   if (!otp || !otpCrypto.compareCode(code, otp.codeHash)) {
-    throw new AuthError("Invalid or expired code");
+    throw new ApiError(401, "INVALID_OTP", "Invalid or expired code");
   }
 
   await otpRepo.markConsumed(otp.id);
@@ -84,12 +87,11 @@ export async function verifyOtp(email: string, code: string, purpose: "LOGIN" | 
 
   if (purpose === "REGISTRATION") {
     await userRepo.activateUser(user.id);
-    return { activated: true, message: "Account activated. You can now log in." };
+    return { activated: true as const, message: "Account activated. You can now log in." };
   }
 
-  // LOGIN → issue JWT with a fresh random sessionId per login.
-  const sessionId = crypto.randomUUID();
-  const token = jwt.sign({ userId: user.id, role: user.role, sessionId });
+  // LOGIN → issue JWT. Payload: userId, role, email ONLY.
+  const token = jwt.sign({ userId: user.id, role: user.role, email: user.email });
   return {
     activated: undefined,
     token,
@@ -97,17 +99,20 @@ export async function verifyOtp(email: string, code: string, purpose: "LOGIN" | 
   };
 }
 
+export async function logout(userId: string, token: string | undefined) {
+  // Access-JWT-only design: stateless logout. JWTs expire on their own
+  // (JWT_EXPIRES_IN); clients discard the token. We record the audit event.
+  await logEvent({
+    eventType: "AUTH_LOGOUT",
+    actorUserId: userId,
+    metadata: { tokenPrefix: token ? token.slice(0, 12) : undefined },
+  });
+  return { message: "Logged out" };
+}
+
 export async function getCurrentUser(userId: string) {
   const user = await userRepo.findById(userId);
   if (!user) return null;
   // Never expose passwordHash.
-  return { id: user.id, email: user.email, role: user.role, isActive: user.isActive };
-}
-
-export class AuthError extends Error {
-  status: number;
-  constructor(message: string, status = 401) {
-    super(message);
-    this.status = status;
-  }
+  return { id: user.id, email: user.email, role: user.role, isActive: user.status === "ACTIVE" };
 }

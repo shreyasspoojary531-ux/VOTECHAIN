@@ -2,50 +2,76 @@
 
 ```
 backend/
-├── AGENTS.md                     # Working agreement for agents (conventions, layering)
+├── AGENTS.md                     # Working agreement (conventions, layering)
 ├── PRD.md                        # Phase checklist
 ├── MEMORY.md                     # Cross-prompt memory (decisions, seeds, limits)
 ├── FILESTRUCTURE.md              # This file
-├── .env                          # DATABASE_URL, JWT_SECRET, JWT_EXPIRES_IN, OTP_PEPPER, PORT
+├── .env / .env.example           # DATABASE_URL (postgresql), JWT, OTP, Fabric vars
 ├── .gitignore
+├── Dockerfile                    # Multi-stage build (node:22-alpine)
+├── docker-compose.yml            # postgres:17 + backend
 ├── package.json                  # Scripts: dev, build, typecheck, prisma:push, seed
 ├── tsconfig.json
 ├── prisma/
-│   ├── schema.prisma             # User, OTPCode, AuditRecord (SQLite)
-│   ├── dev.db                    # SQLite database (gitignored)
-│   └── seed.ts                   # Seeds active admin + registrar
+│   ├── schema.prisma             # 11 models, 4+ enums, PostgreSQL
+│   ├── migrations/               # init migration
+│   └── seed.ts                   # 50 Aadhaar citizens, 3 staff, 10 voters, election + 4 candidates
 └── src/
-    ├── app.ts                    # Express app; /api/v1/auth + global rate limiter
+    ├── app.ts                    # Express app; /api/v1/{auth,registrar,elections,votes,blockchain,audit}
     ├── server.ts                 # Entrypoint
-    ├── config/index.ts           # Env config (jwt secret, otp pepper/ttl)
+    ├── blockchain/               # ONLY dir that references Fabric
+    │   ├── types.ts              # SubmitVoteInput, ChainTransaction, Block, VerificationResult
+    │   ├── fabric.client.ts      # Simulated hash-chained ledger (demo)
+    │   ├── fabric.gateway.ts     # Simulated-vs-real switch boundary
+    │   ├── fabric.service.ts     # Public API: submitVote/getTransaction/getBlock/verifyTransaction
+    │   └── transactions.ts       # Chaincode entrypoint names
+    ├── config/index.ts           # Env config (jwt, otp, cors, fabric)
+    ├── controllers/              # Thin asyncHandler-wrapped handlers
+    │   ├── auth.controller.ts
+    │   ├── registrar.controller.ts
+    │   ├── election.controller.ts
+    │   ├── candidate.controller.ts
+    │   ├── vote.controller.ts
+    │   ├── vote.controller.results.ts  # POST /elections/:id/results
+    │   ├── blockchain.controller.ts
+    │   └── audit.controller.ts
     ├── crypto/
     │   ├── password.ts           # bcrypt hash/compare
-    │   ├── otp.ts                # 6-digit generate; HMAC-SHA256 hashCode/compareCode
-    │   └── jwt.ts                # sign/verify, payload { userId, role, sessionId }
-    ├── controllers/
-    │   └── auth.controller.ts    # Thin handlers → auth.service
+    │   ├── otp.ts                # 6-digit generate; HMAC-SHA256 hashCode/compareCode (peppered)
+    │   └── jwt.ts                # sign/verify; payload { userId, role, email } ONLY
     ├── middleware/
-    │   ├── jwt.middleware.ts     # Bearer verification; attaches req.user
-    │   ├── rbac.middleware.ts    # requireRole(...roles); 403; runs after JWT
-    │   ├── rateLimiter.ts        # globalLimiter (100/15min) + otpLimiter (5/min)
-    │   └── validate.middleware.ts# Generic Zod body validation
+    │   ├── jwt.middleware.ts     # authenticate(): Bearer verify, attaches req.user
+    │   ├── rbac.middleware.ts    # authorize(...roles): 403; after authenticate
+    │   ├── rateLimiter.ts        # global 100/15min; otp 5/min on send-otp + verify-otp
+    │   ├── security.ts           # helmet + cors
+    │   ├── validate.middleware.ts# Zod validation → 400 envelope
+    │   └── errorHandler.ts       # ApiError class + centralized handler
     ├── repositories/
-    │   ├── user.repository.ts    # createUser, findByEmail, findById, activateUser
-    │   └── otp.repository.ts     # createOtp, findLatestValid, markConsumed, invalidatePrior
+    │   ├── user.repository.ts
+    │   ├── aadhaar.repository.ts # read-only MockAadhaar access
+    │   ├── voter.repository.ts   # VoterProfile + VoterEligibility
+    │   ├── otp.repository.ts
+    │   ├── election.repository.ts
+    │   └── vote.repository.ts    # credentials, ballots, blockchain txs, tally
     ├── routes/
-    │   └── auth.routes.ts        # 5 auth endpoints; OTP limiter on send-otp/verify-otp
+    │   ├── auth.routes.ts
+    │   ├── registrar.routes.ts
+    │   ├── election.routes.ts
+    │   ├── vote.routes.ts
+    │   ├── blockchain.routes.ts
+    │   └── audit.routes.ts
     ├── services/
-    │   ├── auth.service.ts       # Business logic: register/sendOtp/login/verifyOtp/me
-    │   └── audit.service.ts      # Generic logEvent() — shared by all later modules
-    ├── types/                    # (empty, reserved)
+    │   ├── auth.service.ts       # register/sendOtp/login/verifyOtp/logout/me
+    │   ├── registrar.service.ts  # Aadhaar checks (18+, alive, duplicate) + voter creation
+    │   ├── election.service.ts   # DRAFT→PUBLISHED→ACTIVE→CLOSED→RESULTS transitions
+    │   ├── candidate.service.ts
+    │   ├── vote.service.ts       # credential issuance + ATOMIC vote transaction + results
+    │   └── audit.service.ts      # generic logEvent() — used by every module
+    ├── types/                    # (reserved)
     ├── utils/
-    │   ├── logger.ts             # Pino instance
-    │   └── prisma.ts             # Prisma client singleton
-    ├── validators/
-    │   └── auth.validator.ts     # Zod schemas for all auth request bodies
-    └── blockchain/               # (empty, reserved — ONLY this dir may reference Fabric)
+    │   ├── logger.ts             # Pino
+    │   ├── prisma.ts             # Prisma client singleton
+    │   ├── response.ts           # ok()/fail() envelopes
+    │   └── asyncHandler.ts       # async error forwarding
+    └── validators/               # auth, registrar, election, vote Zod schemas
 ```
-
-## Planned (later prompts)
-- `src/routes/` + `src/controllers/` + `src/services/`: registrar, election, voting, blockchain modules
-- `src/blockchain/`: Hyperledger Fabric integration

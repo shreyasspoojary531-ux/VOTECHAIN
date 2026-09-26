@@ -1,65 +1,44 @@
 import type { Request, Response } from "express";
 import * as authService from "../services/auth.service";
-import { AuthError } from "../services/auth.service";
+import { fail, ok } from "../utils/response";
+import { asyncHandler } from "../utils/asyncHandler";
 
-export async function register(req: Request, res: Response): Promise<void> {
-  try {
-    const { email, password } = req.body;
-    res.status(201).json(await authService.register(email, password));
-  } catch (err) {
-    handleError(res, err);
+export const register = asyncHandler(async (req: Request, res: Response) => {
+  const { email, password } = req.body;
+  ok(res, await authService.register(email, password), 201);
+});
+
+export const sendOtp = asyncHandler(async (req: Request, res: Response) => {
+  const { email, purpose } = req.body;
+  ok(res, await authService.sendOtpFor(email, purpose));
+});
+
+export const login = asyncHandler(async (req: Request, res: Response) => {
+  const { email, password } = req.body;
+  ok(res, await authService.login(email, password));
+});
+
+export const verifyOtp = asyncHandler(async (req: Request, res: Response) => {
+  const { email, code, purpose } = req.body;
+  const result = await authService.verifyOtp(email, code, purpose);
+  if (result.activated) {
+    ok(res, { message: result.message });
+  } else {
+    ok(res, { token: result.token, user: result.user });
   }
-}
+});
 
-export async function sendOtp(req: Request, res: Response): Promise<void> {
-  try {
-    const { email, purpose } = req.body;
-    res.json(await authService.sendOtpFor(email, purpose));
-  } catch (err) {
-    handleError(res, err);
-  }
-}
+/** Requires authenticate() — userId comes from the token. */
+export const logout = asyncHandler(async (req: Request, res: Response) => {
+  const token = req.headers.authorization?.replace("Bearer ", "");
+  ok(res, await authService.logout(req.user!.id, token));
+});
 
-export async function login(req: Request, res: Response): Promise<void> {
-  try {
-    const { email, password } = req.body;
-    res.json(await authService.login(email, password));
-  } catch (err) {
-    handleError(res, err);
-  }
-}
-
-export async function verifyOtp(req: Request, res: Response): Promise<void> {
-  try {
-    const { email, code, purpose } = req.body;
-    const result = await authService.verifyOtp(email, code, purpose);
-    if (result.activated) {
-      res.json({ message: result.message });
-    } else {
-      res.json({ token: result.token, user: result.user });
-    }
-  } catch (err) {
-    handleError(res, err);
-  }
-}
-
-export async function me(req: Request, res: Response): Promise<void> {
-  try {
-    const user = await authService.getCurrentUser(req.user!.id);
-    if (!user) {
-      res.status(404).json({ error: "User not found" });
-      return;
-    }
-    res.json({ id: user.id, email: user.email, role: user.role, isActive: user.isActive });
-  } catch (err) {
-    handleError(res, err);
-  }
-}
-
-function handleError(res: Response, err: unknown): void {
-  if (err instanceof AuthError) {
-    res.status(err.status).json({ error: err.message });
+export const me = asyncHandler(async (req: Request, res: Response) => {
+  const user = await authService.getCurrentUser(req.user!.id);
+  if (!user) {
+    fail(res, 404, "USER_NOT_FOUND", "User not found");
     return;
   }
-  throw err;
-}
+  ok(res, user);
+});

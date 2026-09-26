@@ -1,10 +1,14 @@
 import jwt from "jsonwebtoken";
 import { config } from "../config";
 
+/**
+ * JWT contains ONLY userId, role, email.
+ * Never include: password, aadhaar, phone, constituency, candidate/ballot data.
+ */
 export interface JwtPayload {
   userId: string;
   role: string;
-  sessionId: string;
+  email: string;
 }
 
 export function sign(payload: JwtPayload): string {

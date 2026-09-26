@@ -5,21 +5,24 @@ export interface AuditEvent {
   eventType: string;
   electionId?: string;
   actorUserId?: string;
+  actorRole?: string;
   metadata?: Record<string, unknown>;
 }
 
 /**
  * Writes an AuditRecord row. Deliberately generic — every later module
  * (registrar, election, voting, blockchain) imports this unchanged.
+ * `eventType` is stored in the `action` column per the master schema.
  */
 export async function logEvent(event: AuditEvent): Promise<void> {
   try {
     await prisma.auditRecord.create({
       data: {
-        eventType: event.eventType,
+        action: event.eventType,
         electionId: event.electionId,
-        actorUserId: event.actorUserId,
-        metadata: event.metadata ? JSON.stringify(event.metadata) : undefined,
+        actorId: event.actorUserId,
+        actorRole: event.actorRole,
+        metadata: event.metadata ? (event.metadata as object) : undefined,
       },
     });
   } catch (err) {

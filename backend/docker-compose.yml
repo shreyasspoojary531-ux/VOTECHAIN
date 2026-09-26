@@ -1,0 +1,42 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: votechain
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: votechain
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U votechain"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: .
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://votechain:password@postgres:5432/votechain
+      PORT: "5000"
+      JWT_SECRET: change_me_in_real_deployments
+      JWT_EXPIRES_IN: 1d
+      OTP_EXPIRY_MINUTES: "5"
+      OTP_PEPPER: change_me_too
+      CORS_ORIGIN: http://localhost:3000
+      FABRIC_CHANNEL: votechannel
+      FABRIC_CHAINCODE: votechain
+      FABRIC_NETWORK: ./blockchain/network
+      SIMULATED_BLOCKCHAIN: "true"
+    ports:
+      - "5000:5000"
+    command: sh -c "npx prisma migrate deploy && node dist/src/server.js"
+
+volumes:
+  pgdata:
