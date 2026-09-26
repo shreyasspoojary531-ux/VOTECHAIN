@@ -7,7 +7,7 @@ import Navbar from '@/components/Navbar';
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-canvas text-ink font-sans selection:bg-accent/30 flex flex-col relative overflow-x-hidden">
+    <main className="min-h-screen bg-canvas text-ink font-sans selection:bg-accent/30 flex flex-col relative overflow-x-hidden">
       {/* Top Navbar */}
       <Navbar />
 
@@ -385,6 +385,6 @@ export default function HomePage() {
           </div>
         </div>
       </footer>
-    </div>
+    </main>
   );
 }
