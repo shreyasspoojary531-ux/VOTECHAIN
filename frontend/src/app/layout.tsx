@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import { Fraunces, Geist_Mono, Inter } from 'next/font/google';
+import { Fraunces, Geist_Mono, Inter, Poppins } from 'next/font/google';
 import localFont from 'next/font/local';
 import { AuthProvider } from '@/context/AuthContext';
 import ServiceWorkerCleaner from '@/components/ServiceWorkerCleaner';
@@ -23,9 +23,16 @@ const fraunces = Fraunces({
   display: 'swap',
 });
 
+const poppins = Poppins({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-poppins',
+  display: 'swap',
+});
+
 const headingFont = localFont({
   src: '../../public/fonts/mistical-spring.ttf',
-  variable: '--font-heading',
+  variable: '--font-mistical',
   display: 'swap',
 });
 
@@ -43,7 +50,7 @@ export default function RootLayout({
     <html
       lang="en"
       suppressHydrationWarning
-      className={`${inter.variable} ${geistMono.variable} ${fraunces.variable} ${headingFont.variable}`}
+      className={`${inter.variable} ${geistMono.variable} ${fraunces.variable} ${poppins.variable} ${headingFont.variable}`}
     >
       <body suppressHydrationWarning className="min-h-screen bg-canvas font-sans text-ink antialiased">
         <ServiceWorkerCleaner />

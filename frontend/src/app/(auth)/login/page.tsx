@@ -128,7 +128,7 @@ export default function LoginPage() {
           <div className="w-10 h-10 rounded-xl bg-surface-raised border border-hairline flex items-center justify-center mx-auto text-ink font-bold text-base shadow-sm">
             V
           </div>
-          <h1 className="text-2xl font-normal text-ink tracking-tight font-heading">
+          <h1 className="text-2xl font-medium text-ink tracking-tight font-poppins">
             Log in to VoteChain
           </h1>
           <p className="text-xs text-ink-secondary">
