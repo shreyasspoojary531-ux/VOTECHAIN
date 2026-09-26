@@ -106,90 +106,101 @@ export default function VotersListPage() {
         )}
 
         {/* Table / List Container */}
-        {loading ? (
-          <div className="space-y-3">
-            {[1, 2, 3].map((i) => (
-              <div
-                key={i}
-                className="h-14 animate-pulse rounded-lg border border-hairline bg-surface"
-              ></div>
-            ))}
-          </div>
-        ) : data && data.items.length > 0 ? (
-          <div className="space-y-4">
-            <div className="overflow-hidden rounded-lg border border-hairline bg-surface">
-              <table className="w-full text-left text-sm">
-                <thead className="border-b border-hairline bg-canvas text-xs uppercase tracking-wider text-ink-secondary">
-                  <tr>
-                    <th className="px-4 py-3 font-medium">Voter ID</th>
-                    <th className="px-4 py-3 font-medium">Name</th>
-                    <th className="px-4 py-3 font-medium">Aadhaar</th>
-                    <th className="px-4 py-3 font-medium">Constituency</th>
-                    <th className="px-4 py-3 font-medium">Registered Date</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-hairline">
-                  {data.items.map((voter) => (
-                    <tr key={voter.id} className="hover:bg-surface-raised">
-                      <td className="px-4 py-3 font-mono text-ink">{voter.id}</td>
-                      <td className="px-4 py-3 text-ink">{voter.name}</td>
-                      <td className="px-4 py-3 font-mono text-ink-secondary">
-                        •••• •••• {voter.aadhaarLast4}
-                      </td>
-                      <td className="px-4 py-3 font-mono text-ink-secondary">
-                        {voter.constituencyId}
-                      </td>
-                      <td className="px-4 py-3 font-mono text-xs text-ink-muted">
-                        {voter.registeredAt
-                          ? new Date(voter.registeredAt).toLocaleDateString()
-                          : 'N/A'}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Pagination Controls */}
-            <div className="flex items-center justify-between text-xs text-ink-secondary">
-              <span className="font-mono">
-                Showing page {data.page} of {Math.max(1, Math.ceil(data.total / data.pageSize))} (
-                {data.total} total)
-              </span>
-
-              <div className="flex gap-2">
-                <button
-                  disabled={page <= 1}
-                  onClick={() => setPage((prev) => Math.max(1, prev - 1))}
-                  className="rounded border border-hairline bg-surface px-3 py-1.5 font-mono text-ink hover:bg-surface-raised disabled:opacity-40"
-                >
-                  Previous
-                </button>
-                <button
-                  disabled={page * data.pageSize >= data.total}
-                  onClick={() => setPage((prev) => prev + 1)}
-                  className="rounded border border-hairline bg-surface px-3 py-1.5 font-mono text-ink hover:bg-surface-raised disabled:opacity-40"
-                >
-                  Next
-                </button>
+        {(() => {
+          const votersList = data?.items || data?.data || [];
+          if (loading) {
+            return (
+              <div className="space-y-3">
+                {[1, 2, 3].map((i) => (
+                  <div
+                    key={i}
+                    className="h-14 animate-pulse rounded-lg border border-hairline bg-surface"
+                  ></div>
+                ))}
               </div>
+            );
+          }
+
+          if (votersList.length > 0 && data) {
+            return (
+              <div className="space-y-4">
+                <div className="overflow-hidden rounded-lg border border-hairline bg-surface">
+                  <table className="w-full text-left text-sm">
+                    <thead className="border-b border-hairline bg-canvas text-xs uppercase tracking-wider text-ink-secondary">
+                      <tr>
+                        <th className="px-4 py-3 font-medium">Voter ID</th>
+                        <th className="px-4 py-3 font-medium">Name</th>
+                        <th className="px-4 py-3 font-medium">Aadhaar</th>
+                        <th className="px-4 py-3 font-medium">Constituency</th>
+                        <th className="px-4 py-3 font-medium">Registered Date</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-hairline">
+                      {votersList.map((voter) => (
+                        <tr key={voter.id} className="hover:bg-surface-raised">
+                          <td className="px-4 py-3 font-mono text-ink">{voter.id}</td>
+                          <td className="px-4 py-3 text-ink">{voter.name}</td>
+                          <td className="px-4 py-3 font-mono text-ink-secondary">
+                            •••• •••• {voter.aadhaarLast4}
+                          </td>
+                          <td className="px-4 py-3 font-mono text-ink-secondary">
+                            {voter.constituencyId}
+                          </td>
+                          <td className="px-4 py-3 font-mono text-xs text-ink-muted">
+                            {voter.registeredAt
+                              ? new Date(voter.registeredAt).toLocaleDateString()
+                              : 'N/A'}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+
+                {/* Pagination Controls */}
+                <div className="flex items-center justify-between text-xs text-ink-secondary">
+                  <span className="font-mono">
+                    Showing page {data.page} of {Math.max(1, Math.ceil(data.total / data.pageSize))} (
+                    {data.total} total)
+                  </span>
+
+                  <div className="flex gap-2">
+                    <button
+                      disabled={page <= 1}
+                      onClick={() => setPage((prev) => Math.max(1, prev - 1))}
+                      className="rounded border border-hairline bg-surface px-3 py-1.5 font-mono text-ink hover:bg-surface-raised disabled:opacity-40"
+                    >
+                      Previous
+                    </button>
+                    <button
+                      disabled={page * data.pageSize >= data.total}
+                      onClick={() => setPage((prev) => prev + 1)}
+                      className="rounded border border-hairline bg-surface px-3 py-1.5 font-mono text-ink hover:bg-surface-raised disabled:opacity-40"
+                    >
+                      Next
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          }
+
+          return (
+            /* Empty state */
+            <div className="rounded-lg border border-hairline bg-surface p-12 text-center space-y-3">
+              <p className="font-mono text-sm font-semibold text-ink">No voters registered yet</p>
+              <p className="text-xs text-ink-secondary max-w-sm mx-auto">
+                Use the voter registration form to enrol citizens into the official database.
+              </p>
+              <Link
+                href="/registrar/register-voter"
+                className="inline-block rounded-md bg-ink px-4 py-2 text-xs font-medium text-canvas hover:opacity-90"
+              >
+                + Register First Voter
+              </Link>
             </div>
-          </div>
-        ) : (
-          /* Empty state */
-          <div className="rounded-lg border border-hairline bg-surface p-12 text-center space-y-3">
-            <p className="font-mono text-sm font-semibold text-ink">No voters registered yet</p>
-            <p className="text-xs text-ink-secondary max-w-sm mx-auto">
-              Use the voter registration form to enrol citizens into the official database.
-            </p>
-            <Link
-              href="/registrar/register-voter"
-              className="inline-block rounded-md bg-ink px-4 py-2 text-xs font-medium text-canvas hover:opacity-90"
-            >
-              + Register First Voter
-            </Link>
-          </div>
-        )}
+          );
+        })()}
       </div>
     </main>
   );

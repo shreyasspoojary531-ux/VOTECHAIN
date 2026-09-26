@@ -75,6 +75,19 @@
   - Zero exposed secrets or raw stack traces.
 - Executed `npm run format`, `npm run lint`, `npm run typecheck`, and `npm run build` — 100% clean build.
 
+### 2026-09-26 — Fix 401/422 Errors & Envelope Auto-Unwrapping
+- **API Envelope & Auth Sync**:
+  - Updated `frontend/src/services/api.ts` to auto-unwrap backend's `{ success: true, data: T }` envelope. Updated `frontend/src/services/auth.api.ts` accordingly.
+  - Enhanced `ApiError` message parser in `frontend/src/services/api.ts` to inspect nested `{ error: { message, code } }` payload so exact backend error messages are displayed.
+- **Validation Schema Fixes**:
+  - Updated `createElectionBodySchema` in `backend/src/validators/election.validator.ts` to accept numerical timestamps/date strings and 1+ character names.
+- **Daemon & PostgreSQL Service Setup**:
+  - Started user-space PostgreSQL server on port 5432 using `/tmp` socket.
+  - Bound backend Express server explicitly to `0.0.0.0` port 8080 and running dev server.
+- **Verification**:
+  - `npx tsc --noEmit` and `npm run lint` in `frontend/`: 0 errors.
+  - `npx tsc --noEmit` in `backend/`: 0 errors.
+
 ## Decisions & Assumptions
 
 - **`src/` directory: yes.** The repo's pre-existing (empty) scaffold used `src/`, and keeping Next.js app code under `frontend/src/` separates it cleanly from config at `frontend/` root. Documented in FILESTRUCTURE.md.

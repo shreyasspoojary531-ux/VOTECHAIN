@@ -51,6 +51,24 @@ export default function BlockDetailPage() {
     fetchBlock();
   }, [fetchBlock]);
 
+  const raw = block as unknown as {
+    height?: number;
+    blockNumber?: number;
+    hash?: string;
+    blockHash?: string;
+    previousHash?: string;
+    timestamp?: number | string;
+    txCount?: number;
+    txIds?: string[];
+    transactions?: Array<{ txId: string }>;
+  } | null;
+
+  const height = raw ? raw.height ?? raw.blockNumber ?? blockId : blockId;
+  const hash = raw ? raw.hash || raw.blockHash || '' : '';
+  const previousHash = raw ? raw.previousHash || '' : '';
+  const timestampStr = raw?.timestamp ? new Date(raw.timestamp).toLocaleString() : 'N/A';
+  const txList = raw ? raw.txIds || raw.transactions?.map((t) => t.txId) || [] : [];
+
   return (
     <main className="min-h-screen bg-canvas p-6 text-ink md:p-12">
       <div className="mx-auto max-w-4xl space-y-8">
@@ -91,7 +109,7 @@ export default function BlockDetailPage() {
               <span className="font-mono text-xs uppercase tracking-widest text-success">
                 ● Committed Block
               </span>
-              <h1 className="text-3xl font-semibold tracking-tight">Block #{block.height}</h1>
+              <h1 className="text-3xl font-semibold tracking-tight">Block #{height}</h1>
             </div>
 
             {/* Block Hashes Card */}
@@ -103,17 +121,17 @@ export default function BlockDetailPage() {
               <div className="space-y-3 rounded-md border border-hairline bg-canvas p-4 text-xs">
                 <div className="flex flex-col gap-1 border-b border-hairline pb-3">
                   <span className="text-ink-secondary font-medium">Block Hash</span>
-                  <span className="font-mono text-ink break-all">{block.hash}</span>
+                  <span className="font-mono text-ink break-all">{hash}</span>
                 </div>
 
                 <div className="flex flex-col gap-1 border-b border-hairline pb-3">
                   <span className="text-ink-secondary font-medium">Previous Block Hash</span>
-                  <span className="font-mono text-ink-muted break-all">{block.previousHash}</span>
+                  <span className="font-mono text-ink-muted break-all">{previousHash}</span>
                 </div>
 
                 <div className="flex justify-between items-center pt-1 font-mono text-ink-secondary">
                   <span>Timestamp</span>
-                  <span>{new Date(block.timestamp).toLocaleString()}</span>
+                  <span>{timestampStr}</span>
                 </div>
               </div>
             </div>
@@ -121,30 +139,36 @@ export default function BlockDetailPage() {
             {/* Transactions List */}
             <div className="space-y-4">
               <h2 className="text-xs font-medium uppercase tracking-wider text-ink-secondary">
-                Committed Transactions ({block.txIds.length})
+                Committed Transactions ({txList.length})
               </h2>
 
               <div className="overflow-hidden rounded-lg border border-hairline bg-surface">
-                <ul className="divide-y divide-hairline">
-                  {block.txIds.map((txId, idx) => (
-                    <li
-                      key={idx}
-                      className="flex items-center justify-between p-4 hover:bg-surface-raised"
-                    >
-                      <div className="space-y-1">
-                        <span className="font-mono text-xs text-ink">{txId}</span>
-                        <p className="text-xs text-ink-muted">Type: VOTE / BALLOT_COMMIT</p>
-                      </div>
-
-                      <Link
-                        href={`/blockchain/transaction/${encodeURIComponent(txId)}`}
-                        className="rounded border border-hairline bg-surface px-3 py-1 font-mono text-xs text-ink hover:bg-hairline"
+                {txList.length > 0 ? (
+                  <ul className="divide-y divide-hairline">
+                    {txList.map((txId, idx) => (
+                      <li
+                        key={txId || idx}
+                        className="flex items-center justify-between p-4 hover:bg-surface-raised"
                       >
-                        Inspect Tx →
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
+                        <div className="space-y-1">
+                          <span className="font-mono text-xs text-ink">{txId}</span>
+                          <p className="text-xs text-ink-muted">Type: VOTE / BALLOT_COMMIT</p>
+                        </div>
+
+                        <Link
+                          href={`/blockchain/transaction/${encodeURIComponent(txId)}`}
+                          className="rounded border border-hairline bg-surface px-3 py-1 font-mono text-xs text-ink hover:bg-hairline"
+                        >
+                          Inspect Tx →
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <div className="p-6 text-center text-xs text-ink-muted font-mono">
+                    No transactions recorded in this block.
+                  </div>
+                )}
               </div>
             </div>
           </div>

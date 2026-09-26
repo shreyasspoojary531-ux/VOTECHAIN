@@ -50,18 +50,17 @@ async function main() {
   const registrarPasswordHash = await bcrypt.hash('Registrar@123', 10);
   const auditorPasswordHash = await bcrypt.hash('Auditor@123', 10);
   const voterPasswordHash = await bcrypt.hash('Voter@123', 10);
+  const genericPasswordHash = await bcrypt.hash('password123', 10);
 
-  // 1. Create ADMIN User
-  await prisma.user.create({
-    data: {
-      email: 'admin@votechain.demo',
-      passwordHash: adminPasswordHash,
-      role: Role.ADMIN,
-      isActive: true,
-    },
+  // 1. Create ADMIN Users (.demo & .gov)
+  await prisma.user.createMany({
+    data: [
+      { email: 'admin@votechain.demo', passwordHash: adminPasswordHash, role: Role.ADMIN, isActive: true },
+      { email: 'admin@votechain.gov', passwordHash: genericPasswordHash, role: Role.ADMIN, isActive: true },
+    ],
   });
 
-  // 2. Create REGISTRAR User
+  // 2. Create REGISTRAR Users (.demo & .gov)
   const registrarUser = await prisma.user.create({
     data: {
       email: 'registrar@votechain.demo',
@@ -71,14 +70,21 @@ async function main() {
     },
   });
 
-  // 3. Create AUDITOR User
   await prisma.user.create({
     data: {
-      email: 'auditor@votechain.demo',
-      passwordHash: auditorPasswordHash,
-      role: Role.AUDITOR,
+      email: 'registrar@votechain.gov',
+      passwordHash: genericPasswordHash,
+      role: Role.REGISTRAR,
       isActive: true,
     },
+  });
+
+  // 3. Create AUDITOR Users (.demo & .gov)
+  await prisma.user.createMany({
+    data: [
+      { email: 'auditor@votechain.demo', passwordHash: auditorPasswordHash, role: Role.AUDITOR, isActive: true },
+      { email: 'auditor@votechain.gov', passwordHash: genericPasswordHash, role: Role.AUDITOR, isActive: true },
+    ],
   });
 
   // 4. Create 50 MockAadhaar Records
@@ -93,11 +99,8 @@ async function main() {
     const city = CITIES[(i - 1) % CITIES.length];
     const address = `#${100 + i}, Sector ${((i * 3) % 20) + 1}, ${city}`;
     const phone = `98765${String(10000 + i).slice(-5)}`;
-    
-    // Aadhaar number formatted as 12 digits
     const aadhaarNumber = `9999${String(10000000 + i)}`;
 
-    // Varied DOB: 5 records under 18 (minors), 45 records adults (18+)
     let dob: Date;
     if (i <= 5) {
       const year = 2008 + (i % 5);
@@ -123,10 +126,25 @@ async function main() {
     mockAadhaars.push(aadhaarRecord);
   }
 
-  // 5. Seed 10 VOTER users linked to adult MockAadhaar records (records index 5..14)
+  // 5. Seed VOTER users (.demo & .gov)
+  await prisma.user.create({
+    data: {
+      email: 'voter@votechain.gov',
+      passwordHash: genericPasswordHash,
+      role: Role.VOTER,
+      isActive: true,
+      voterProfile: {
+        create: {
+          aadhaarId: mockAadhaars[5].id,
+          registeredByUserId: registrarUser.id,
+        },
+      },
+    },
+  });
+
   for (let vIndex = 0; vIndex < 10; vIndex++) {
     const aadhaarRecord = mockAadhaars[5 + vIndex];
-    const voterUser = await prisma.user.create({
+    await prisma.user.create({
       data: {
         email: `voter${vIndex + 1}@votechain.demo`,
         passwordHash: voterPasswordHash,
@@ -140,17 +158,16 @@ async function main() {
         },
       },
     });
-    console.log(`Created Voter: ${voterUser.email} linked to Aadhaar ${aadhaarRecord.aadhaarNumber}`);
   }
 
   console.log(`
 ✅ Database seeding completed successfully!
 ---------------------------------------------------------
-Admin User:     admin@votechain.demo (Password: Admin@123)
-Registrar User: registrar@votechain.demo (Password: Registrar@123)
-Auditor User:   auditor@votechain.demo (Password: Auditor@123)
-Voter Users:    voter1..10@votechain.demo (Password: Voter@123)
-Mock Aadhaar:   50 records total (5 minors under 18, 45 adults)
+Admin Accounts:     admin@votechain.demo (Admin@123), admin@votechain.gov (password123)
+Registrar Accounts: registrar@votechain.demo (Registrar@123), registrar@votechain.gov (password123)
+Auditor Accounts:   auditor@votechain.demo (Auditor@123), auditor@votechain.gov (password123)
+Voter Accounts:     voter@votechain.gov (password123), voter1..10@votechain.demo (Voter@123)
+Mock Aadhaar:       50 records total
 ---------------------------------------------------------
   `);
 }

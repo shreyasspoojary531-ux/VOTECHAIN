@@ -7,12 +7,18 @@ import { useRouter } from 'next/navigation';
 import { register as registerApi } from '@/services/auth.api';
 import { sendOtp } from '@/services/otp.api';
 import { ApiError } from '@/services/api';
-import type { RegisterRequest, Role } from '@/types';
+import type { Role } from '@/types';
 
 export default function RegisterPage() {
   const router = useRouter();
 
-  const [formData, setFormData] = useState<RegisterRequest>({
+  const [formData, setFormData] = useState<{
+    name: string;
+    email: string;
+    password: string;
+    aadhaarNumber: string;
+    role: Role;
+  }>({
     name: '',
     email: '',
     password: '',

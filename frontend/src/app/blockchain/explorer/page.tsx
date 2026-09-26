@@ -78,13 +78,24 @@ export default function BlockchainExplorerPage() {
         <ChainVisual
           blocks={
             blocks && blocks.length > 0
-              ? blocks.map((b) => ({
-                  index: b.height,
-                  hash: b.hash,
-                  previousHash: b.previousHash,
-                  timestamp: new Date(b.timestamp).toISOString(),
-                  txCount: b.txCount,
-                }))
+              ? blocks.map((b) => {
+                  const raw = b as unknown as {
+                    height?: number;
+                    blockNumber?: number;
+                    hash?: string;
+                    blockHash?: string;
+                    previousHash?: string;
+                    timestamp?: number | string;
+                    txCount?: number;
+                  };
+                  return {
+                    index: raw.height ?? raw.blockNumber ?? 0,
+                    hash: raw.hash || raw.blockHash || '',
+                    previousHash: raw.previousHash || '',
+                    timestamp: new Date(raw.timestamp || Date.now()).toISOString(),
+                    txCount: raw.txCount || 0,
+                  };
+                })
               : undefined
           }
         />
@@ -133,26 +144,35 @@ export default function BlockchainExplorerPage() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-hairline">
-                  {blocks.map((block) => (
-                    <tr key={block.height} className="hover:bg-surface-raised">
-                      <td className="px-4 py-3 font-mono font-bold text-ink">#{block.height}</td>
-                      <td className="px-4 py-3 font-mono text-xs text-ink-secondary max-w-xs truncate">
-                        {block.hash}
-                      </td>
-                      <td className="px-4 py-3 font-mono text-xs text-ink">{block.txCount} txs</td>
-                      <td className="px-4 py-3 font-mono text-xs text-ink-muted">
-                        {new Date(block.timestamp).toLocaleString()}
-                      </td>
-                      <td className="px-4 py-3 text-right">
-                        <Link
-                          href={`/blockchain/block/${block.height}`}
-                          className="rounded border border-hairline bg-surface px-3 py-1 text-xs font-mono text-ink hover:bg-hairline"
-                        >
-                          View Block →
-                        </Link>
-                      </td>
-                    </tr>
-                  ))}
+                  {blocks.map((block, idx) => {
+                    const blockHeight =
+                      block.height ?? (block as unknown as { blockNumber?: number }).blockNumber ?? idx;
+                    const blockHash =
+                      block.hash || (block as unknown as { blockHash?: string }).blockHash || '';
+                    const txCount = block.txCount ?? 0;
+                    const timestampStr = block.timestamp ? new Date(block.timestamp).toLocaleString() : 'N/A';
+
+                    return (
+                      <tr key={blockHash || `block-${blockHeight}-${idx}`} className="hover:bg-surface-raised">
+                        <td className="px-4 py-3 font-mono font-bold text-ink">#{blockHeight}</td>
+                        <td className="px-4 py-3 font-mono text-xs text-ink-secondary max-w-xs truncate">
+                          {blockHash}
+                        </td>
+                        <td className="px-4 py-3 font-mono text-xs text-ink">{txCount} txs</td>
+                        <td className="px-4 py-3 font-mono text-xs text-ink-muted">
+                          {timestampStr}
+                        </td>
+                        <td className="px-4 py-3 text-right">
+                          <Link
+                            href={`/blockchain/block/${blockHeight}`}
+                            className="rounded border border-hairline bg-surface px-3 py-1 text-xs font-mono text-ink hover:bg-hairline"
+                          >
+                            View Block →
+                          </Link>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

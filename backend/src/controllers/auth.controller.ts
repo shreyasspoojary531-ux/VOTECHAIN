@@ -1,7 +1,19 @@
 import { Request, Response, NextFunction } from 'express';
-
 import { authService } from '../services/auth.service';
 import { AppError } from '../middleware/errorHandler';
+
+/**
+ * POST /auth/register
+ */
+export async function register(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const { email, password, name, aadhaarNumber, role } = req.body;
+    const result = await authService.register({ email, password, name, aadhaarNumber, role });
+    res.status(201).json({ success: true, data: result });
+  } catch (err) {
+    next(err);
+  }
+}
 
 /**
  * POST /auth/login
@@ -12,7 +24,6 @@ export async function login(req: Request, res: Response, next: NextFunction): Pr
     const { email, password } = req.body as { email: string; password: string };
     const result = await authService.login(email, password);
 
-    // devOtp surfaces only in development; strip the key entirely otherwise
     const data: Record<string, unknown> = { ...result };
     if (result.devOtp) data.devOtp = result.devOtp;
     res.status(200).json({ success: true, data });
@@ -22,8 +33,7 @@ export async function login(req: Request, res: Response, next: NextFunction): Pr
 }
 
 /**
- * POST /auth/send-otp — issues an OTP for a pending voter login challenge.
- * Responds with devOtp only in development.
+ * POST /auth/send-otp
  */
 export async function sendOtp(req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
@@ -46,7 +56,25 @@ export async function verifyOtp(req: Request, res: Response, next: NextFunction)
   }
 }
 
-/** POST /auth/logout — stateless JWT: client discards the token. */
+/** POST /auth/refresh — silent token refresh when expired or near expiry. */
+export async function refreshToken(req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const header = req.headers.authorization;
+    const bodyToken = req.body?.token;
+    const rawToken = (header && header.startsWith('Bearer ')) ? header.slice(7).trim() : bodyToken;
+
+    if (!rawToken) {
+      throw new AppError('Token required for refresh', 401, true, 'TOKEN_REQUIRED');
+    }
+
+    const result = await authService.refreshToken(rawToken);
+    res.status(200).json({ success: true, data: result });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/** POST /auth/logout */
 export function logout(_req: Request, res: Response): void {
   res.status(200).json({
     success: true,

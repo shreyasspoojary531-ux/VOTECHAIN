@@ -55,9 +55,39 @@ export async function listRegisteredVoters(
   if (search) {
     params.set('search', search);
   }
-  return apiClient<Paginated<Voter>>(`/registrar/voters?${params.toString()}`, {
-    method: 'GET',
-  });
+  const result = await apiClient<Paginated<Voter> | Voter[]>(
+    `/registrar/voters?${params.toString()}`,
+    {
+      method: 'GET',
+    },
+  );
+
+  if (Array.isArray(result)) {
+    return {
+      items: result,
+      data: result,
+      total: result.length,
+      page,
+      pageSize,
+    };
+  }
+
+  const raw = result as unknown as {
+    items?: Voter[];
+    data?: Voter[];
+    total?: number;
+    page?: number;
+    pageSize?: number;
+  };
+  const list = raw?.items || raw?.data || [];
+
+  return {
+    items: list,
+    data: list,
+    total: raw?.total ?? list.length,
+    page: raw?.page ?? page,
+    pageSize: raw?.pageSize ?? pageSize,
+  };
 }
 
 /**
