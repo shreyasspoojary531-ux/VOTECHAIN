@@ -10,7 +10,7 @@ Blockchain-secured e-voting platform. This repository holds the full stack:
 | `backend/`  | API service                                                    |
 | `blockchain/` | Ledger / chain services                                      |
 | `database/` | Schema and migrations                                          |
-| `docs/`     | Architecture, API contracts, security model (read before feature work) |
+| `documentation/` | Architecture, API contracts, security model (read before feature work) |
 | `scripts/`  | Orchestration helpers                                          |
 
 ## Source of truth (read in this order before any task)
@@ -19,7 +19,7 @@ Blockchain-secured e-voting platform. This repository holds the full stack:
 2. `MEMORY.md` — progress log and decisions & assumptions made so far.
 3. `FILESTRUCTURE.md` — real folder tree; update it whenever files are added/removed.
 4. `DESIGN.md` — visual direction: tokens, typography, layout language.
-5. `docs/api/*.md` — endpoint contracts when wiring services.
+5. `documentation/api.md` — endpoint contracts when wiring services; `documentation/` holds all project docs.
 
 ## Frontend conventions
 

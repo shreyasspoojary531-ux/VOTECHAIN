@@ -14,7 +14,7 @@
 ├── backend/               # API service (Express + Prisma; full stack workflow live)
 ├── blockchain/            # ledger services (isolated abstraction layer in backend/src/blockchain)
 ├── database/              # schema/migrations & user-space PostgreSQL cluster
-├── docs/                  # architecture/API/security docs
+├── documentation/         # architecture/API/security/testing/deployment docs
 ├── scripts/               # orchestration helpers
 └── frontend/              # ← Next.js web app
 ```
@@ -27,7 +27,6 @@ Stack: Express + TypeScript + Prisma (PostgreSQL) · JWT auth · RBAC · Zod · 
 backend/
 ├── package.json               # scripts: dev, build, start, prisma:*
 ├── tsconfig.json
-├── Dockerfile
 ├── .env                       # local config (PORT=8080, DATABASE_URL socket)
 ├── prisma/
 │   ├── schema.prisma          # 11 models + enums

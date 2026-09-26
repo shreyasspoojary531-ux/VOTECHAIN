@@ -1,36 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# VoteChain — Blockchain-Secured E-Voting Platform
 
-## Getting Started
+A verifiable electronic voting platform with four roles (Registrar, Voter, Admin, Auditor). Voter privacy is enforced cryptographically (Aadhaar-based identity → OTP verification → ballot cast → verifiable receipt); integrity is enforced by an append-only ledger that anyone may inspect.
 
-First, run the development server:
+## Quickstart
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Backend (PostgreSQL must be running locally)
+cd backend
+npm install
+npx prisma migrate dev && npx prisma db seed
+npm run dev            # http://localhost:8080/api/v1
+
+# Frontend
+cd frontend
+npm install
+cp .env.example .env.local   # NEXT_PUBLIC_API_BASE_URL=http://localhost:8080/api/v1
+npm run dev            # http://localhost:3000
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Repository layout
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+| Directory        | Concern                                                        |
+| ---------------- | -------------------------------------------------------------- |
+| `frontend/`      | Next.js 15 (App Router) + TypeScript + Tailwind CSS v4 web app |
+| `backend/`       | Express + TypeScript + Prisma API service                      |
+| `blockchain/`    | Ledger abstraction (isolated inside `backend/src/blockchain`)  |
+| `database/`      | Schema/migrations and user-space PostgreSQL cluster            |
+| `documentation/` | All project documentation (start at `documentation/README.md`) |
+| `scripts/`       | Orchestration helpers                                          |
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Documentation
 
-## Learn More
+Full documentation lives in [`documentation/`](documentation/README.md): architecture, API reference, data model, security model, testing, deployment, and limitations.
 
-To learn more about Next.js, take a look at the following resources:
+## Scripts
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Location           | Commands |
+| ------------------ | -------- |
+| `backend/`         | `npm run dev`, `npm run build`, `npm start`, `npm run prisma:generate`, `npm run prisma:migrate`, `npm run prisma:seed` |
+| `frontend/`        | `npm run dev`, `npm run build`, `npm start`, `npm run lint`, `npm run typecheck`, `npm run format` |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Requirements
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Node.js 20+
+- PostgreSQL 16
