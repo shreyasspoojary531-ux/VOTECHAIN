@@ -1,33 +1,70 @@
-import { api } from './api';
-import type { Paginated, Voter } from '@/types';
+import { apiClient } from './api';
+import type {
+  AadhaarSearchQuery,
+  AadhaarSearchResult,
+  Paginated,
+  RegisterVoterRequest,
+  RegisterVoterResponse,
+  Voter,
+} from '@/types';
 
-// Hard dependency on the shared client; request bodies land with the registrar prompt.
-void api;
-
-export interface AadhaarSearchParams {
-  query: string;
-  page?: number;
-  pageSize?: number;
+export interface RegistrarSummary {
+  votersRegisteredToday: number;
+  pendingVerifications: number;
+  totalRegistered: number;
 }
 
-export interface RegisterVoterParams {
-  aadhaar: string;
-  name: string;
-  constituencyId: string;
+/**
+ * GET /api/v1/registrar/aadhaar/search
+ */
+export async function searchAadhaar(query: AadhaarSearchQuery): Promise<AadhaarSearchResult[]> {
+  const searchParams = new URLSearchParams();
+  if (query.aadhaarNumber) {
+    searchParams.set('aadhaarNumber', query.aadhaarNumber);
+  }
+  const queryString = searchParams.toString();
+  const path = `/registrar/aadhaar/search${queryString ? `?${queryString}` : ''}`;
+
+  return apiClient<AadhaarSearchResult[]>(path, {
+    method: 'GET',
+  });
 }
 
-function notImplemented(endpoint: string): never {
-  throw new Error(`${endpoint} is not implemented yet (scaffold stub)`);
+/**
+ * POST /api/v1/registrar/register-voter
+ */
+export async function registerVoter(data: RegisterVoterRequest): Promise<RegisterVoterResponse> {
+  return apiClient<RegisterVoterResponse>('/registrar/register-voter', {
+    method: 'POST',
+    body: data,
+  });
 }
 
-/** GET /api/v1/registrar/aadhaar/search */
-export async function searchAadhaar(params: AadhaarSearchParams): Promise<Paginated<Voter>> {
-  void params;
-  throw notImplemented('GET /api/v1/registrar/aadhaar/search');
+/**
+ * GET /api/v1/registrar/voters
+ */
+export async function listRegisteredVoters(
+  page = 1,
+  pageSize = 10,
+  search = '',
+): Promise<Paginated<Voter>> {
+  const params = new URLSearchParams({
+    page: String(page),
+    pageSize: String(pageSize),
+  });
+  if (search) {
+    params.set('search', search);
+  }
+  return apiClient<Paginated<Voter>>(`/registrar/voters?${params.toString()}`, {
+    method: 'GET',
+  });
 }
 
-/** POST /api/v1/registrar/register-voter */
-export async function registerVoter(params: RegisterVoterParams): Promise<Voter> {
-  void params;
-  throw notImplemented('POST /api/v1/registrar/register-voter');
+/**
+ * GET /api/v1/registrar/summary
+ */
+export async function getRegistrarSummary(): Promise<RegistrarSummary> {
+  return apiClient<RegistrarSummary>('/registrar/summary', {
+    method: 'GET',
+  });
 }

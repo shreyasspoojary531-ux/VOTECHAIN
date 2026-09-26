@@ -2,6 +2,15 @@
 
 > Purpose: continuity between prompts/sessions. Log every meaningful step in the Progress Log and every judgment call under Decisions & Assumptions so future agents don't re-litigate settled questions or unknowingly contradict them.
 
+### 2026-09-26 — Registrar Role Module (`services/registration.api.ts` & `/registrar/*` pages)
+- Implemented `services/registration.api.ts` (`searchAadhaar`, `registerVoter`, `listRegisteredVoters`, `getRegistrarSummary`) using `apiClient`.
+- Built Resend-style Registrar module pages:
+  - `app/registrar/dashboard/page.tsx`: Summary cards (voters registered today, pending actions, total registered), loading skeleton, error handling, quick action cards.
+  - `app/registrar/aadhaar-search/page.tsx`: Search form, results table with "Register this voter" action per row deep-linking with query parameters (`?aadhaarNumber=...&name=...`), default/searching/empty/error states.
+  - `app/registrar/register-voter/page.tsx`: Enrolment form prefilled from query params, client validation, loading/error/success states with created voter ID confirmation card.
+  - `app/registrar/voters/page.tsx`: Paginated, searchable list of registered voters with pagination controls, loading skeleton, empty state, error banner.
+- Verified `npm run lint`, `npm run typecheck`, `npm run format`, and `npm run build` pass cleanly with static page generation.
+
 ### 2026-09-26 — Auth Services, AuthContext, and Resend-Style Auth Pages (`/login`, `/register`, `/otp`)
 - Implemented `services/auth.api.ts` (`register`, `login`, `logout`) using `apiClient`.
 - Implemented `services/otp.api.ts` (`sendOtp`, `verifyOtp`) using `apiClient`.
