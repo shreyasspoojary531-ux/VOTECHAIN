@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens (DESIGN.md). Tailwind v4 CSS-first configuration: every token
+ * below becomes a standard Tailwind utility (bg-canvas, border-hairline,
+ * rounded-md, font-sans, ...).
+ */
+@theme {
+  /* Canvas — true black, per DESIGN.md */
+  --color-canvas: #000000;
+  --color-surface: #0a0a0a;
+  --color-surface-raised: #141414;
+
+  /* Hairline borders (DESIGN.md scale: black → #1A1A1A → #262626) */
+  --color-hairline: #1f1f1f;
+  --color-hairline-strong: #262626;
+  --color-hairline-emphasis: #2e2e2e;
+
+  /* Ink (text on black) */
+  --color-ink: #f5f5f4;
+  --color-ink-secondary: #a3a3a3;
+  --color-ink-muted: #6b6b6b;
+
+  /* Semantic */
+  --color-success: #34d399;
+  --color-danger: #f87171;
+  --color-warning: #fbbf24;
+  --color-accent: #818cf8;
+
+  /* Radius scale: md 8px, lg 12px, full per DESIGN.md */
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-full: 9999px;
+
+  /* Font families — wired to next/font variables in app/layout.tsx */
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+  --font-display: var(--font-fraunces), Georgia, serif;
+}
+
+/* True-black canvas with light ink, applied globally. */
+body {
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+}
