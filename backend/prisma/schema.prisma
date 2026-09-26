@@ -1,0 +1,65 @@
+// ---------------------------------------------------------------------------
+// E-Voting platform schema
+// Phase 2 — Auth & OTP module
+// NOTE: SQLite connector — no enum support; role/purpose values are validated
+// at the application layer (Zod) instead.
+// ---------------------------------------------------------------------------
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+/// Platform users. Never store plaintext passwords — only the bcrypt hash.
+/// role: "ADMIN" | "REGISTRAR" | "VOTER" (registration defaults to VOTER;
+/// ADMIN and REGISTRAR exist only via seed).
+model User {
+  id           String    @id @default(uuid())
+  email        String    @unique
+  passwordHash String
+  role         String    @default("VOTER")
+  isActive     Boolean   @default(false)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  otpCodes OTPCode[]
+
+  @@index([email])
+}
+
+/// One-time codes. At most one valid (unconsumed, unexpired) row per
+/// (userId, purpose) — creating a new one invalidates prior unconsumed ones.
+/// codeHash is an HMAC-SHA256 hash of the 6-digit code, never the raw code.
+/// purpose: "LOGIN" | "REGISTRATION".
+model OTPCode {
+  id         String    @id @default(uuid())
+  userId     String
+  purpose    String
+  codeHash   String
+  expiresAt  DateTime
+  consumedAt DateTime?
+  createdAt  DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, purpose, consumedAt, expiresAt])
+}
+
+/// Append-only audit trail. metadata is a JSON string (SQLite has no JSON type).
+/// No FK to User — actorUserId is a loose reference so audit rows survive
+/// user deletion. Every later module writes through audit.service.logEvent.
+model AuditRecord {
+  id          String   @id @default(uuid())
+  eventType   String
+  electionId  String?
+  actorUserId String?
+  metadata    String?
+  createdAt   DateTime @default(now())
+
+  @@index([eventType, createdAt])
+  @@index([electionId])
+}
