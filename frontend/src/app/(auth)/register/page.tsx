@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { register as registerApi } from '@/services/auth.api';
 import { sendOtp } from '@/services/otp.api';
@@ -49,7 +50,6 @@ export default function RegisterPage() {
     e.preventDefault();
     setError(null);
 
-    // Client-side validation before API call
     const validationError = validate();
     if (validationError) {
       setError(validationError);
@@ -64,18 +64,12 @@ export default function RegisterPage() {
         aadhaarNumber: formData.aadhaarNumber.replace(/\s+/g, ''),
       });
 
-      // Send OTP to user email/identifier prior to routing to /otp
       try {
         await sendOtp({ identifier: formData.email });
       } catch {
         // Continue to /otp page even if mock OTP dispatch endpoint fails
       }
 
-      /**
-       * Flow Decision Note:
-       * Routes to /otp upon registration because multi-factor OTP verification is required
-       * before full session activation and identity confirmation on the ledger.
-       */
       router.push(`/otp?identifier=${encodeURIComponent(formData.email)}`);
     } catch (err: unknown) {
       if (err instanceof ApiError) {
@@ -91,28 +85,66 @@ export default function RegisterPage() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-6 bg-canvas text-ink">
-      <div className="w-full max-w-sm space-y-6">
-        <div className="space-y-2 text-center">
-          <h1 className="text-2xl font-semibold tracking-tight">Create an Account</h1>
-          <p className="text-sm text-ink-secondary">Register to join the VoteChain platform</p>
+    <main className="relative flex min-h-screen flex-col items-center justify-center p-6 bg-canvas text-ink selection:bg-accent/30 overflow-hidden">
+      {/* Top Left Home Back Link */}
+      <Link
+        href="/"
+        className="fixed top-6 left-6 text-xs text-ink-secondary hover:text-ink transition-colors flex items-center gap-1.5 z-20 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-accent rounded-sm px-1.5 py-1"
+      >
+        <span aria-hidden="true">&lt;</span> Home
+      </Link>
+
+      {/* Ambient Full-Bleed Background Texture */}
+      <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
+        <Image
+          src="/bg-auth.png"
+          alt="Ambient Auth Background"
+          fill
+          priority
+          className="object-cover opacity-75"
+        />
+        {/* Scrim Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-canvas/70 via-canvas/40 to-canvas/80" />
+      </div>
+
+      {/* Centered Register Card Container */}
+      <div className="w-full max-w-sm z-10 space-y-6 text-center my-8">
+        {/* Brand Logo & Header */}
+        <div className="space-y-3">
+          <div className="w-10 h-10 rounded-xl bg-surface-raised border border-hairline flex items-center justify-center mx-auto text-ink font-bold text-base shadow-sm">
+            V
+          </div>
+          <h1 className="text-2xl font-medium text-ink tracking-tight font-poppins">
+            Create an Account
+          </h1>
+          <p className="text-xs text-ink-secondary">
+            Already have an account?{' '}
+            <Link href="/login" className="text-ink font-semibold hover:underline">
+              Log in
+            </Link>
+          </p>
         </div>
 
+        {/* Main Register Form */}
         <form
           onSubmit={handleSubmit}
-          className="space-y-4 rounded-lg border border-hairline bg-surface p-6"
+          className="resend-card p-6 border border-hairline/80 space-y-4 text-left shadow-2xl"
         >
           {error && (
             <div
               role="alert"
-              className="rounded-md border border-danger/30 bg-danger/10 p-3 text-xs text-danger"
+              aria-live="polite"
+              className="rounded-xl border border-danger/40 bg-danger/10 p-3 text-xs text-danger flex items-center gap-2"
             >
-              {error}
+              <svg className="w-4 h-4 text-danger shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>{error}</span>
             </div>
           )}
 
           <div className="space-y-1.5">
-            <label htmlFor="name" className="text-xs font-medium text-ink-secondary">
+            <label htmlFor="name" className="text-xs font-medium text-ink-secondary text-left block">
               Full Name
             </label>
             <input
@@ -122,13 +154,13 @@ export default function RegisterPage() {
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
               placeholder="John Doe"
-              className="w-full rounded-md border border-hairline-strong bg-canvas px-3 py-2 text-sm text-ink placeholder-ink-muted focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+              className="w-full rounded-xl bg-[#0c0c0c] border border-hairline-strong px-3.5 py-2.5 text-sm text-ink placeholder:text-ink-muted focus:outline-none focus:border-ink focus:ring-1 focus:ring-ink transition-all disabled:opacity-50"
               disabled={loading}
             />
           </div>
 
           <div className="space-y-1.5">
-            <label htmlFor="email" className="text-xs font-medium text-ink-secondary">
+            <label htmlFor="email" className="text-xs font-medium text-ink-secondary text-left block">
               Email Address
             </label>
             <input
@@ -138,13 +170,13 @@ export default function RegisterPage() {
               value={formData.email}
               onChange={(e) => setFormData({ ...formData, email: e.target.value })}
               placeholder="voter@example.com"
-              className="w-full rounded-md border border-hairline-strong bg-canvas px-3 py-2 text-sm text-ink placeholder-ink-muted focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+              className="w-full rounded-xl bg-[#0c0c0c] border border-hairline-strong px-3.5 py-2.5 text-sm text-ink placeholder:text-ink-muted focus:outline-none focus:border-ink focus:ring-1 focus:ring-ink transition-all disabled:opacity-50"
               disabled={loading}
             />
           </div>
 
           <div className="space-y-1.5">
-            <label htmlFor="aadhaarNumber" className="text-xs font-medium text-ink-secondary">
+            <label htmlFor="aadhaarNumber" className="text-xs font-medium text-ink-secondary text-left block">
               12-Digit Aadhaar Number
             </label>
             <input
@@ -155,13 +187,13 @@ export default function RegisterPage() {
               value={formData.aadhaarNumber}
               onChange={(e) => setFormData({ ...formData, aadhaarNumber: e.target.value })}
               placeholder="123456789012"
-              className="w-full rounded-md border border-hairline-strong bg-canvas px-3 py-2 font-mono text-sm text-ink placeholder-ink-muted focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+              className="w-full rounded-xl bg-[#0c0c0c] border border-hairline-strong px-3.5 py-2.5 font-mono text-sm text-ink placeholder:text-ink-muted focus:outline-none focus:border-ink focus:ring-1 focus:ring-ink transition-all disabled:opacity-50"
               disabled={loading}
             />
           </div>
 
           <div className="space-y-1.5">
-            <label htmlFor="password" className="text-xs font-medium text-ink-secondary">
+            <label htmlFor="password" className="text-xs font-medium text-ink-secondary text-left block">
               Password
             </label>
             <input
@@ -171,20 +203,20 @@ export default function RegisterPage() {
               value={formData.password}
               onChange={(e) => setFormData({ ...formData, password: e.target.value })}
               placeholder="••••••••"
-              className="w-full rounded-md border border-hairline-strong bg-canvas px-3 py-2 text-sm text-ink placeholder-ink-muted focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+              className="w-full rounded-xl bg-[#0c0c0c] border border-hairline-strong px-3.5 py-2.5 text-sm text-ink placeholder:text-ink-muted focus:outline-none focus:border-ink focus:ring-1 focus:ring-ink transition-all disabled:opacity-50"
               disabled={loading}
             />
           </div>
 
           <div className="space-y-1.5">
-            <label htmlFor="role" className="text-xs font-medium text-ink-secondary">
+            <label htmlFor="role" className="text-xs font-medium text-ink-secondary text-left block">
               Account Role
             </label>
             <select
               id="role"
               value={formData.role}
               onChange={(e) => setFormData({ ...formData, role: e.target.value as Role })}
-              className="w-full rounded-md border border-hairline-strong bg-canvas px-3 py-2 text-sm text-ink focus:border-accent focus:outline-none focus:ring-1 focus:ring-accent"
+              className="w-full rounded-xl bg-[#0c0c0c] border border-hairline-strong px-3.5 py-2.5 text-sm text-ink focus:outline-none focus:border-ink focus:ring-1 focus:ring-ink transition-all disabled:opacity-50"
               disabled={loading}
             >
               <option value="VOTER">Voter</option>
@@ -197,43 +229,33 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            className="flex w-full items-center justify-center rounded-md bg-ink py-2 text-sm font-medium text-canvas transition-opacity hover:opacity-90 disabled:opacity-50"
+            className="w-full bg-ink text-canvas font-medium text-xs rounded-xl py-3 hover:bg-neutral-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           >
             {loading ? (
-              <span className="flex items-center gap-2">
-                <svg
-                  className="h-4 w-4 animate-spin text-canvas"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  ></circle>
-                  <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                  ></path>
+              <>
+                <svg className="animate-spin w-4 h-4 text-canvas" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
                 </svg>
-                Registering...
-              </span>
+                <span>Creating Account...</span>
+              </>
             ) : (
               'Create Account'
             )}
           </button>
         </form>
 
-        <p className="text-center text-xs text-ink-muted">
-          Already have an account?{' '}
-          <Link href="/login" className="font-medium text-ink hover:underline">
-            Sign in
+        {/* Quiet Footer Terms Note */}
+        <p className="text-[11px] text-ink-muted text-center leading-relaxed">
+          By signing up, you agree to our{' '}
+          <Link href="/elections" className="text-ink-secondary hover:text-ink underline transition-colors">
+            Terms
+          </Link>{' '}
+          and{' '}
+          <Link href="/verification" className="text-ink-secondary hover:text-ink underline transition-colors">
+            Privacy Policy
           </Link>
+          .
         </p>
       </div>
     </main>

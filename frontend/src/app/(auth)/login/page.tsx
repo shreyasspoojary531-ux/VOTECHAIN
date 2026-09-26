@@ -111,14 +111,14 @@ export default function LoginPage() {
       {/* Ambient Full-Bleed Background Texture */}
       <div className="absolute inset-0 -z-10 overflow-hidden pointer-events-none">
         <Image
-          src="/bg-login.png"
-          alt="Ambient Login Background"
+          src="/bg-auth.png"
+          alt="Ambient Auth Background"
           fill
           priority
-          className="object-cover opacity-40 mix-blend-screen"
+          className="object-cover opacity-75"
         />
         {/* Scrim Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-canvas/80 via-canvas/60 to-canvas" />
+        <div className="absolute inset-0 bg-gradient-to-b from-canvas/70 via-canvas/40 to-canvas/80" />
       </div>
 
       {/* Centered Login Card Container */}
