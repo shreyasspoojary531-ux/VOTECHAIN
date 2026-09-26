@@ -2,6 +2,15 @@
 
 > Purpose: continuity between prompts/sessions. Log every meaningful step in the Progress Log and every judgment call under Decisions & Assumptions so future agents don't re-litigate settled questions or unknowingly contradict them.
 
+### 2026-09-26 — Core Election + Voting Module (`services/election.api.ts`, `services/voting.api.ts`, and voting pages)
+- Implemented `services/election.api.ts` (`getElections`, `getElectionById`, `createElection`) and `services/voting.api.ts` (`castVote`, `getReceipt`) using `apiClient`.
+- Built citizen voting journey pages:
+  - `app/elections/page.tsx`: Available elections cards with status badges, dates, view/vote actions, loading skeleton, empty state, error state.
+  - `app/elections/[id]/page.tsx`: Election details, candidate cards, polls timeline, and vote CTA.
+  - `app/vote/[electionId]/page.tsx`: Multi-step voting flow (`SELECT` candidate radio group -> `REVIEW` explicit confirmation -> `SUBMITTING` ledger commit state). On success redirects to `/verification/[txId]`. On error permits manual retry.
+  - `app/verification/[txId]/page.tsx`: End-to-end vote receipt verification screen displaying `txId`, `receiptHash`, timestamp, block hash while preserving ballot secrecy. Deep-links to `/blockchain/transaction/[txId]`.
+- Verified `npm run lint`, `npm run typecheck`, `npm run format`, and `npm run build` pass cleanly with zero warnings or errors.
+
 ### 2026-09-26 — Registrar Role Module (`services/registration.api.ts` & `/registrar/*` pages)
 - Implemented `services/registration.api.ts` (`searchAadhaar`, `registerVoter`, `listRegisteredVoters`, `getRegistrarSummary`) using `apiClient`.
 - Built Resend-style Registrar module pages:

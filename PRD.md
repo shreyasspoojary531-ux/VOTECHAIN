@@ -38,9 +38,9 @@ A verifiable electronic voting platform with four roles (Registrar, Voter, Admin
 - [ ] Results (`/admin/results`)
 
 ### Voter
-- [ ] Elections browse (`/elections`)
-- [ ] Vote journey (`/vote`) — cast ballot → POST /api/v1/votes (includes Vote Journey visual)
-- [ ] Receipt / verification (`/verification`) → GET /api/v1/votes/receipt/:txId
+- [x] Elections browse (`/elections`)
+- [x] Vote journey (`/vote`) — cast ballot → POST /api/v1/votes (includes Vote Journey visual)
+- [x] Receipt / verification (`/verification`) → GET /api/v1/votes/receipt/:txId
 
 ### Blockchain
 - [ ] Explorer (`/blockchain/explorer`) → GET /api/v1/blockchain/blocks

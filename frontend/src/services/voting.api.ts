@@ -1,26 +1,24 @@
-import { api } from './api';
-import type { Vote } from '@/types';
+import { apiClient } from './api';
+import type { CastVoteRequest, CastVoteResponse, VoteReceipt } from '@/types';
 
-// Hard dependency on the shared client; request bodies land with the voting prompt.
-void api;
-
-export interface CastVoteParams {
-  electionId: string;
-  candidateId: string;
+/**
+ * POST /api/v1/votes
+ */
+export async function castVote(data: CastVoteRequest): Promise<CastVoteResponse> {
+  return apiClient<CastVoteResponse>('/votes', {
+    method: 'POST',
+    body: data,
+  });
 }
 
-function notImplemented(endpoint: string): never {
-  throw new Error(`${endpoint} is not implemented yet (scaffold stub)`);
+/**
+ * GET /api/v1/votes/receipt/:txId
+ */
+export async function getReceipt(txId: string): Promise<VoteReceipt> {
+  return apiClient<VoteReceipt>(`/votes/receipt/${encodeURIComponent(txId)}`, {
+    method: 'GET',
+  });
 }
 
-/** POST /api/v1/votes */
-export async function castVote(params: CastVoteParams): Promise<Vote> {
-  void params;
-  throw notImplemented('POST /api/v1/votes');
-}
-
-/** GET /api/v1/votes/receipt/:txId */
-export async function getVoteReceipt(txId: string): Promise<Vote> {
-  void txId;
-  throw notImplemented('GET /api/v1/votes/receipt/:txId');
-}
+/** Alias helper for vote receipt lookup */
+export const getVoteReceipt = getReceipt;
