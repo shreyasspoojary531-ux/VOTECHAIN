@@ -16,6 +16,9 @@ interface Config {
   CORS_ORIGIN: string;
   RATE_LIMIT_WINDOW_MS: number;
   RATE_LIMIT_MAX: number;
+  FABRIC_CHANNEL: string;
+  FABRIC_CHAINCODE: string;
+  FABRIC_NETWORK: string;
 }
 
 function validateEnv(): Config {
@@ -42,6 +45,9 @@ function validateEnv(): Config {
     CORS_ORIGIN: process.env.CORS_ORIGIN || 'http://localhost:3000',
     RATE_LIMIT_WINDOW_MS: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000', 10), // 15 mins
     RATE_LIMIT_MAX: parseInt(process.env.RATE_LIMIT_MAX || '100', 10), // 100 requests per 15 min
+    FABRIC_CHANNEL: process.env.FABRIC_CHANNEL || 'votechannel',
+    FABRIC_CHAINCODE: process.env.FABRIC_CHAINCODE || 'votechain',
+    FABRIC_NETWORK: process.env.FABRIC_NETWORK || './blockchain/network',
   };
 }
 

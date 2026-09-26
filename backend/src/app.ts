@@ -7,9 +7,15 @@ import { config } from './config';
 import { logger } from './utils/logger';
 import { errorHandler } from './middleware/errorHandler';
 import { notFoundHandler } from './middleware/notFound';
+
 import healthRoutes from './routes/health.routes';
 import authRoutes from './routes/auth.routes';
 import registrarRoutes from './routes/registrar.routes';
+import electionRoutes from './routes/election.routes';
+import candidateRoutes from './routes/candidate.routes';
+import votingRoutes from './routes/voting.routes';
+import blockchainRoutes from './routes/blockchain.routes';
+import auditRoutes from './routes/audit.routes';
 
 const app: Application = express();
 
@@ -50,7 +56,7 @@ app.use(
   pinoHttp({
     logger,
     autoLogging: {
-      ignore: (req) => req.url === '/api/v1/health', // Don't clutter logs with frequent health checks
+      ignore: (req) => req.url === '/api/v1/health',
     },
   })
 );
@@ -59,6 +65,11 @@ app.use(
 app.use('/api/v1', healthRoutes);
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/registrar', registrarRoutes);
+app.use('/api/v1/elections', electionRoutes);
+app.use('/api/v1/candidates', candidateRoutes);
+app.use('/api/v1/votes', votingRoutes);
+app.use('/api/v1/blockchain', blockchainRoutes);
+app.use('/api/v1/audit', auditRoutes);
 
 // 404 handler
 app.use(notFoundHandler);
