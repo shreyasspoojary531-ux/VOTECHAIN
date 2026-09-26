@@ -1,5 +1,4 @@
 import { Router } from 'express';
-
 import { authenticate } from '../middleware/auth.middleware';
 import { validate } from '../middleware/validate.middleware';
 import {
@@ -10,6 +9,14 @@ import {
 import { login, sendOtp, verifyOtp, logout, me } from '../controllers/auth.controller';
 
 const router = Router();
+
+/** POST /api/v1/auth/register — registration request placeholder. */
+router.post('/register', (req, res) => {
+  res.status(200).json({
+    success: true,
+    data: { message: 'Voter registration is handled by the Registrar portal via Aadhaar verification.' },
+  });
+});
 
 /** POST /api/v1/auth/login — password check; staff get JWT, voters get pendingToken. */
 router.post('/login', validate({ body: loginBodySchema }), login);

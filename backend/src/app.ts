@@ -11,6 +11,8 @@ import { notFoundHandler } from './middleware/notFound';
 import healthRoutes from './routes/health.routes';
 import authRoutes from './routes/auth.routes';
 import registrarRoutes from './routes/registrar.routes';
+import registrarSummaryRoutes from './routes/registrar.summary.routes';
+import adminRoutes from './routes/admin.routes';
 import electionRoutes from './routes/election.routes';
 import candidateRoutes from './routes/candidate.routes';
 import votingRoutes from './routes/voting.routes';
@@ -64,7 +66,9 @@ app.use(
 // Mount API routes
 app.use('/api/v1', healthRoutes);
 app.use('/api/v1/auth', authRoutes);
+app.use('/api/v1/registrar', registrarSummaryRoutes);
 app.use('/api/v1/registrar', registrarRoutes);
+app.use('/api/v1/admin', adminRoutes);
 app.use('/api/v1/elections', electionRoutes);
 app.use('/api/v1/candidates', candidateRoutes);
 app.use('/api/v1/votes', votingRoutes);

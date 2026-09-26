@@ -15,6 +15,8 @@ const notFound_1 = require("./middleware/notFound");
 const health_routes_1 = __importDefault(require("./routes/health.routes"));
 const auth_routes_1 = __importDefault(require("./routes/auth.routes"));
 const registrar_routes_1 = __importDefault(require("./routes/registrar.routes"));
+const registrar_summary_routes_1 = __importDefault(require("./routes/registrar.summary.routes"));
+const admin_routes_1 = __importDefault(require("./routes/admin.routes"));
 const election_routes_1 = __importDefault(require("./routes/election.routes"));
 const candidate_routes_1 = __importDefault(require("./routes/candidate.routes"));
 const voting_routes_1 = __importDefault(require("./routes/voting.routes"));
@@ -57,7 +59,9 @@ app.use((0, pino_http_1.default)({
 // Mount API routes
 app.use('/api/v1', health_routes_1.default);
 app.use('/api/v1/auth', auth_routes_1.default);
+app.use('/api/v1/registrar', registrar_summary_routes_1.default);
 app.use('/api/v1/registrar', registrar_routes_1.default);
+app.use('/api/v1/admin', admin_routes_1.default);
 app.use('/api/v1/elections', election_routes_1.default);
 app.use('/api/v1/candidates', candidate_routes_1.default);
 app.use('/api/v1/votes', voting_routes_1.default);

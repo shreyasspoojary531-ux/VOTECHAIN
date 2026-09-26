@@ -19,6 +19,7 @@ import {
   getCandidates,
   addCandidate,
 } from '../controllers/election.controller';
+import { electionService } from '../services/election.service';
 
 const router = Router();
 
@@ -80,6 +81,29 @@ router.post(
   requireRole('ADMIN'),
   validate({ params: idParamSchema }),
   addCandidate
+);
+
+/** PUT /api/v1/elections/:id/candidates — ADMIN update candidate roster */
+router.put(
+  '/:id/candidates',
+  authenticate,
+  requireRole('ADMIN'),
+  validate({ params: idParamSchema }),
+  async (req, res, next) => {
+    try {
+      const candidates = req.body.candidates as Array<{ name: string; partyName: string }>;
+      for (const c of candidates || []) {
+        await electionService.addCandidate(req.params.id as string, {
+          name: c.name,
+          party: c.partyName,
+        });
+      }
+      const updated = await electionService.getById(req.params.id as string);
+      res.status(200).json({ success: true, data: updated });
+    } catch (err) {
+      next(err);
+    }
+  }
 );
 
 export default router;
