@@ -191,7 +191,9 @@ export interface AuditEvent {
 // Envelopes
 export interface Paginated<T> {
   items: T[];
+  data?: T[];
   total: number;
   page: number;
   pageSize: number;
+  totalPages?: number;
 }
