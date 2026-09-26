@@ -81,9 +81,9 @@ Project scaffold created according to multi-service architecture (Frontend, Back
 │   ├── .env.example
 │   │
 │   ├── prisma/
-│   │   ├── schema.prisma
-│   │   ├── migrations/
-│   │   └── seed.ts
+│   │   ├── schema.prisma   — Complete 11-model Prisma database schema
+│   │   ├── migrations/     — Generated SQL migration history
+│   │   └── seed.ts         — Database seeder (50 MockAadhaar, Admin, Registrar, 3 Voters)
 │   │
 │   ├── src/
 │   │   ├── config/

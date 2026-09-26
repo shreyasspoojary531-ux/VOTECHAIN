@@ -36,7 +36,7 @@ Core privacy rule: voter identity is always kept separate from ballot data, at e
 - [ ] Privacy architecture visual — Identity Layer / Anonymous Voting Layer / Blockchain Layer, visually separated
 
 ### Phase 2 — Backend (not started)
-- [ ] Express (TypeScript) + PostgreSQL (Prisma) setup; data models: MockAadhaar, Voter, Election, Candidate, VotingCredential, Ballot, BlockchainTransaction, AuditLog, Admin
+- [x] Express (TypeScript) + PostgreSQL (Prisma) setup; data models: MockAadhaar, User, VoterProfile, VoterEligibility, OTPCode, Election, Candidate, AnonymousCredential, Ballot, BlockchainTransaction, AuditRecord + migration & seed data
 - [ ] Auth APIs (`/api/auth/login`, `/logout`, `/me`) + JWT (no ballot/candidate data in token)
 - [ ] Role-based authorization middleware (VOTER, ADMIN, AUDITOR)
 - [ ] Election APIs (CRUD, admin-only mutations)

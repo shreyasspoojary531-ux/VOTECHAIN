@@ -1,5 +1,4 @@
 // Prisma schema file for VoteChain
-// Learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
   provider = "prisma-client-js"
@@ -8,4 +7,210 @@ generator client {
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+// ------------------------------------------------------
+// Enums
+// ------------------------------------------------------
+
+enum Role {
+  REGISTRAR
+  VOTER
+  ADMIN
+  AUDITOR
+}
+
+enum OTPPurpose {
+  LOGIN
+  REGISTRATION
+}
+
+enum ElectionStatus {
+  DRAFT
+  PUBLISHED
+  CLOSED
+  RESULTS_PUBLISHED
+}
+
+enum TransactionStatus {
+  PENDING
+  CONFIRMED
+  FAILED
+}
+
+enum AuditEventType {
+  AUTH_LOGIN
+  OTP_SENT
+  OTP_VERIFIED
+  VOTER_REGISTERED
+  CREDENTIAL_ISSUED
+  BALLOT_CREATED
+  BALLOT_HASHED
+  BLOCKCHAIN_SUBMITTED
+  BLOCKCHAIN_CONFIRMED
+  CREDENTIAL_USED
+  VERIFICATION_PERFORMED
+  ELECTION_CREATED
+  ELECTION_PUBLISHED
+  ELECTION_CLOSED
+  RESULTS_PUBLISHED
+}
+
+// ------------------------------------------------------
+// Models
+// ------------------------------------------------------
+
+model MockAadhaar {
+  id            String        @id @default(uuid())
+  aadhaarNumber String        @unique
+  fullName      String
+  dateOfBirth   DateTime
+  gender        String
+  address       String
+  phone         String
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  voterProfile  VoterProfile?
+}
+
+model User {
+  id                 String          @id @default(uuid())
+  email              String          @unique
+  passwordHash       String
+  role               Role
+  isActive           Boolean         @default(true)
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
+
+  voterProfile       VoterProfile?
+  registeredProfiles VoterProfile[]  @relation("RegistrarVoterProfiles")
+  createdElections   Election[]      @relation("AdminElections")
+  otpCodes           OTPCode[]
+  auditRecords       AuditRecord[]   @relation("ActorUserAuditRecords")
+}
+
+model VoterProfile {
+  id                 String             @id @default(uuid())
+  userId             String             @unique
+  user               User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  aadhaarId          String             @unique
+  aadhaar            MockAadhaar        @relation(fields: [aadhaarId], references: [id], onDelete: Cascade)
+  registeredByUserId String
+  registeredByUser   User               @relation("RegistrarVoterProfiles", fields: [registeredByUserId], references: [id])
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+
+  eligibilities      VoterEligibility[]
+}
+
+model VoterEligibility {
+  id                 String               @id @default(uuid())
+  voterProfileId     String
+  voterProfile       VoterProfile         @relation(fields: [voterProfileId], references: [id], onDelete: Cascade)
+  electionId         String
+  election           Election             @relation(fields: [electionId], references: [id], onDelete: Cascade)
+  isEligible         Boolean
+  reason             String?
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+
+  credential         AnonymousCredential?
+
+  @@unique([voterProfileId, electionId])
+}
+
+model OTPCode {
+  id          String     @id @default(uuid())
+  userId      String
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  codeHash    String
+  purpose     OTPPurpose
+  expiresAt   DateTime
+  consumedAt  DateTime?
+  createdAt   DateTime   @default(now())
+}
+
+model Election {
+  id              String                 @id @default(uuid())
+  title           String
+  description     String
+  status          ElectionStatus         @default(DRAFT)
+  startDate       DateTime
+  endDate         DateTime
+  createdByUserId String
+  createdByUser   User                   @relation("AdminElections", fields: [createdByUserId], references: [id])
+  createdAt       DateTime               @default(now())
+  updatedAt       DateTime               @updatedAt
+
+  candidates      Candidate[]
+  eligibilities   VoterEligibility[]
+  credentials     AnonymousCredential[]
+  ballots         Ballot[]
+  transactions    BlockchainTransaction[]
+  auditRecords    AuditRecord[]
+}
+
+model Candidate {
+  id          String   @id @default(uuid())
+  electionId  String
+  election    Election @relation(fields: [electionId], references: [id], onDelete: Cascade)
+  name        String
+  party       String
+  symbolUrl   String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  ballots     Ballot[]
+}
+
+model AnonymousCredential {
+  id                 String           @id @default(uuid())
+  credentialHash     String           @unique
+  electionId         String
+  election           Election         @relation(fields: [electionId], references: [id], onDelete: Cascade)
+  voterEligibilityId String           @unique
+  voterEligibility   VoterEligibility @relation(fields: [voterEligibilityId], references: [id], onDelete: Cascade)
+  isUsed             Boolean          @default(false)
+  issuedAt           DateTime         @default(now())
+  usedAt             DateTime?
+}
+
+model Ballot {
+  id               String                 @id @default(uuid())
+  electionId       String
+  election         Election               @relation(fields: [electionId], references: [id], onDelete: Cascade)
+  candidateId      String
+  candidate        Candidate              @relation(fields: [candidateId], references: [id])
+  credentialHash   String
+  encryptedPayload String
+  ballotHash       String                 @unique
+  transactionId    String?                @unique
+  transaction      BlockchainTransaction? @relation(fields: [transactionId], references: [id])
+  createdAt        DateTime               @default(now())
+}
+
+model BlockchainTransaction {
+  id           String            @id @default(uuid())
+  txId         String            @unique
+  electionId   String
+  election     Election          @relation(fields: [electionId], references: [id], onDelete: Cascade)
+  ballotHash   String
+  blockNumber  Int?
+  status       TransactionStatus @default(PENDING)
+  confirmedAt  DateTime?
+  createdAt    DateTime          @default(now())
+
+  ballot       Ballot?
+}
+
+model AuditRecord {
+  id           String         @id @default(uuid())
+  eventType    AuditEventType
+  electionId   String?
+  election     Election?      @relation(fields: [electionId], references: [id], onDelete: SetNull)
+  actorUserId  String?
+  actorUser    User?          @relation("ActorUserAuditRecords", fields: [actorUserId], references: [id], onDelete: SetNull)
+  metadata     Json?
+  timestamp    DateTime       @default(now())
 }
