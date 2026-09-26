@@ -159,7 +159,7 @@ export default function HomePage() {
           <p className="font-mono text-xs uppercase tracking-widest text-accent">
             Live Ledger Activity
           </p>
-          <h2 className="font-heading text-2xl sm:text-3xl text-ink font-normal">
+          <h2 className="font-display text-2xl sm:text-3xl text-ink font-normal">
             Real-Time Audit Trail & Proof Verification
           </h2>
           <p className="text-sm text-ink-secondary max-w-xl">
@@ -282,7 +282,7 @@ export default function HomePage() {
               <span className="inline-block px-3 py-1 rounded-full bg-neutral-900/10 text-neutral-900 font-mono text-xs font-semibold">
                 PUBLIC AUDITABILITY
               </span>
-              <h2 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-normal text-neutral-950 tracking-tight leading-tight">
+              <h2 className="font-display text-3xl sm:text-4xl lg:text-5xl font-normal text-neutral-950 tracking-tight leading-tight">
                 Inspect Every Proof Without Exposing Who Voted.
               </h2>
               <p className="text-base text-neutral-700 leading-relaxed font-sans max-w-xl">

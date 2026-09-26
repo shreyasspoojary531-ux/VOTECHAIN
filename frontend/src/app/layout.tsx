@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { Fraunces, Geist_Mono, Inter } from 'next/font/google';
+import localFont from 'next/font/local';
 import { AuthProvider } from '@/context/AuthContext';
 import './globals.css';
 
@@ -21,6 +22,12 @@ const fraunces = Fraunces({
   display: 'swap',
 });
 
+const headingFont = localFont({
+  src: '../../public/fonts/mistical-spring.ttf',
+  variable: '--font-heading',
+  display: 'swap',
+});
+
 export const metadata: Metadata = {
   title: 'e-Voting',
   description: 'Secure, verifiable electronic voting platform',
@@ -32,7 +39,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${geistMono.variable} ${fraunces.variable}`}>
+    <html lang="en" className={`${inter.variable} ${geistMono.variable} ${fraunces.variable} ${headingFont.variable}`}>
       <body className="min-h-screen bg-canvas font-sans text-ink antialiased">
         <AuthProvider>{children}</AuthProvider>
       </body>

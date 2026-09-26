@@ -36,7 +36,7 @@
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, monospace;
   --font-display: var(--font-fraunces), Georgia, serif;
-  --font-heading: var(--font-fraunces), Georgia, serif;
+  --font-heading: var(--font-heading), var(--font-fraunces), Georgia, serif;
 }
 
 /* True-black canvas with light ink, applied globally. */
@@ -46,7 +46,7 @@ body {
 }
 
 .font-heading {
-  font-family: var(--font-heading);
+  font-family: var(--font-heading), Georgia, serif;
 }
 
 /* Resend card style fading top border */
