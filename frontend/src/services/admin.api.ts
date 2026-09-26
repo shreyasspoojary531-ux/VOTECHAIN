@@ -88,3 +88,12 @@ export async function deleteVoter(id: string): Promise<{ deleted: boolean }> {
     method: 'DELETE',
   });
 }
+
+/**
+ * POST /api/v1/admin/blockchain/reset — Reset Blockchain Ledger to Genesis block
+ */
+export async function resetBlockchainLedger(): Promise<{ success: boolean; message?: string }> {
+  return apiClient<{ success: boolean; message?: string }>('/admin/blockchain/reset', {
+    method: 'POST',
+  });
+}

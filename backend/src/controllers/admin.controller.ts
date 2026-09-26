@@ -97,3 +97,17 @@ export async function deleteVoter(
     next(err);
   }
 }
+
+/** POST /admin/blockchain/reset — Reset Blockchain Ledger */
+export async function resetBlockchain(
+  _req: Request,
+  res: Response,
+  next: NextFunction
+): Promise<void> {
+  try {
+    const result = await adminService.resetBlockchain();
+    res.status(200).json({ success: true, data: result });
+  } catch (err) {
+    next(err);
+  }
+}

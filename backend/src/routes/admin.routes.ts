@@ -14,6 +14,7 @@ import {
   deleteElection,
   deleteVoter,
   getAdminSummary,
+  resetBlockchain,
 } from '../controllers/admin.controller';
 
 const router = Router();
@@ -23,6 +24,10 @@ router.use(authenticate, requireRole('ADMIN'));
 
 /** GET /api/v1/admin/summary */
 router.get('/summary', getAdminSummary);
+
+/** POST /api/v1/admin/blockchain/reset & DELETE /api/v1/admin/blockchain */
+router.post('/blockchain/reset', resetBlockchain);
+router.delete('/blockchain', resetBlockchain);
 
 /** GET /api/v1/admin/mock-aadhaar */
 router.get('/mock-aadhaar', validate({ query: listQuerySchema }), listMockAadhaars);

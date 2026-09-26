@@ -30,6 +30,14 @@ export class FabricGateway {
     this.blocks.set(0, genesisBlock);
   }
 
+  reset(): void {
+    this.blocks.clear();
+    this.transactions.clear();
+    this.currentBlockNumber = 1;
+    this.seedGenesisBlock();
+    logger.info('Fabric gateway blockchain ledger reset to Genesis block');
+  }
+
   async submitTransaction(input: SubmitVoteInput): Promise<{ txId: string; blockNumber: number }> {
     await fabricClient.connect();
 

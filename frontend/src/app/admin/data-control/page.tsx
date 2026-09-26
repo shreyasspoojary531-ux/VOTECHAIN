@@ -9,17 +9,20 @@ import {
   deleteMockAadhaar,
   deleteVoter,
   listMockAadhaars,
+  resetBlockchainLedger,
 } from '@/services/admin.api';
+import { getBlocks } from '@/services/blockchain.api';
 import { ApiError } from '@/services/api';
-import type { Election, MockAadhaarRecord, Voter } from '@/types';
+import type { Block, Election, MockAadhaarRecord, Voter } from '@/types';
 
 export default function AdminDataControlPage() {
-  const [activeTab, setActiveTab] = useState<'elections' | 'voters' | 'aadhaar'>('elections');
+  const [activeTab, setActiveTab] = useState<'elections' | 'voters' | 'aadhaar' | 'blockchain'>('elections');
 
   // Lists Data
   const [elections, setElections] = useState<Election[]>([]);
   const [voters, setVoters] = useState<Voter[]>([]);
   const [aadhaars, setAadhaars] = useState<MockAadhaarRecord[]>([]);
+  const [blocks, setBlocks] = useState<Block[]>([]);
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -30,15 +33,17 @@ export default function AdminDataControlPage() {
     setLoading(true);
     setError(null);
     try {
-      const [electionsRes, votersRes, aadhaarRes] = await Promise.all([
+      const [electionsRes, votersRes, aadhaarRes, blocksRes] = await Promise.all([
         getElections().catch(() => []),
         listRegisteredVoters(1, 50).catch(() => ({ items: [], data: [] })),
         listMockAadhaars(1, 50).catch(() => ({ items: [], data: [] })),
+        getBlocks().catch(() => []),
       ]);
 
       setElections(Array.isArray(electionsRes) ? electionsRes : []);
       setVoters(votersRes.items || votersRes.data || []);
       setAadhaars(aadhaarRes.items || aadhaarRes.data || []);
+      setBlocks(Array.isArray(blocksRes) ? blocksRes : []);
     } catch (err: unknown) {
       if (err instanceof ApiError) {
         setError(err.message);
@@ -103,6 +108,29 @@ export default function AdminDataControlPage() {
     } catch (err: unknown) {
       if (err instanceof ApiError) setError(err.message);
       else setError('Failed to delete Aadhaar record');
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
+  const handleResetBlockchain = async () => {
+    if (
+      !confirm(
+        'Reset Blockchain Ledger? This will erase all committed ballot transactions and reset the ledger back to Genesis Block #0!'
+      )
+    )
+      return;
+
+    setDeletingId('blockchain');
+    setError(null);
+    setSuccessMsg(null);
+    try {
+      await resetBlockchainLedger();
+      setSuccessMsg('Successfully reset blockchain ledger back to Genesis block #0.');
+      fetchAllData();
+    } catch (err: unknown) {
+      if (err instanceof ApiError) setError(err.message);
+      else setError('Failed to reset blockchain ledger');
     } finally {
       setDeletingId(null);
     }
@@ -192,6 +220,16 @@ export default function AdminDataControlPage() {
             }`}
           >
             🪪 Mock Aadhaar Citizens ({aadhaars.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('blockchain')}
+            className={`px-6 py-3 border-b-2 transition-colors ${
+              activeTab === 'blockchain'
+                ? 'border-ink text-ink font-semibold'
+                : 'border-transparent text-ink-secondary hover:text-ink'
+            }`}
+          >
+            ⛓️ Blockchain Ledger ({blocks.length} Blocks)
           </button>
         </div>
 
@@ -347,6 +385,71 @@ export default function AdminDataControlPage() {
                     No Mock Aadhaar records found.
                   </div>
                 )}
+              </div>
+            )}
+
+            {/* TAB 4: BLOCKCHAIN LEDGER */}
+            {activeTab === 'blockchain' && (
+              <div className="space-y-6">
+                {/* Ledger Control Action Bar */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 rounded-lg border border-danger/30 bg-danger/5 p-6">
+                  <div className="space-y-1">
+                    <h3 className="text-sm font-semibold text-danger">Reset & Flush Blockchain Ledger</h3>
+                    <p className="text-xs text-ink-secondary max-w-xl">
+                      Erase all stored transactions, ballot records, and reset the blockchain ledger back to Genesis Block #0. Use this when starting fresh election test runs.
+                    </p>
+                  </div>
+                  <button
+                    disabled={deletingId === 'blockchain'}
+                    onClick={handleResetBlockchain}
+                    className="rounded-md bg-danger px-5 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-danger/90 disabled:opacity-50 font-mono whitespace-nowrap"
+                  >
+                    {deletingId === 'blockchain' ? 'Resetting Ledger...' : '🔥 Reset / Delete Blockchain'}
+                  </button>
+                </div>
+
+                {/* Blocks Overview */}
+                <div className="space-y-3">
+                  <h3 className="text-xs font-medium uppercase tracking-wider text-ink-secondary">
+                    Committed Ledger Blocks ({blocks.length})
+                  </h3>
+                  {blocks.length > 0 ? (
+                    <div className="overflow-hidden rounded-lg border border-hairline bg-surface">
+                      <table className="w-full text-left text-sm">
+                        <thead className="border-b border-hairline bg-canvas text-xs uppercase tracking-wider text-ink-secondary">
+                          <tr>
+                            <th className="px-4 py-3 font-medium">Height / Block #</th>
+                            <th className="px-4 py-3 font-medium">Block Hash</th>
+                            <th className="px-4 py-3 font-medium">Transactions</th>
+                            <th className="px-4 py-3 text-right font-medium">Timestamp</th>
+                          </tr>
+                        </thead>
+                        <tbody className="divide-y divide-hairline font-mono text-xs">
+                          {blocks.map((block) => (
+                            <tr key={block.height || block.hash} className="hover:bg-surface-raised">
+                              <td className="px-4 py-3 font-bold text-accent">
+                                Block #{block.height ?? (block as unknown as { blockNumber?: number }).blockNumber ?? 0}
+                              </td>
+                              <td className="px-4 py-3 text-ink-muted truncate max-w-xs" title={block.hash}>
+                                {block.hash || (block as unknown as { blockHash?: string }).blockHash}
+                              </td>
+                              <td className="px-4 py-3 text-ink-secondary">
+                                {block.txCount ?? block.txIds?.length ?? 0} tx
+                              </td>
+                              <td className="px-4 py-3 text-right text-ink-muted">
+                                {new Date(block.timestamp).toLocaleString()}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  ) : (
+                    <div className="rounded-lg border border-hairline bg-surface p-12 text-center text-xs text-ink-muted font-mono">
+                      No blocks found. Ledger is uninitialized or empty.
+                    </div>
+                  )}
+                </div>
               </div>
             )}
           </div>

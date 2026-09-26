@@ -1,5 +1,6 @@
 import { prisma } from '../utils/prisma';
 import { AppError } from '../middleware/errorHandler';
+import { fabricService } from '../blockchain/fabric.service';
 
 export interface CreateMockAadhaarInput {
   aadhaarNumber: string;
@@ -159,5 +160,33 @@ export const adminService = {
     ]);
 
     return { deleted: true };
+  },
+
+  /** Reset / Clear Blockchain Ledger (deletes all transactions, ballots, and resets Fabric Gateway to Genesis) */
+  async resetBlockchain() {
+    await prisma.$transaction([
+      prisma.ballot.deleteMany({}),
+      prisma.blockchainTransaction.deleteMany({}),
+      prisma.anonymousCredential.updateMany({
+        data: { isUsed: false, usedAt: null },
+      }),
+      prisma.auditRecord.deleteMany({
+        where: {
+          eventType: {
+            in: [
+              'BALLOT_CREATED',
+              'BALLOT_HASHED',
+              'BLOCKCHAIN_SUBMITTED',
+              'BLOCKCHAIN_CONFIRMED',
+              'CREDENTIAL_USED',
+            ],
+          },
+        },
+      }),
+    ]);
+
+    fabricService.reset();
+
+    return { success: true, message: 'Blockchain ledger successfully reset to Genesis block' };
   },
 };

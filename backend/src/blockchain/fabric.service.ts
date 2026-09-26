@@ -26,6 +26,10 @@ export class FabricService {
   async verifyTransaction(txId: string): Promise<VerificationResult> {
     return fabricGateway.verifyTransaction(txId);
   }
+
+  reset(): void {
+    fabricGateway.reset();
+  }
 }
 
 export const fabricService = new FabricService();
