@@ -46,13 +46,16 @@ async function main() {
   await prisma.user.deleteMany();
   await prisma.mockAadhaar.deleteMany();
 
-  const commonPasswordHash = await bcrypt.hash('DemoPassword123!', 10);
+  const adminPasswordHash = await bcrypt.hash('Admin@123', 10);
+  const registrarPasswordHash = await bcrypt.hash('Registrar@123', 10);
+  const auditorPasswordHash = await bcrypt.hash('Auditor@123', 10);
+  const voterPasswordHash = await bcrypt.hash('Voter@123', 10);
 
   // 1. Create ADMIN User
-  const adminUser = await prisma.user.create({
+  await prisma.user.create({
     data: {
       email: 'admin@votechain.demo',
-      passwordHash: commonPasswordHash,
+      passwordHash: adminPasswordHash,
       role: Role.ADMIN,
       isActive: true,
     },
@@ -62,13 +65,23 @@ async function main() {
   const registrarUser = await prisma.user.create({
     data: {
       email: 'registrar@votechain.demo',
-      passwordHash: commonPasswordHash,
+      passwordHash: registrarPasswordHash,
       role: Role.REGISTRAR,
       isActive: true,
     },
   });
 
-  // 3. Create 50 MockAadhaar Records
+  // 3. Create AUDITOR User
+  await prisma.user.create({
+    data: {
+      email: 'auditor@votechain.demo',
+      passwordHash: auditorPasswordHash,
+      role: Role.AUDITOR,
+      isActive: true,
+    },
+  });
+
+  // 4. Create 50 MockAadhaar Records
   const mockAadhaars = [];
   for (let i = 1; i <= 50; i++) {
     const isMale = i % 2 === 1;
@@ -87,11 +100,9 @@ async function main() {
     // Varied DOB: 5 records under 18 (minors), 45 records adults (18+)
     let dob: Date;
     if (i <= 5) {
-      // Minors aged 12 to 16
       const year = 2008 + (i % 5);
       dob = new Date(`${year}-05-15T00:00:00.000Z`);
     } else {
-      // Adults aged 20 to 65
       const year = 1960 + ((i * 7) % 45);
       const month = String(((i % 12) + 1)).padStart(2, '0');
       const day = String(((i % 28) + 1)).padStart(2, '0');
@@ -112,13 +123,13 @@ async function main() {
     mockAadhaars.push(aadhaarRecord);
   }
 
-  // 4. Seed 3 VOTER users linked to adult MockAadhaar records (records index 5, 6, 7)
-  for (let vIndex = 0; vIndex < 3; vIndex++) {
+  // 5. Seed 10 VOTER users linked to adult MockAadhaar records (records index 5..14)
+  for (let vIndex = 0; vIndex < 10; vIndex++) {
     const aadhaarRecord = mockAadhaars[5 + vIndex];
     const voterUser = await prisma.user.create({
       data: {
         email: `voter${vIndex + 1}@votechain.demo`,
-        passwordHash: commonPasswordHash,
+        passwordHash: voterPasswordHash,
         role: Role.VOTER,
         isActive: true,
         voterProfile: {
@@ -135,9 +146,10 @@ async function main() {
   console.log(`
 ✅ Database seeding completed successfully!
 ---------------------------------------------------------
-Admin User:     admin@votechain.demo (Password: DemoPassword123!)
-Registrar User: registrar@votechain.demo (Password: DemoPassword123!)
-Voter Users:    voter1@votechain.demo, voter2@votechain.demo, voter3@votechain.demo
+Admin User:     admin@votechain.demo (Password: Admin@123)
+Registrar User: registrar@votechain.demo (Password: Registrar@123)
+Auditor User:   auditor@votechain.demo (Password: Auditor@123)
+Voter Users:    voter1..10@votechain.demo (Password: Voter@123)
 Mock Aadhaar:   50 records total (5 minors under 18, 45 adults)
 ---------------------------------------------------------
   `);

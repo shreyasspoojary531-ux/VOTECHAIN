@@ -13,6 +13,13 @@ const logger_1 = require("./utils/logger");
 const errorHandler_1 = require("./middleware/errorHandler");
 const notFound_1 = require("./middleware/notFound");
 const health_routes_1 = __importDefault(require("./routes/health.routes"));
+const auth_routes_1 = __importDefault(require("./routes/auth.routes"));
+const registrar_routes_1 = __importDefault(require("./routes/registrar.routes"));
+const election_routes_1 = __importDefault(require("./routes/election.routes"));
+const candidate_routes_1 = __importDefault(require("./routes/candidate.routes"));
+const voting_routes_1 = __importDefault(require("./routes/voting.routes"));
+const blockchain_routes_1 = __importDefault(require("./routes/blockchain.routes"));
+const audit_routes_1 = __importDefault(require("./routes/audit.routes"));
 const app = (0, express_1.default)();
 // Security headers
 app.use((0, helmet_1.default)());
@@ -44,11 +51,18 @@ app.use(express_1.default.json());
 app.use((0, pino_http_1.default)({
     logger: logger_1.logger,
     autoLogging: {
-        ignore: (req) => req.url === '/api/v1/health', // Don't clutter logs with frequent health checks
+        ignore: (req) => req.url === '/api/v1/health',
     },
 }));
 // Mount API routes
 app.use('/api/v1', health_routes_1.default);
+app.use('/api/v1/auth', auth_routes_1.default);
+app.use('/api/v1/registrar', registrar_routes_1.default);
+app.use('/api/v1/elections', election_routes_1.default);
+app.use('/api/v1/candidates', candidate_routes_1.default);
+app.use('/api/v1/votes', voting_routes_1.default);
+app.use('/api/v1/blockchain', blockchain_routes_1.default);
+app.use('/api/v1/audit', audit_routes_1.default);
 // 404 handler
 app.use(notFound_1.notFoundHandler);
 // Centralized error handler (must be last)
