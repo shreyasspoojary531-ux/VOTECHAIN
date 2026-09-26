@@ -32,22 +32,46 @@ export default function LoginPage() {
     }
   };
 
-  const handleDemoFill = (role: Role) => {
+  const handleQuickLogin = async (role: Role) => {
+    setError(null);
+    setLoading(true);
+
+    let targetEmail = 'voter@votechain.gov';
     switch (role) {
-      case 'VOTER':
-        setEmail('voter@votechain.gov');
-        break;
       case 'REGISTRAR':
-        setEmail('registrar@votechain.gov');
+        targetEmail = 'registrar@votechain.gov';
         break;
       case 'ADMIN':
-        setEmail('admin@votechain.gov');
+        targetEmail = 'admin@votechain.gov';
         break;
       case 'AUDITOR':
-        setEmail('auditor@votechain.gov');
+        targetEmail = 'auditor@votechain.gov';
+        break;
+      case 'VOTER':
+      default:
+        targetEmail = 'voter@votechain.gov';
         break;
     }
+
+    setEmail(targetEmail);
     setPassword('password123');
+
+    try {
+      const response = await loginApi({ email: targetEmail, password: 'password123' });
+      authLogin(response.jwt, response.user);
+      const dashboard = getRoleDashboard(response.user.role);
+      router.push(dashboard);
+    } catch (err: unknown) {
+      if (err instanceof ApiError) {
+        setError(err.message);
+      } else if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Sign in failed. Please try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -79,43 +103,47 @@ export default function LoginPage() {
         <div className="space-y-2 text-center">
           <h1 className="text-2xl font-semibold tracking-tight">Sign in to VoteChain</h1>
           <p className="text-sm text-ink-secondary">
-            Enter your credentials to access your role portal
+            Click a demo role account or enter credentials below
           </p>
         </div>
 
-        {/* Quick Demo Role Selector */}
+        {/* Instant Demo Role Selector */}
         <div className="p-3 rounded-lg border border-hairline bg-surface space-y-2">
           <div className="text-[11px] font-mono text-ink-muted uppercase tracking-wider text-center">
-            Quick Demo Login Accounts
+            One-Click Demo Login
           </div>
-          <div className="grid grid-cols-2 gap-1.5 font-mono text-xs">
+          <div className="grid grid-cols-2 gap-2 font-mono text-xs">
             <button
               type="button"
-              onClick={() => handleDemoFill('VOTER')}
-              className="p-1.5 rounded border border-hairline bg-canvas hover:border-accent text-accent text-center"
+              disabled={loading}
+              onClick={() => handleQuickLogin('VOTER')}
+              className="p-2 rounded border border-hairline bg-canvas hover:border-accent hover:bg-surface-raised text-accent text-center transition-all disabled:opacity-50"
             >
-              Voter
+              ⚡ Voter Login
             </button>
             <button
               type="button"
-              onClick={() => handleDemoFill('REGISTRAR')}
-              className="p-1.5 rounded border border-hairline bg-canvas hover:border-success text-success text-center"
+              disabled={loading}
+              onClick={() => handleQuickLogin('REGISTRAR')}
+              className="p-2 rounded border border-hairline bg-canvas hover:border-success hover:bg-surface-raised text-success text-center transition-all disabled:opacity-50"
             >
-              Registrar
+              ⚡ Registrar Login
             </button>
             <button
               type="button"
-              onClick={() => handleDemoFill('ADMIN')}
-              className="p-1.5 rounded border border-hairline bg-canvas hover:border-warning text-warning text-center"
+              disabled={loading}
+              onClick={() => handleQuickLogin('ADMIN')}
+              className="p-2 rounded border border-hairline bg-canvas hover:border-warning hover:bg-surface-raised text-warning text-center transition-all disabled:opacity-50"
             >
-              Admin
+              ⚡ Admin Login
             </button>
             <button
               type="button"
-              onClick={() => handleDemoFill('AUDITOR')}
-              className="p-1.5 rounded border border-hairline bg-canvas hover:border-danger text-danger text-center"
+              disabled={loading}
+              onClick={() => handleQuickLogin('AUDITOR')}
+              className="p-2 rounded border border-hairline bg-canvas hover:border-danger hover:bg-surface-raised text-danger text-center transition-all disabled:opacity-50"
             >
-              Auditor
+              ⚡ Auditor Login
             </button>
           </div>
         </div>

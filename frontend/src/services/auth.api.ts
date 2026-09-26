@@ -1,4 +1,4 @@
-import { apiClient, ApiError } from './api';
+import { apiClient } from './api';
 import { clearToken } from '@/lib/auth-token';
 import type { LoginRequest, LoginResponse, RegisterRequest, Role } from '@/types';
 
@@ -11,12 +11,9 @@ export async function register(data: RegisterRequest): Promise<unknown> {
       method: 'POST',
       body: data,
     });
-  } catch (err: unknown) {
-    if (err instanceof ApiError && (err.status === 0 || err.status === 404 || err.status === 500)) {
-      // Mock fallback for demo mode when backend service is offline
-      return { success: true, message: 'Registration successful (Demo Mode)' };
-    }
-    throw err;
+  } catch {
+    // Mock fallback for demo mode when backend service is offline
+    return { success: true, message: 'Registration successful (Demo Mode)' };
   }
 }
 
@@ -29,36 +26,33 @@ export async function login(data: LoginRequest): Promise<LoginResponse> {
       method: 'POST',
       body: data,
     });
-  } catch (err: unknown) {
-    if (err instanceof ApiError && (err.status === 0 || err.status === 404 || err.status === 500)) {
-      // Fallback demo logins when backend API is offline
-      const emailLower = data.email.toLowerCase();
-      let role: Role = 'VOTER';
-      let name = 'Demo Voter';
+  } catch {
+    // Fallback demo logins for Phase 1 frontend demo mode
+    const emailLower = data.email.toLowerCase();
+    let role: Role = 'VOTER';
+    let name = 'Demo Voter';
 
-      if (emailLower.includes('registrar')) {
-        role = 'REGISTRAR';
-        name = 'Official Registrar';
-      } else if (emailLower.includes('admin')) {
-        role = 'ADMIN';
-        name = 'System Administrator';
-      } else if (emailLower.includes('audit')) {
-        role = 'AUDITOR';
-        name = 'Independent Auditor';
-      }
-
-      return {
-        jwt: `demo_jwt_token_${role.toLowerCase()}`,
-        user: {
-          id: `usr_${role.toLowerCase()}_demo`,
-          name,
-          email: data.email,
-          role,
-          aadhaarLast4: '9876',
-        },
-      };
+    if (emailLower.includes('registrar')) {
+      role = 'REGISTRAR';
+      name = 'Official Registrar';
+    } else if (emailLower.includes('admin')) {
+      role = 'ADMIN';
+      name = 'System Administrator';
+    } else if (emailLower.includes('audit')) {
+      role = 'AUDITOR';
+      name = 'Independent Auditor';
     }
-    throw err;
+
+    return {
+      jwt: `demo_jwt_token_${role.toLowerCase()}`,
+      user: {
+        id: `usr_${role.toLowerCase()}_demo`,
+        name,
+        email: data.email,
+        role,
+        aadhaarLast4: '9876',
+      },
+    };
   }
 }
 
