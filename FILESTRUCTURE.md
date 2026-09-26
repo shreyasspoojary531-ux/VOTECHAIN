@@ -34,6 +34,7 @@ backend/
 │   ├── migrations/20260926084701_init/
 │   └── seed.ts                # 50 Aadhaar (5 minors), admin/registrar/3 voters
 ├── tests/
+│   ├── auth.e2e.sh            # 15-case test: login, OTP flow, JWT, RBAC, replay
 │   └── registrar.e2e.sh       # 10-case endpoint test (401/403/400/404/409/422/201/200)
 └── src/
     ├── app.ts                 # helmet, cors, rate-limit, pino-http, route mounting
@@ -45,17 +46,25 @@ backend/
     │   ├── errorHandler.ts        # AppError + centralized handler
     │   └── notFound.ts
     ├── validators/
+    │   ├── auth.validator.ts       # login/send-otp/verify-otp schemas
     │   └── registrar.validator.ts
     ├── repositories/
     │   ├── aadhaar.repository.ts  # minimal-PII select + alreadyRegistered flag
-    │   └── voter.repository.ts    # transactional create + paginated list
+    │   ├── voter.repository.ts    # transactional create + paginated list
+    │   ├── user.repository.ts     # safe public projection (never passwordHash)
+    │   └── otp.repository.ts      # hashed OTP storage, single-use consumption
     ├── services/
+    │   ├── auth.service.ts        # login/OTP/JWT; pendingToken challenge flow
     │   └── registrar.service.ts   # age gate, $transaction, VOTER_REGISTERED audit
     ├── controllers/
+    │   ├── auth.controller.ts
     │   └── registrar.controller.ts
     ├── routes/
     │   ├── health.routes.ts
+    │   ├── auth.routes.ts         # /login /send-otp /verify-otp /logout /me
     │   └── registrar.routes.ts    # authenticate + requireRole('REGISTRAR')
+    ├── crypto/
+    │   └── otp.ts                 # 6-digit gen, HMAC+pepper hash, timing-safe verify
     └── utils/
         ├── logger.ts
         └── prisma.ts

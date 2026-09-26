@@ -87,10 +87,16 @@ CODE=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$BASE/register-voter" -H 
 check "unknown aadhaar rejected" 404 "$CODE"
 
 echo
-echo "=== 8. Successful registration (adult 999910000010) ==="
+echo "=== 8. Successful registration (adult 999910000010; 409 if a previous run registered them) ==="
 CODE=$(curl -s -o /tmp/r.json -w "%{http_code}" -X POST "$BASE/register-voter" -H "$AUTH" -H "Content-Type: application/json" -d '{"aadhaarNumber":"999910000010"}')
-check "valid adult registration" 201 "$CODE"
-node -e "const d=require('/tmp/r.json'); console.log('  -> email:', d.data?.email, '| tempPassword:', d.data?.temporaryPassword)"
+if [ "$CODE" = "201" ]; then
+  check "valid adult registration" 201 "$CODE"
+  node -e "const d=require('/tmp/r.json'); console.log('  -> email:', d.data?.email, '| tempPassword:', d.data?.temporaryPassword)"
+elif [ "$CODE" = "409" ]; then
+  check "valid adult registration (already registered by earlier run)" 409 "$CODE"
+else
+  check "valid adult registration" 201 "$CODE"
+fi
 
 echo
 echo "=== 9. Voters list (should now include the new voter) ==="

@@ -8,6 +8,7 @@ import { logger } from './utils/logger';
 import { errorHandler } from './middleware/errorHandler';
 import { notFoundHandler } from './middleware/notFound';
 import healthRoutes from './routes/health.routes';
+import authRoutes from './routes/auth.routes';
 import registrarRoutes from './routes/registrar.routes';
 
 const app: Application = express();
@@ -56,6 +57,7 @@ app.use(
 
 // Mount API routes
 app.use('/api/v1', healthRoutes);
+app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/registrar', registrarRoutes);
 
 // 404 handler

@@ -10,6 +10,9 @@ interface Config {
   LOG_LEVEL: string;
   DATABASE_URL: string;
   JWT_SECRET: string;
+  JWT_EXPIRES_IN: string;
+  OTP_PEPPER: string;
+  OTP_EXPIRY_MINUTES: number;
   CORS_ORIGIN: string;
   RATE_LIMIT_WINDOW_MS: number;
   RATE_LIMIT_MAX: number;
@@ -33,6 +36,9 @@ function validateEnv(): Config {
     LOG_LEVEL: process.env.LOG_LEVEL || 'info',
     DATABASE_URL: process.env.DATABASE_URL!,
     JWT_SECRET: process.env.JWT_SECRET!,
+    JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '1d',
+    OTP_PEPPER: process.env.OTP_PEPPER || 'dev-only-pepper-change-me',
+    OTP_EXPIRY_MINUTES: parseInt(process.env.OTP_EXPIRY_MINUTES || '5', 10),
     CORS_ORIGIN: process.env.CORS_ORIGIN || 'http://localhost:3000',
     RATE_LIMIT_WINDOW_MS: parseInt(process.env.RATE_LIMIT_WINDOW_MS || '900000', 10), // 15 mins
     RATE_LIMIT_MAX: parseInt(process.env.RATE_LIMIT_MAX || '100', 10), // 100 requests per 15 min
