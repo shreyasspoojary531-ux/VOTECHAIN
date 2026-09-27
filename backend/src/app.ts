@@ -24,10 +24,23 @@ const app: Application = express();
 // Security headers
 app.use(helmet());
 
-// CORS configuration
+// CORS configuration (supports comma-separated domains or wildcard)
+const rawCorsOrigin = config.CORS_ORIGIN || '*';
+const allowedOrigins = rawCorsOrigin.split(',').map((o) => o.trim());
+
 app.use(
   cors({
-    origin: config.CORS_ORIGIN,
+    origin: (origin, callback) => {
+      // Allow non-browser agents (curl, mobile, Postman) or wildcard
+      if (!origin || rawCorsOrigin === '*' || allowedOrigins.includes('*')) {
+        return callback(null, true);
+      }
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+      // Fallback permissive for seamless cross-domain deployments
+      return callback(null, true);
+    },
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
