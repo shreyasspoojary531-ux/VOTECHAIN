@@ -22,7 +22,8 @@
 │   │   └── sample_seed.sql # Standalone sample SQL seed script
 │   └── diagrams/
 │       └── er_diagram.md  # Mermaid ER diagram
-├── documentation/         # Architecture, API, security, testing, and deployment docs
+├── documentation/         # Architecture, API, security, testing, deployment, and docker scaling docs
+│   └── docker-scalability.md # Docker setup, load balancing & scaling guide
 ├── scripts/               # orchestration helpers
 └── frontend/              # ← Next.js web app
 ```

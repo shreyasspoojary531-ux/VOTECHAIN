@@ -43,6 +43,7 @@ npm run dev                                 # http://localhost:3000
 | [blockchain.md](blockchain.md)                | Ledger abstraction layer and data flow of a vote       |
 | [testing.md](testing.md)                      | E2E suites, verification commands                      |
 | [deployment.md](deployment.md)                | Running locally, env vars, production notes            |
+| [docker-scalability.md](docker-scalability.md) | Docker multi-container setup, load balancing, & scaling |
 | [limitations.md](limitations.md)              | Known limitations and mock boundaries                  |
 | [contributing.md](contributing.md)            | Conventions and PR checklist                           |
 | [prd.md](prd.md)                              | Product requirements and feature checklist             |
