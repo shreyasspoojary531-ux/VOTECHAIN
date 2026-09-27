@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { getAdminSummary, type AdminSummary } from '@/services/election.api';
 import { ApiError } from '@/services/api';
+import { PageHeading } from '@/components/ui/page-heading';
 
 export default function AdminDashboardPage() {
   const [summary, setSummary] = useState<AdminSummary | null>(null);
@@ -40,12 +41,10 @@ export default function AdminDashboardPage() {
     <main className="min-h-screen bg-canvas p-6 text-ink md:p-12">
       <div className="mx-auto max-w-5xl space-y-8">
         {/* Header */}
-        <div className="space-y-1">
-          <p className="font-mono text-xs uppercase tracking-widest text-ink-muted">
-            System Administrator
-          </p>
-          <h1 className="text-3xl font-semibold tracking-tight">Election Management Console</h1>
-        </div>
+        <PageHeading
+          eyebrow="System Administrator"
+          title="Election Management Console"
+        />
 
         {/* Error Alert */}
         {error && (
@@ -56,7 +55,7 @@ export default function AdminDashboardPage() {
             <span>{error}</span>
             <button
               onClick={fetchSummary}
-              className="rounded bg-danger/20 px-3 py-1 font-medium text-danger hover:bg-danger/30"
+              className="rounded bg-danger/20 px-3 py-1 text-xs font-semibold text-danger hover:bg-danger/30"
             >
               Retry
             </button>
@@ -76,21 +75,21 @@ export default function AdminDashboardPage() {
         ) : summary ? (
           <div className="grid gap-4 sm:grid-cols-3">
             <div className="rounded-lg border border-hairline bg-surface p-6 space-y-2">
-              <p className="text-xs font-medium text-ink-secondary">Active Elections</p>
+              <p className="text-xs font-normal text-ink-secondary">Active Elections</p>
               <p className="font-mono text-3xl font-bold text-success">
                 {summary.activeElectionsCount}
               </p>
             </div>
 
             <div className="rounded-lg border border-hairline bg-surface p-6 space-y-2">
-              <p className="text-xs font-medium text-ink-secondary">Total Votes Cast</p>
+              <p className="text-xs font-normal text-ink-secondary">Total Votes Cast</p>
               <p className="font-mono text-3xl font-bold text-ink">
                 {(summary.totalVotesCast ?? 0).toLocaleString()}
               </p>
             </div>
 
             <div className="rounded-lg border border-hairline bg-surface p-6 space-y-2">
-              <p className="text-xs font-medium text-ink-secondary">All Elections Created</p>
+              <p className="text-xs font-normal text-ink-secondary">All Elections Created</p>
               <p className="font-mono text-3xl font-bold text-accent">
                 {summary.totalElectionsCount}
               </p>
@@ -116,9 +115,9 @@ export default function AdminDashboardPage() {
                 <h3 className="text-sm font-semibold text-ink group-hover:text-accent">
                   Elections
                 </h3>
-                <span className="font-mono text-xs text-ink-muted group-hover:text-accent">→</span>
+                <span className="text-xs text-ink-muted group-hover:text-accent">→</span>
               </div>
-              <p className="mt-2 text-xs text-ink-secondary">
+              <p className="mt-2 text-xs text-ink-secondary leading-relaxed">
                 View table of all elections, statuses, and live results links.
               </p>
             </Link>
@@ -131,9 +130,9 @@ export default function AdminDashboardPage() {
                 <h3 className="text-sm font-semibold text-ink group-hover:text-accent">
                   Create Election
                 </h3>
-                <span className="font-mono text-xs text-ink-muted group-hover:text-accent">→</span>
+                <span className="text-xs text-ink-muted group-hover:text-accent">→</span>
               </div>
-              <p className="mt-2 text-xs text-ink-secondary">
+              <p className="mt-2 text-xs text-ink-secondary leading-relaxed">
                 Configure new election title, poll dates, and candidate roster.
               </p>
             </Link>
@@ -146,9 +145,9 @@ export default function AdminDashboardPage() {
                 <h3 className="text-sm font-semibold text-ink group-hover:text-accent">
                   Candidates
                 </h3>
-                <span className="font-mono text-xs text-ink-muted group-hover:text-accent">→</span>
+                <span className="text-xs text-ink-muted group-hover:text-accent">→</span>
               </div>
-              <p className="mt-2 text-xs text-ink-secondary">
+              <p className="mt-2 text-xs text-ink-secondary leading-relaxed">
                 Inspect and configure candidate rosters per election.
               </p>
             </Link>
@@ -159,9 +158,9 @@ export default function AdminDashboardPage() {
             >
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-semibold text-ink group-hover:text-accent">Results</h3>
-                <span className="font-mono text-xs text-ink-muted group-hover:text-accent">→</span>
+                <span className="text-xs text-ink-muted group-hover:text-accent">→</span>
               </div>
-              <p className="mt-2 text-xs text-ink-secondary">
+              <p className="mt-2 text-xs text-ink-secondary leading-relaxed">
                 Inspect live candidate vote tallies and turnout statistics.
               </p>
             </Link>

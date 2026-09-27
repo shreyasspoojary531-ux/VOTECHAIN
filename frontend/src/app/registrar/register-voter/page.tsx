@@ -6,6 +6,7 @@ import { useSearchParams } from 'next/navigation';
 import { registerVoter } from '@/services/registration.api';
 import { ApiError } from '@/services/api';
 import type { RegisterVoterRequest, RegisterVoterResponse } from '@/types';
+import { PageHeading } from '@/components/ui/page-heading';
 
 function RegisterVoterFormContent() {
   const searchParams = useSearchParams();
@@ -74,18 +75,12 @@ function RegisterVoterFormContent() {
   return (
     <div className="w-full max-w-lg space-y-6">
       {/* Header */}
-      <div className="space-y-1">
-        <Link
-          href="/registrar/dashboard"
-          className="font-mono text-xs text-ink-muted hover:text-ink hover:underline"
-        >
-          ← Back to Dashboard
-        </Link>
-        <h1 className="text-3xl font-semibold tracking-tight">Register Voter</h1>
-        <p className="text-sm text-ink-secondary">
-          Enrol an eligible citizen into the official voter register
-        </p>
-      </div>
+      <PageHeading
+        backHref="/registrar/dashboard"
+        backLabel="Back to Dashboard"
+        title="Register Voter"
+        description="Enrol an eligible citizen into the official voter register"
+      />
 
       {/* Success Confirmation Card */}
       {successResult ? (() => {
@@ -115,6 +110,7 @@ function RegisterVoterFormContent() {
               <h2 className="text-lg font-semibold">Voter Successfully Registered</h2>
             </div>
 
+<<<<<<< Updated upstream
             <div className="space-y-4 rounded-md border border-hairline bg-canvas p-4 text-xs">
               <div className="flex justify-between border-b border-hairline pb-2">
                 <span className="text-ink-secondary">Voter Profile ID:</span>
@@ -182,6 +178,24 @@ function RegisterVoterFormContent() {
                 Register Another
               </button>
             </div>
+=======
+          <div className="flex gap-3">
+            <Link
+              href="/registrar/voters"
+              className="flex-1 rounded-md bg-ink py-2 text-center text-xs font-semibold text-canvas hover:opacity-90"
+            >
+              View All Registered Voters
+            </Link>
+            <button
+              onClick={() => {
+                setSuccessResult(null);
+                setFormData({ aadhaarNumber: '', name: '', constituencyId: 'CONST_001' });
+              }}
+              className="rounded-md border border-hairline bg-surface px-4 py-2 text-xs font-semibold text-ink hover:bg-surface-raised"
+            >
+              Register Another
+            </button>
+>>>>>>> Stashed changes
           </div>
         );
       })() : (
@@ -200,7 +214,7 @@ function RegisterVoterFormContent() {
           )}
 
           <div className="space-y-1.5">
-            <label htmlFor="aadhaarNumber" className="text-xs font-medium text-ink-secondary">
+            <label htmlFor="aadhaarNumber" className="text-xs font-normal text-ink-secondary">
               Citizen 12-Digit Aadhaar Number
             </label>
             <input
@@ -217,7 +231,7 @@ function RegisterVoterFormContent() {
           </div>
 
           <div className="space-y-1.5">
-            <label htmlFor="name" className="text-xs font-medium text-ink-secondary">
+            <label htmlFor="name" className="text-xs font-normal text-ink-secondary">
               Voter Full Name
             </label>
             <input
@@ -233,7 +247,7 @@ function RegisterVoterFormContent() {
           </div>
 
           <div className="space-y-1.5">
-            <label htmlFor="constituencyId" className="text-xs font-medium text-ink-secondary">
+            <label htmlFor="constituencyId" className="text-xs font-normal text-ink-secondary">
               Constituency Segment ID
             </label>
             <select
@@ -253,7 +267,7 @@ function RegisterVoterFormContent() {
           <button
             type="submit"
             disabled={loading}
-            className="flex w-full items-center justify-center rounded-md bg-ink py-2 text-sm font-medium text-canvas transition-opacity hover:opacity-90 disabled:opacity-50"
+            className="flex w-full items-center justify-center rounded-md bg-ink py-2 text-sm font-semibold text-canvas transition-opacity hover:opacity-90 disabled:opacity-50"
           >
             {loading ? 'Submitting Registration...' : 'Complete Voter Enrolment'}
           </button>
@@ -266,12 +280,11 @@ function RegisterVoterFormContent() {
 export default function RegisterVoterPage() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-6 bg-canvas text-ink">
-      <Suspense
-        fallback={
-          <div className="text-center font-mono text-xs text-ink-muted">
-            Loading registration form...
-          </div>
-        }
+      <Suspense          fallback={
+            <div className="text-center text-xs text-ink-muted">
+              Loading registration form...
+            </div>
+          }
       >
         <RegisterVoterFormContent />
       </Suspense>

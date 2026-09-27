@@ -20,7 +20,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     ref,
   ) => {
     const baseClasses =
-      'inline-flex items-center justify-center rounded-md font-medium transition-all disabled:opacity-50';
+      'inline-flex items-center justify-center rounded-md font-semibold transition-all disabled:opacity-50';
 
     const variantClasses = {
       primary: 'bg-ink text-canvas hover:opacity-90',

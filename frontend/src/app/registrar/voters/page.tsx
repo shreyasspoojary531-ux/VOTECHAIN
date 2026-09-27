@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { listRegisteredVoters } from '@/services/registration.api';
 import { ApiError } from '@/services/api';
 import type { Paginated, Voter } from '@/types';
+import { PageHeading } from '@/components/ui/page-heading';
 
 export default function VotersListPage() {
   const [data, setData] = useState<Paginated<Voter> | null>(null);
@@ -64,18 +65,16 @@ export default function VotersListPage() {
         {/* Header */}
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
           <div className="space-y-1">
-            <Link
-              href="/registrar/dashboard"
-              className="font-mono text-xs text-ink-muted hover:text-ink hover:underline"
-            >
-              ← Back to Dashboard
-            </Link>
-            <h1 className="text-3xl font-semibold tracking-tight">Registered Voters</h1>
+            <PageHeading
+              backHref="/registrar/dashboard"
+              backLabel="Back to Dashboard"
+              title="Registered Voters"
+            />
           </div>
 
           <Link
             href="/registrar/register-voter"
-            className="rounded-md bg-ink px-4 py-2 text-xs font-medium text-canvas hover:opacity-90 self-start sm:self-auto"
+            className="rounded-md bg-ink px-4 py-2 text-xs font-semibold text-canvas hover:opacity-90 self-start sm:self-auto"
           >
             + Register New Voter
           </Link>
@@ -188,13 +187,13 @@ export default function VotersListPage() {
           return (
             /* Empty state */
             <div className="rounded-lg border border-hairline bg-surface p-12 text-center space-y-3">
-              <p className="font-mono text-sm font-semibold text-ink">No voters registered yet</p>
-              <p className="text-xs text-ink-secondary max-w-sm mx-auto">
+              <p className="text-sm font-semibold text-ink">No voters registered yet</p>
+              <p className="text-xs text-ink-secondary max-w-sm mx-auto leading-relaxed">
                 Use the voter registration form to enrol citizens into the official database.
               </p>
               <Link
                 href="/registrar/register-voter"
-                className="inline-block rounded-md bg-ink px-4 py-2 text-xs font-medium text-canvas hover:opacity-90"
+                className="inline-block rounded-md bg-ink px-4 py-2 text-xs font-semibold text-canvas hover:opacity-90"
               >
                 + Register First Voter
               </Link>

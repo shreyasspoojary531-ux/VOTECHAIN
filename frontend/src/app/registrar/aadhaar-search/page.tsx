@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { searchAadhaar } from '@/services/registration.api';
 import { ApiError } from '@/services/api';
 import type { AadhaarSearchResult } from '@/types';
+import { PageHeading } from '@/components/ui/page-heading';
 
 export default function AadhaarSearchPage() {
   const [query, setQuery] = useState('');
@@ -49,18 +50,12 @@ export default function AadhaarSearchPage() {
     <main className="min-h-screen bg-canvas p-6 text-ink md:p-12">
       <div className="mx-auto max-w-4xl space-y-8">
         {/* Header */}
-        <div className="space-y-1">
-          <Link
-            href="/registrar/dashboard"
-            className="font-mono text-xs text-ink-muted hover:text-ink hover:underline"
-          >
-            ← Back to Dashboard
-          </Link>
-          <h1 className="text-3xl font-semibold tracking-tight">Aadhaar Search</h1>
-          <p className="text-sm text-ink-secondary">
-            Verify citizen Aadhaar details before registering them for voting
-          </p>
-        </div>
+        <PageHeading
+          backHref="/registrar/dashboard"
+          backLabel="Back to Dashboard"
+          title="Aadhaar Search"
+          description="Verify citizen Aadhaar details before registering them for voting"
+        />
 
         {/* Search Form */}
         <form onSubmit={handleSearch} className="flex gap-3">
@@ -75,7 +70,7 @@ export default function AadhaarSearchPage() {
           <button
             type="submit"
             disabled={loading || !query.trim()}
-            className="rounded-md bg-ink px-5 py-2.5 text-sm font-medium text-canvas transition-opacity hover:opacity-90 disabled:opacity-50"
+            className="rounded-md bg-ink px-5 py-2.5 text-sm font-semibold text-canvas transition-opacity hover:opacity-90 disabled:opacity-50"
           >
             {loading ? 'Searching...' : 'Search'}
           </button>
@@ -137,11 +132,11 @@ export default function AadhaarSearchPage() {
                         <td className="px-4 py-3 text-ink">{row.name || 'N/A'}</td>
                         <td className="px-4 py-3">
                           {row.isRegistered ? (
-                            <span className="inline-flex items-center rounded-full bg-success/10 px-2.5 py-0.5 text-xs font-medium text-success">
+                            <span className="inline-flex items-center rounded-full bg-success/10 px-2.5 py-0.5 text-xs font-semibold text-success">
                               Registered
                             </span>
                           ) : (
-                            <span className="inline-flex items-center rounded-full bg-warning/10 px-2.5 py-0.5 text-xs font-medium text-warning">
+                            <span className="inline-flex items-center rounded-full bg-warning/10 px-2.5 py-0.5 text-xs font-semibold text-warning">
                               Unregistered
                             </span>
                           )}
@@ -152,7 +147,7 @@ export default function AadhaarSearchPage() {
                           ) : (
                             <Link
                               href={registerUrl}
-                              className="rounded-md bg-accent px-3 py-1.5 text-xs font-medium text-canvas hover:opacity-90"
+                              className="rounded-md bg-accent px-3 py-1.5 text-xs font-semibold text-canvas hover:opacity-90"
                             >
                               Register This Voter
                             </Link>
@@ -169,7 +164,7 @@ export default function AadhaarSearchPage() {
           /* Empty state */
           <div className="rounded-lg border border-hairline bg-surface p-8 text-center space-y-2">
             <p className="font-semibold text-ink text-base">No matches found</p>
-            <p className="text-xs text-ink-secondary">
+            <p className="text-xs text-ink-secondary leading-relaxed">
               No Aadhaar record was found matching &quot;{query}&quot;. Please verify the number and
               try again.
             </p>
@@ -177,7 +172,7 @@ export default function AadhaarSearchPage() {
         ) : (
           /* Default state */
           <div className="rounded-lg border border-hairline bg-surface p-8 text-center space-y-2">
-            <p className="font-mono text-xs text-ink-muted">
+            <p className="text-xs text-ink-muted">
               Enter a 12-digit Aadhaar number above to perform a lookup.
             </p>
           </div>

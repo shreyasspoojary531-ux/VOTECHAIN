@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { createElection } from '@/services/election.api';
 import { ApiError } from '@/services/api';
+import { PageHeading } from '@/components/ui/page-heading';
 
 interface CandidateInput {
   name: string;
@@ -104,18 +105,12 @@ export default function CreateElectionPage() {
     <main className="min-h-screen bg-canvas p-6 text-ink md:p-12">
       <div className="mx-auto max-w-2xl space-y-8">
         {/* Header */}
-        <div className="space-y-1">
-          <Link
-            href="/admin/dashboard"
-            className="font-mono text-xs text-ink-muted hover:text-ink hover:underline"
-          >
-            ← Back to Console
-          </Link>
-          <h1 className="text-3xl font-semibold tracking-tight">Create New Election</h1>
-          <p className="text-sm text-ink-secondary">
-            Configure election metadata, voting timeline, and official candidate roster.
-          </p>
-        </div>
+        <PageHeading
+          backHref="/admin/dashboard"
+          backLabel="Back to Console"
+          title="Create New Election"
+          description="Configure election metadata, voting timeline, and official candidate roster."
+        />
 
         {/* Form Container */}
         <form
@@ -137,7 +132,7 @@ export default function CreateElectionPage() {
             </h2>
 
             <div className="space-y-1.5">
-              <label htmlFor="title" className="text-xs font-medium text-ink-secondary">
+              <label htmlFor="title" className="text-xs font-normal text-ink-secondary">
                 Election Title
               </label>
               <input
@@ -153,7 +148,7 @@ export default function CreateElectionPage() {
             </div>
 
             <div className="space-y-1.5">
-              <label htmlFor="description" className="text-xs font-medium text-ink-secondary">
+              <label htmlFor="description" className="text-xs font-normal text-ink-secondary">
                 Description
               </label>
               <textarea
@@ -170,7 +165,7 @@ export default function CreateElectionPage() {
 
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
-                <label htmlFor="startsAt" className="text-xs font-medium text-ink-secondary">
+                <label htmlFor="startsAt" className="text-xs font-normal text-ink-secondary">
                   Poll Start Date & Time
                 </label>
                 <input
@@ -185,7 +180,7 @@ export default function CreateElectionPage() {
               </div>
 
               <div className="space-y-1.5">
-                <label htmlFor="endsAt" className="text-xs font-medium text-ink-secondary">
+                <label htmlFor="endsAt" className="text-xs font-normal text-ink-secondary">
                   Poll Close Date & Time
                 </label>
                 <input
@@ -210,7 +205,7 @@ export default function CreateElectionPage() {
               <button
                 type="button"
                 onClick={handleAddCandidate}
-                className="text-xs font-medium text-accent hover:underline"
+                className="text-xs font-semibold text-accent hover:underline"
               >
                 + Add Candidate
               </button>
@@ -256,7 +251,7 @@ export default function CreateElectionPage() {
           <button
             type="submit"
             disabled={loading}
-            className="flex w-full items-center justify-center rounded-md bg-ink py-2.5 text-sm font-medium text-canvas transition-opacity hover:opacity-90 disabled:opacity-50"
+            className="flex w-full items-center justify-center rounded-md bg-ink py-2.5 text-sm font-semibold text-canvas transition-opacity hover:opacity-90 disabled:opacity-50"
           >
             {loading ? 'Creating Election...' : 'Publish Election'}
           </button>

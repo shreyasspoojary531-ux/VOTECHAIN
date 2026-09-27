@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { closeElection, getElections, publishElection } from '@/services/election.api';
 import { ApiError } from '@/services/api';
 import type { Election } from '@/types';
+import { PageHeading } from '@/components/ui/page-heading';
 
 export default function AdminElectionsPage() {
   const [elections, setElections] = useState<Election[] | null>(null);
@@ -74,6 +75,7 @@ export default function AdminElectionsPage() {
         {/* Header */}
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
           <div className="space-y-1">
+<<<<<<< Updated upstream
             <Link
               href="/admin/dashboard"
               className="font-mono text-xs text-ink-muted hover:text-ink hover:underline"
@@ -84,11 +86,18 @@ export default function AdminElectionsPage() {
             <p className="text-xs text-ink-secondary">
               Create, publish draft elections to open voting, or close completed polls.
             </p>
+=======
+            <PageHeading
+              backHref="/admin/dashboard"
+              backLabel="Back to Console"
+              title="Elections Overview"
+            />
+>>>>>>> Stashed changes
           </div>
 
           <Link
             href="/admin/create-election"
-            className="rounded-md bg-ink px-4 py-2 text-xs font-medium text-canvas hover:opacity-90 self-start sm:self-auto"
+            className="rounded-md bg-ink px-4 py-2 text-xs font-semibold text-canvas hover:opacity-90 self-start sm:self-auto"
           >
             + Create New Election
           </Link>
@@ -103,7 +112,7 @@ export default function AdminElectionsPage() {
             <span>{error}</span>
             <button
               onClick={fetchElections}
-              className="rounded bg-danger/20 px-3 py-1 font-medium hover:bg-danger/30"
+              className="rounded bg-danger/20 px-3 py-1 text-xs font-semibold hover:bg-danger/30"
             >
               Retry
             </button>
@@ -186,7 +195,7 @@ export default function AdminElectionsPage() {
 
                       <Link
                         href={`/admin/results?electionId=${encodeURIComponent(elec.id)}`}
-                        className="rounded border border-hairline bg-surface px-2.5 py-1 text-xs font-medium text-ink hover:bg-hairline"
+                        className="rounded border border-hairline bg-surface px-2.5 py-1 text-xs font-semibold text-ink hover:bg-hairline"
                       >
                         View Results
                       </Link>
@@ -198,13 +207,13 @@ export default function AdminElectionsPage() {
           </div>
         ) : (
           <div className="rounded-lg border border-hairline bg-surface p-12 text-center space-y-3">
-            <p className="font-mono text-sm font-semibold text-ink">No elections created yet</p>
-            <p className="text-xs text-ink-secondary max-w-sm mx-auto">
+            <p className="text-sm font-semibold text-ink">No elections created yet</p>
+            <p className="text-xs text-ink-secondary max-w-sm mx-auto leading-relaxed">
               Configure and publish an election to open candidate voting and ledger tracking.
             </p>
             <Link
               href="/admin/create-election"
-              className="inline-block rounded-md bg-ink px-4 py-2 text-xs font-medium text-canvas hover:opacity-90"
+              className="inline-block rounded-md bg-ink px-4 py-2 text-xs font-semibold text-canvas hover:opacity-90"
             >
               + Create First Election
             </Link>
