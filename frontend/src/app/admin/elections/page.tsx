@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { closeElection, getElections, publishElection } from '@/services/election.api';
 import { ApiError } from '@/services/api';
 import type { Election } from '@/types';
-import { PageHeading } from '@/components/ui/page-heading';
 
 export default function AdminElectionsPage() {
   const [elections, setElections] = useState<Election[] | null>(null);
@@ -75,7 +74,6 @@ export default function AdminElectionsPage() {
         {/* Header */}
         <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
           <div className="space-y-1">
-<<<<<<< Updated upstream
             <Link
               href="/admin/dashboard"
               className="font-mono text-xs text-ink-muted hover:text-ink hover:underline"
@@ -86,13 +84,6 @@ export default function AdminElectionsPage() {
             <p className="text-xs text-ink-secondary">
               Create, publish draft elections to open voting, or close completed polls.
             </p>
-=======
-            <PageHeading
-              backHref="/admin/dashboard"
-              backLabel="Back to Console"
-              title="Elections Overview"
-            />
->>>>>>> Stashed changes
           </div>
 
           <Link

@@ -2,7 +2,7 @@
 
 Documentation for VoteChain: a verifiable electronic voting platform with four roles (**Registrar**, **Voter**, **Admin**, **Auditor**). Voter privacy is enforced cryptographically (Aadhaar-based identity → OTP verification → anonymous credential → ballot cast → verifiable receipt); integrity is enforced by an append-only ledger that anyone may inspect.
 
-## Quickstart (no Docker required)
+## Quickstart Development Setup
 
 ```bash
 # 1. Backend — PostgreSQL must be running locally

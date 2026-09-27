@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useState } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { createElection } from '@/services/election.api';
 import { ApiError } from '@/services/api';

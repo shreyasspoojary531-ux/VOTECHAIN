@@ -1,12 +1,10 @@
 # Deployment & Environments
 
-Docker artifacts have been removed from this repository — deployment is plain Node.js + PostgreSQL.
-
 ## Prerequisites
 
 - Node.js 20+
-- PostgreSQL 16 (local server or managed)
-- npm
+- PostgreSQL 16 (local server or managed cluster)
+- npm 10+
 
 ## Local development
 

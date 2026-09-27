@@ -30,8 +30,4 @@ Honest inventory of what is mocked, simplified, or deferred. Read before relying
 
 - No CI pipelines yet (`.github/` exists but workflows are not part of the verified flow).
 - Single PostgreSQL instance assumed; no replication/failover story.
-- `scripts/*.sh` (`setup`, `dev`, `test`, `deploy`) are placeholders and currently empty.
-
-## Removed
-
-- Docker/compose artifacts (Dockerfiles, compose files) have been removed; see deployment.md for the Node-native runbook.
+- `scripts/*.sh` (`setup`, `dev`, `test`, `deploy`) are placeholders for future orchestration.

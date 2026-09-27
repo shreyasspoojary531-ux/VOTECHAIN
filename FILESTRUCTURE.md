@@ -13,8 +13,14 @@
 ├── DESIGN.md              # visual direction & tokens reference
 ├── backend/               # API service (Express + Prisma; full stack workflow live)
 ├── blockchain/            # ledger services (isolated abstraction layer in backend/src/blockchain)
-├── database/              # schema/migrations & user-space PostgreSQL cluster
-├── documentation/         # architecture/API/security/testing/deployment docs
+├── database/              # Schema/migrations & PostgreSQL DDL/seed scripts
+│   ├── README.md          # Database subsystem guide
+│   ├── schema.sql         # Standard DDL SQL schema
+│   ├── seed/
+│   │   └── sample_seed.sql # Standalone sample SQL seed script
+│   └── diagrams/
+│       └── er_diagram.md  # Mermaid ER diagram
+├── documentation/         # Architecture, API, security, testing, and deployment docs
 ├── scripts/               # orchestration helpers
 └── frontend/              # ← Next.js web app
 ```

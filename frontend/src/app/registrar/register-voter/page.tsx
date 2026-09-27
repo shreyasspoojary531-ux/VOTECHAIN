@@ -110,7 +110,6 @@ function RegisterVoterFormContent() {
               <h2 className="text-lg font-semibold">Voter Successfully Registered</h2>
             </div>
 
-<<<<<<< Updated upstream
             <div className="space-y-4 rounded-md border border-hairline bg-canvas p-4 text-xs">
               <div className="flex justify-between border-b border-hairline pb-2">
                 <span className="text-ink-secondary">Voter Profile ID:</span>
@@ -178,24 +177,6 @@ function RegisterVoterFormContent() {
                 Register Another
               </button>
             </div>
-=======
-          <div className="flex gap-3">
-            <Link
-              href="/registrar/voters"
-              className="flex-1 rounded-md bg-ink py-2 text-center text-xs font-semibold text-canvas hover:opacity-90"
-            >
-              View All Registered Voters
-            </Link>
-            <button
-              onClick={() => {
-                setSuccessResult(null);
-                setFormData({ aadhaarNumber: '', name: '', constituencyId: 'CONST_001' });
-              }}
-              className="rounded-md border border-hairline bg-surface px-4 py-2 text-xs font-semibold text-ink hover:bg-surface-raised"
-            >
-              Register Another
-            </button>
->>>>>>> Stashed changes
           </div>
         );
       })() : (
