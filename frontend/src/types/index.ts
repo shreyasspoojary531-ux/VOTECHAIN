@@ -94,7 +94,7 @@ export interface Candidate {
   imageUrl?: string | null;
 }
 
-export type ElectionStatus = 'DRAFT' | 'ACTIVE' | 'CLOSED' | 'ARCHIVED';
+export type ElectionStatus = 'DRAFT' | 'PUBLISHED' | 'ACTIVE' | 'CLOSED' | 'RESULTS_PUBLISHED' | 'ARCHIVED';
 
 export interface Election {
   id: string;
@@ -122,12 +122,16 @@ export interface CreateElectionRequest {
 export interface CastVoteRequest {
   electionId: string;
   candidateId: string;
-  voterId: string;
+  credentialHash?: string;
+  voterId?: string;
 }
 
 export interface CastVoteResponse {
   txId: string;
-  receiptHash: string;
+  receiptHash?: string;
+  ballotHash?: string;
+  blockNumber?: number;
+  status?: string;
   timestamp: number;
 }
 
@@ -171,12 +175,16 @@ export interface Block {
 // Audit
 export interface ElectionAuditReport {
   electionId: string;
-  totalVotesCast: number;
-  validVotesCount: number;
-  invalidVotesCount: number;
-  chainIntegrityVerified: boolean;
-  discrepancies: string[];
-  lastAuditTimestamp: number;
+  totalVotesCast?: number;
+  totalBallots?: number;
+  totalTransactions?: number;
+  validVotesCount?: number;
+  invalidVotesCount?: number;
+  chainIntegrityVerified?: boolean;
+  isIntegrityVerified?: boolean;
+  discrepancies?: string[];
+  lastAuditTimestamp?: number;
+  auditedAt?: number;
 }
 
 export interface AuditEvent {
@@ -196,4 +204,25 @@ export interface Paginated<T> {
   page: number;
   pageSize: number;
   totalPages?: number;
+}
+
+// Mock Aadhaar Admin Management
+export interface MockAadhaarRecord {
+  id: string;
+  aadhaarNumber: string;
+  fullName: string;
+  dateOfBirth: string | Date;
+  gender: 'Male' | 'Female' | 'Other';
+  phone: string;
+  address: string;
+  createdAt: string | Date;
+}
+
+export interface CreateMockAadhaarRequest {
+  aadhaarNumber: string;
+  fullName: string;
+  dateOfBirth: string;
+  gender: 'Male' | 'Female' | 'Other';
+  phone: string;
+  address: string;
 }

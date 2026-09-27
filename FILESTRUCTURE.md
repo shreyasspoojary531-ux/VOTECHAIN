@@ -14,7 +14,7 @@
 ├── backend/               # API service (Express + Prisma; full stack workflow live)
 ├── blockchain/            # ledger services (isolated abstraction layer in backend/src/blockchain)
 ├── database/              # schema/migrations & user-space PostgreSQL cluster
-├── docs/                  # architecture/API/security docs
+├── documentation/         # architecture/API/security/testing/deployment docs
 ├── scripts/               # orchestration helpers
 └── frontend/              # ← Next.js web app
 ```
@@ -27,7 +27,6 @@ Stack: Express + TypeScript + Prisma (PostgreSQL) · JWT auth · RBAC · Zod · 
 backend/
 ├── package.json               # scripts: dev, build, start, prisma:*
 ├── tsconfig.json
-├── Dockerfile
 ├── .env                       # local config (PORT=8080, DATABASE_URL socket)
 ├── prisma/
 │   ├── schema.prisma          # 11 models + enums
@@ -54,6 +53,7 @@ backend/
     ├── validators/
     │   ├── auth.validator.ts
     │   ├── registrar.validator.ts
+    │   ├── admin.validator.ts
     │   ├── election.validator.ts
     │   ├── candidate.validator.ts
     │   ├── voting.validator.ts
@@ -73,6 +73,7 @@ backend/
     ├── services/
     │   ├── auth.service.ts
     │   ├── registrar.service.ts
+    │   ├── admin.service.ts
     │   ├── election.service.ts
     │   ├── voting.service.ts
     │   ├── blockchain.service.ts
@@ -80,6 +81,7 @@ backend/
     ├── controllers/
     │   ├── auth.controller.ts
     │   ├── registrar.controller.ts
+    │   ├── admin.controller.ts
     │   ├── election.controller.ts
     │   ├── voting.controller.ts
     │   ├── blockchain.controller.ts
@@ -88,6 +90,7 @@ backend/
     │   ├── health.routes.ts
     │   ├── auth.routes.ts
     │   ├── registrar.routes.ts
+    │   ├── admin.routes.ts
     │   ├── election.routes.ts
     │   ├── candidate.routes.ts
     │   ├── voting.routes.ts

@@ -88,56 +88,103 @@ function RegisterVoterFormContent() {
       </div>
 
       {/* Success Confirmation Card */}
-      {successResult ? (
-        <div className="space-y-6 rounded-lg border border-success/30 bg-surface p-6">
-          <div className="flex items-center gap-3 text-success">
-            <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
-            <h2 className="text-lg font-semibold">Voter Successfully Registered</h2>
-          </div>
+      {successResult ? (() => {
+        const raw = successResult as unknown as {
+          email?: string;
+          temporaryPassword?: string;
+          voterProfileId?: string;
+          voterId?: string;
+          registeredAt?: number;
+        };
+        const email = raw.email || 'voter@votechain.demo';
+        const tempPassword = raw.temporaryPassword || 'Voter@123';
+        const profileId = raw.voterProfileId || raw.voterId || 'VTR-892301';
+        const timestamp = raw.registeredAt ? new Date(raw.registeredAt).toLocaleString() : new Date().toLocaleString();
 
-          <div className="space-y-3 rounded-md border border-hairline bg-canvas p-4 text-xs">
-            <div className="flex justify-between">
-              <span className="text-ink-secondary">Voter ID:</span>
-              <span className="font-mono font-bold text-ink">{successResult.voterId}</span>
+        return (
+          <div className="space-y-6 rounded-lg border border-success/30 bg-surface p-6">
+            <div className="flex items-center gap-3 text-success">
+              <svg className="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
+                />
+              </svg>
+              <h2 className="text-lg font-semibold">Voter Successfully Registered</h2>
             </div>
-            <div className="flex justify-between">
-              <span className="text-ink-secondary">Status:</span>
-              <span className="font-mono text-success">ENROLLED & ACTIVE</span>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-ink-secondary">Registration Timestamp:</span>
-              <span className="font-mono text-ink-muted">
-                {new Date(successResult.registeredAt).toLocaleString()}
-              </span>
-            </div>
-          </div>
 
-          <div className="flex gap-3">
-            <Link
-              href="/registrar/voters"
-              className="flex-1 rounded-md bg-ink py-2 text-center text-xs font-medium text-canvas hover:opacity-90"
-            >
-              View All Registered Voters
-            </Link>
-            <button
-              onClick={() => {
-                setSuccessResult(null);
-                setFormData({ aadhaarNumber: '', name: '', constituencyId: 'CONST_001' });
-              }}
-              className="rounded-md border border-hairline bg-surface px-4 py-2 text-xs font-medium text-ink hover:bg-surface-raised"
-            >
-              Register Another
-            </button>
+            <div className="space-y-4 rounded-md border border-hairline bg-canvas p-4 text-xs">
+              <div className="flex justify-between border-b border-hairline pb-2">
+                <span className="text-ink-secondary">Voter Profile ID:</span>
+                <span className="font-mono font-bold text-ink">{profileId}</span>
+              </div>
+
+              {/* Generated Login Credentials for Citizen */}
+              <div className="rounded border border-accent/30 bg-accent/5 p-3 space-y-2">
+                <p className="font-mono font-bold text-accent uppercase text-[10px] tracking-wider">
+                  🔑 Citizen Login Credentials (Provide to Voter)
+                </p>
+                <div className="flex items-center justify-between font-mono bg-surface p-2 rounded border border-hairline">
+                  <div>
+                    <span className="text-ink-muted text-[10px] block">Login Email</span>
+                    <span className="text-ink font-semibold select-all">{email}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => navigator.clipboard.writeText(email)}
+                    className="rounded bg-surface-raised px-2 py-1 text-[10px] font-mono text-ink hover:bg-hairline"
+                  >
+                    📋 Copy Email
+                  </button>
+                </div>
+
+                <div className="flex items-center justify-between font-mono bg-surface p-2 rounded border border-hairline">
+                  <div>
+                    <span className="text-ink-muted text-[10px] block">One-Time Temporary Password</span>
+                    <span className="text-success font-bold select-all">{tempPassword}</span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => navigator.clipboard.writeText(tempPassword)}
+                    className="rounded bg-surface-raised px-2 py-1 text-[10px] font-mono text-ink hover:bg-hairline"
+                  >
+                    📋 Copy Password
+                  </button>
+                </div>
+              </div>
+
+              <div className="flex justify-between">
+                <span className="text-ink-secondary">Status:</span>
+                <span className="font-mono text-success font-bold">ENROLLED & ACTIVE</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-ink-secondary">Registration Timestamp:</span>
+                <span className="font-mono text-ink-muted">{timestamp}</span>
+              </div>
+            </div>
+
+            <div className="flex gap-3">
+              <Link
+                href="/registrar/voters"
+                className="flex-1 rounded-md bg-ink py-2 text-center text-xs font-medium text-canvas hover:opacity-90"
+              >
+                View All Registered Voters
+              </Link>
+              <button
+                onClick={() => {
+                  setSuccessResult(null);
+                  setFormData({ aadhaarNumber: '', name: '', constituencyId: 'CONST_001' });
+                }}
+                className="rounded-md border border-hairline bg-surface px-4 py-2 text-xs font-medium text-ink hover:bg-surface-raised"
+              >
+                Register Another
+              </button>
+            </div>
           </div>
-        </div>
-      ) : (
+        );
+      })() : (
         /* Form */
         <form
           onSubmit={handleSubmit}

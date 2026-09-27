@@ -176,7 +176,7 @@ function AdminResultsContent() {
             <div>
               <p className="text-xs font-medium text-ink-secondary">Total Ballots Counted</p>
               <p className="font-mono text-3xl font-bold text-ink">
-                {resultsData.totalVotesCast.toLocaleString()}
+                {(resultsData.totalVotesCast ?? 0).toLocaleString()}
               </p>
             </div>
             <span className="font-mono text-xs text-success">✓ Chain Verified</span>
@@ -200,7 +200,7 @@ function AdminResultsContent() {
                     </div>
                     <div className="font-mono text-xs space-x-2">
                       <span className="font-bold text-ink">
-                        {item.voteCount.toLocaleString()} votes
+                        {(item.voteCount ?? 0).toLocaleString()} votes
                       </span>
                       <span className="text-ink-secondary">({item.votePercentage}%)</span>
                     </div>

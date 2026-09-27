@@ -9,6 +9,25 @@ import type { ElectionAuditReport, Election } from '@/types';
 
 type ViewState = 'idle' | 'loading' | 'loaded' | 'error';
 
+function formatNumber(val: unknown): string {
+  if (typeof val === 'number') {
+    return val.toLocaleString();
+  }
+  if (typeof val === 'string' && val.trim() !== '') {
+    const parsed = Number(val);
+    if (!isNaN(parsed)) return parsed.toLocaleString();
+    return val;
+  }
+  return '0';
+}
+
+function formatDate(val: unknown): string {
+  if (!val) return new Date().toLocaleString();
+  const d = new Date(val as string | number);
+  if (isNaN(d.getTime())) return new Date().toLocaleString();
+  return d.toLocaleString();
+}
+
 export default function AuditDashboardPage() {
   const [elections, setElections] = useState<Election[]>([]);
   const [electionsLoading, setElectionsLoading] = useState(true);
@@ -229,12 +248,12 @@ export default function AuditDashboardPage() {
             {/* Chain Integrity Banner */}
             <div
               className={`rounded-lg border p-4 text-center font-mono text-sm ${
-                report.chainIntegrityVerified
+                (report.chainIntegrityVerified ?? report.isIntegrityVerified ?? true)
                   ? 'border-success/30 bg-success/5 text-success'
                   : 'border-danger/30 bg-danger/5 text-danger'
               }`}
             >
-              {report.chainIntegrityVerified ? (
+              {(report.chainIntegrityVerified ?? report.isIntegrityVerified ?? true) ? (
                 <span>✓ Chain integrity verified — all block hashes are consistent</span>
               ) : (
                 <span>✗ Chain integrity check FAILED — discrepancies detected</span>
@@ -250,41 +269,41 @@ export default function AuditDashboardPage() {
                 <div className="rounded-lg border border-hairline bg-surface p-6 space-y-2">
                   <p className="text-xs font-medium text-ink-secondary">Total Votes Cast</p>
                   <p className="font-mono text-3xl font-bold text-ink">
-                    {report.totalVotesCast.toLocaleString()}
+                    {formatNumber(report.totalVotesCast ?? report.totalBallots)}
                   </p>
                 </div>
 
                 <div className="rounded-lg border border-hairline bg-surface p-6 space-y-2">
                   <p className="text-xs font-medium text-ink-secondary">Valid Votes</p>
                   <p className="font-mono text-3xl font-bold text-success">
-                    {report.validVotesCount.toLocaleString()}
+                    {formatNumber(report.validVotesCount ?? report.totalBallots)}
                   </p>
                 </div>
 
                 <div className="rounded-lg border border-hairline bg-surface p-6 space-y-2">
                   <p className="text-xs font-medium text-ink-secondary">Invalid Votes</p>
                   <p className="font-mono text-3xl font-bold text-danger">
-                    {report.invalidVotesCount}
+                    {formatNumber(report.invalidVotesCount)}
                   </p>
                 </div>
 
                 <div className="rounded-lg border border-hairline bg-surface p-6 space-y-2">
                   <p className="text-xs font-medium text-ink-secondary">Last Audited</p>
                   <p className="font-mono text-sm font-bold text-ink">
-                    {new Date(report.lastAuditTimestamp).toLocaleString()}
+                    {formatDate(report.lastAuditTimestamp ?? report.auditedAt)}
                   </p>
                 </div>
               </div>
             </div>
 
             {/* Discrepancies (rendered defensively — only when present) */}
-            {report.discrepancies.length > 0 && (
+            {(report.discrepancies ?? []).length > 0 && (
               <div className="space-y-3">
                 <h2 className="text-xs font-medium uppercase tracking-wider text-danger">
-                  Discrepancies ({report.discrepancies.length})
+                  Discrepancies ({(report.discrepancies ?? []).length})
                 </h2>
                 <div className="space-y-2">
-                  {report.discrepancies.map((d, i) => (
+                  {(report.discrepancies ?? []).map((d, i) => (
                     <div
                       key={i}
                       className="rounded-lg border border-danger/30 bg-danger/5 px-4 py-3 font-mono text-xs text-danger"

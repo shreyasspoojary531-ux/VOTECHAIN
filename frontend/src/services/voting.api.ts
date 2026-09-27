@@ -2,7 +2,17 @@ import { apiClient } from './api';
 import type { CastVoteRequest, CastVoteResponse, VoteReceipt } from '@/types';
 
 /**
- * POST /api/v1/votes
+ * POST /api/v1/votes/credential — Issue anonymous voting credential for election
+ */
+export async function issueCredential(electionId: string): Promise<{ credentialHash: string }> {
+  return apiClient<{ credentialHash: string }>('/votes/credential', {
+    method: 'POST',
+    body: { electionId },
+  });
+}
+
+/**
+ * POST /api/v1/votes — Cast anonymous vote
  */
 export async function castVote(data: CastVoteRequest): Promise<CastVoteResponse> {
   return apiClient<CastVoteResponse>('/votes', {
