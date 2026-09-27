@@ -143,7 +143,8 @@ async function main() {
   });
 
   for (let vIndex = 0; vIndex < 10; vIndex++) {
-    const aadhaarRecord = mockAadhaars[5 + vIndex];
+    // Start at 6: index 5 is already used by voter@votechain.gov above (unique aadhaarId)
+    const aadhaarRecord = mockAadhaars[6 + vIndex];
     await prisma.user.create({
       data: {
         email: `voter${vIndex + 1}@votechain.demo`,
