@@ -11,7 +11,9 @@
 ├── MEMORY.md              # progress log + decisions & assumptions
 ├── FILESTRUCTURE.md       # this file
 ├── DESIGN.md              # visual direction & tokens reference
-├── backend/               # API service (Express + Prisma; full stack workflow live)
+├── docker-compose.yml     # Multi-container orchestration (PostgreSQL, Backend, Nginx, Frontend)
+├── nginx.conf             # Load balancer config for scalable backend nodes
+├── backend/               # API service (Express + Prisma; Dockerfile included)
 ├── blockchain/            # ledger services (isolated abstraction layer in backend/src/blockchain)
 ├── database/              # Schema/migrations & PostgreSQL DDL/seed scripts
 │   ├── README.md          # Database subsystem guide
